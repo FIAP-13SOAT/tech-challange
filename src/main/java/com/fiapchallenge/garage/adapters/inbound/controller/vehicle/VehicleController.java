@@ -1,4 +1,4 @@
-package com.fiapchallenge.garage.adapters.inbound.controller;
+package com.fiapchallenge.garage.adapters.inbound.controller.vehicle;
 
 import com.fiapchallenge.garage.application.service.VehicleService;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
