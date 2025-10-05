@@ -15,19 +15,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Transactional
-@SpringBootTest
 @AutoConfigureMockMvc
 public class CustomerIntegrationTest extends BaseIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private final MockMvc mockMvc;
+    private final JpaCustomerRepository customerRepository;
 
     @Autowired
-    private JpaCustomerRepository customerRepository;
+    public CustomerIntegrationTest(MockMvc mockMvc, JpaCustomerRepository customerRepository) {
+        this.mockMvc = mockMvc;
+        this.customerRepository = customerRepository;
+    }
 
     @Test
     void shouldCreateCustomerAndPersistToDatabase() throws Exception {
-        // When
         mockMvc.perform(post("/customers")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .param("name", "John Doe")
@@ -38,7 +39,6 @@ public class CustomerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.email").value("john@example.com"))
                 .andExpect(jsonPath("$.phone").value("123456789"));
 
-        // Then
         CustomerEntity savedCustomer = customerRepository.findAll().get(0);
         assertThat(savedCustomer.getName()).isEqualTo("John Doe");
         assertThat(savedCustomer.getEmail()).isEqualTo("john@example.com");
