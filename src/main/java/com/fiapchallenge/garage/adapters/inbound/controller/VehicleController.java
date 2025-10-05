@@ -1,0 +1,28 @@
+package com.fiapchallenge.garage.adapters.inbound.controller;
+
+import com.fiapchallenge.garage.application.service.VehicleService;
+import com.fiapchallenge.garage.domain.vehicle.Vehicle;
+import com.fiapchallenge.garage.domain.vehicle.VehicleRequestDTO;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/vehicles")
+public class VehicleController {
+
+    private final VehicleService vehicleService;
+
+    public VehicleController(VehicleService vehicleService) {
+        this.vehicleService = vehicleService;
+    }
+
+    @PostMapping
+    public ResponseEntity<Vehicle> create(@Valid @ModelAttribute VehicleRequestDTO vehicleRequestDTO) {
+        Vehicle vehicle = vehicleService.create(vehicleRequestDTO);
+        return ResponseEntity.ok(vehicle);
+    }
+}
