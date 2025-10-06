@@ -16,7 +16,7 @@ public class CustomerService {
 
     public Customer create(CustomerRequestDTO data) {
         Customer customer = new Customer(data);
-        customerRepository.save(customer);
+        customer = customerRepository.save(customer);
 
         return customer;
     }
