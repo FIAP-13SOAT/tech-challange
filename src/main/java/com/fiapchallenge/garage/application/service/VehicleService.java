@@ -5,8 +5,10 @@ import com.fiapchallenge.garage.adapters.outbound.repositories.vehicle.VehicleRe
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
 import com.fiapchallenge.garage.domain.vehicle.VehicleRequestDTO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class VehicleService {
 
     private final VehicleRepositoryImpl vehicleRepository;
