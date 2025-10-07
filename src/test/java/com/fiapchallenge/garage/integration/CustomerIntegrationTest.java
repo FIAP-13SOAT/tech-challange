@@ -2,6 +2,7 @@ package com.fiapchallenge.garage.integration;
 
 import com.fiapchallenge.garage.adapters.outbound.repositories.JpaCustomerRepository;
 import com.fiapchallenge.garage.adapters.outbound.entities.CustomerEntity;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,12 +30,19 @@ public class CustomerIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
+    @DisplayName("Deve cadastrar um cliente e persistir")
     void shouldCreateCustomerAndPersistToDatabase() throws Exception {
+        String customerJson = """
+                {
+                  "name": "John Doe",
+                  "email": "john@example.com",
+                  "phone": "123456789"
+                }
+                """;
+
         mockMvc.perform(post("/customers")
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .param("name", "John Doe")
-                .param("email", "john@example.com")
-                .param("phone", "123456789"))
+                .contentType(MediaType.APPLICATION_JSON)
+                        .content(customerJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("John Doe"))
                 .andExpect(jsonPath("$.email").value("john@example.com"))

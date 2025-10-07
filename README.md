@@ -5,6 +5,10 @@
 - Maven
 - Spring Boot
 
+## Documentação
+
+- Documentação da API disponibilizada em: http://localhost:8080/swagger-ui/index.html
+
 ## Testes:
 
 ### Verificar cobertura de testes:

@@ -5,6 +5,8 @@ import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.customer.CustomerRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class CustomerRepositoryImpl implements CustomerRepository {
 
@@ -25,5 +27,10 @@ public class CustomerRepositoryImpl implements CustomerRepository {
                 customerEntity.getEmail(),
                 customerEntity.getPhone()
         );
+    }
+
+    @Override
+    public boolean exists(UUID id) {
+        return jpaCustomerRepository.existsById(id);
     }
 }

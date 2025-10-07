@@ -5,10 +5,7 @@ import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.customer.CustomerRequestDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/customers")
@@ -22,7 +19,7 @@ public class CustomerController implements CustomerControllerOpenApiSpec {
 
     @Override
     @PostMapping
-    public ResponseEntity<Customer> create(@Valid @ModelAttribute CustomerRequestDTO customerRequestDTO) {
+    public ResponseEntity<Customer> create(@Valid @RequestBody CustomerRequestDTO customerRequestDTO) {
         Customer customer = customerService.create(customerRequestDTO);
         return ResponseEntity.ok(customer);
     }

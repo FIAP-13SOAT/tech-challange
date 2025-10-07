@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "Customer", description = "Customer management API")
 public interface CustomerControllerOpenApiSpec {
@@ -24,5 +25,5 @@ public interface CustomerControllerOpenApiSpec {
     })
     ResponseEntity<Customer> create(
         @Parameter(name = "CreateCustomer", description = "Dados do cliente", schema = @Schema(implementation = CustomerRequestDTO.class))
-        @Valid @ModelAttribute CustomerRequestDTO customerRequestDTO);
+        @Valid @RequestBody CustomerRequestDTO customerRequestDTO);
 }
