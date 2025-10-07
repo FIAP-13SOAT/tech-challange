@@ -1,10 +1,7 @@
 package com.fiapchallenge.garage.adapters.outbound.entities;
 
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.UUID;
 
@@ -17,7 +14,10 @@ public class VehicleEntity {
     private UUID id;
     private String model;
     private String brand;
+
+    @Column(unique = true)
     private String licensePlate;
+
     private UUID customerId;
     private String color;
     private Integer year;
