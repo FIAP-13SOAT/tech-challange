@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Tag(name = "ServiceOrder", description = "ServiceOrder management API")
 public interface ServiceOrderOpenApiSpec {
 
-    @Operation(summary = "Criar um novo cliente", description = "Cria uma nova ordem de serviço")
+    @Operation(summary = "Criar uma Ordem de Serviço", description = "Cria uma Ordem de Serviço")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Ordem de serviço criada com sucesso",
+        @ApiResponse(responseCode = "200", description = "Ordem de Serviço criada com sucesso",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceOrder.class))),
         @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content)
     })
