@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.unit.customer.util.factory;
 
 import com.fiapchallenge.garage.domain.customer.Customer;
-import com.fiapchallenge.garage.domain.customer.CustomerRequestDTO;
+import com.fiapchallenge.garage.domain.customer.command.CreateCustomerCommand;
 
 import java.util.UUID;
 
@@ -16,7 +16,7 @@ public class CustomerTestFactory {
         return new Customer(ID, NAME, EMAIL, PHONE);
     }
 
-    public static CustomerRequestDTO buildRequestDTO() {
-        return new CustomerRequestDTO(NAME, EMAIL, PHONE);
+    public static CreateCustomerCommand buildCommand() {
+        return new CreateCustomerCommand(NAME, EMAIL, PHONE);
     }
 }

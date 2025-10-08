@@ -2,7 +2,7 @@ package com.fiapchallenge.garage.unit.vehicle;
 
 import com.fiapchallenge.garage.adapters.outbound.repositories.customer.CustomerRepositoryImpl;
 import com.fiapchallenge.garage.adapters.outbound.repositories.vehicle.VehicleRepositoryImpl;
-import com.fiapchallenge.garage.application.service.VehicleService;
+import com.fiapchallenge.garage.application.vehicle.CreateVehicleService;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
 import com.fiapchallenge.garage.unit.vehicle.factory.VehicleTestFactory;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +27,7 @@ public class VehicleUnitTest {
     private CustomerRepositoryImpl customerRepository;
 
     @InjectMocks
-    private VehicleService vehicleService;
+    private CreateVehicleService createVehicleService;
 
     @Test
     @DisplayName("Criar veículo")
@@ -35,7 +35,7 @@ public class VehicleUnitTest {
         when(customerRepository.exists(VehicleTestFactory.CUSTOMER_ID)).thenReturn(true);
         when(vehicleRepository.save(any(Vehicle.class))).thenReturn(VehicleTestFactory.build());
 
-        Vehicle vehicle = vehicleService.create(VehicleTestFactory.buildRequestDTO());
+        Vehicle vehicle = createVehicleService.handle(VehicleTestFactory.buildCommand());
 
         assertNotNull(vehicle);
         assertEquals(VehicleTestFactory.ID, vehicle.getId());

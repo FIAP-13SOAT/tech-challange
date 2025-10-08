@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.unit.vehicle.factory;
 
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
-import com.fiapchallenge.garage.domain.vehicle.VehicleRequestDTO;
+import com.fiapchallenge.garage.domain.vehicle.command.CreateVehicleCommand;
 
 import java.util.UUID;
 
@@ -20,7 +20,7 @@ public class VehicleTestFactory {
         return new Vehicle(ID, MODEL, BRAND, LICENSE_PLATE, CUSTOMER_ID, COLOR, YEAR, OBSERVATIONS);
     }
 
-    public static VehicleRequestDTO buildRequestDTO() {
-        return new VehicleRequestDTO(MODEL, BRAND, LICENSE_PLATE, COLOR, YEAR, OBSERVATIONS, CUSTOMER_ID);
+    public static CreateVehicleCommand buildCommand() {
+        return new CreateVehicleCommand(MODEL, BRAND, LICENSE_PLATE, COLOR, YEAR, OBSERVATIONS, CUSTOMER_ID);
     }
 }
