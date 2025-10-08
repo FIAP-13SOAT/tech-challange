@@ -3,7 +3,6 @@ package com.fiapchallenge.garage.application.vehicle;
 import com.fiapchallenge.garage.adapters.outbound.repositories.CustomerRepositoryImpl;
 import com.fiapchallenge.garage.adapters.outbound.repositories.VehicleRepositoryImpl;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
-import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto.VehicleRequestDTO;
 import com.fiapchallenge.garage.domain.vehicle.command.CreateVehicleCommand;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
