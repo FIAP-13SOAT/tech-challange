@@ -1,4 +1,4 @@
-package com.fiapchallenge.garage.domain.vehicle;
+package com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto;
 
 import jakarta.validation.constraints.NotNull;
 

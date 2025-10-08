@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.domain.customer;
 
-import com.fiapchallenge.garage.adapters.outbound.entities.CustomerEntity;
+import com.fiapchallenge.garage.domain.customer.command.CreateCustomerCommand;
 
 import java.util.UUID;
 
@@ -11,7 +11,7 @@ public class Customer {
     private String email;
     private String phone;
 
-    public Customer(CustomerRequestDTO customerRequestDTO) {
+    public Customer(CreateCustomerCommand customerRequestDTO) {
         this.name = customerRequestDTO.name();
         this.email = customerRequestDTO.email();
         this.phone = customerRequestDTO.phone();

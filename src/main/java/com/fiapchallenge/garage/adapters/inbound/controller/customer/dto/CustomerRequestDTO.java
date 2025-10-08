@@ -1,4 +1,4 @@
-package com.fiapchallenge.garage.domain.customer;
+package com.fiapchallenge.garage.adapters.inbound.controller.customer.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
