@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/service-orders")
-public class ServiceOrderController {
+public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec {
 
     CreateServiceOrderUseCase createServiceOrderUseCase;
 
@@ -22,7 +22,8 @@ public class ServiceOrderController {
     }
 
     @PostMapping
-    public ResponseEntity<ServiceOrder> save(@Valid @RequestBody CreateServiceOrderDTO createServiceOrderDTO) {
+    @Override
+    public ResponseEntity<ServiceOrder> create(@Valid @RequestBody CreateServiceOrderDTO createServiceOrderDTO) {
         CreateServiceOrderCommand command = new CreateServiceOrderCommand(
                 createServiceOrderDTO.observations(),
                 createServiceOrderDTO.vehicleId(),
