@@ -15,4 +15,6 @@ public interface CustomerRepository {
     List<Customer> findAll();
 
     List<Customer> findByFilters(String name, String email, String cpfCnpj);
+
+    void deleteById(UUID id);
 }

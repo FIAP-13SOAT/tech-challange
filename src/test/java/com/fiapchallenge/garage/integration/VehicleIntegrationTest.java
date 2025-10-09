@@ -2,7 +2,7 @@ package com.fiapchallenge.garage.integration;
 
 import com.fiapchallenge.garage.adapters.outbound.entities.VehicleEntity;
 import com.fiapchallenge.garage.adapters.outbound.repositories.vehicle.JpaVehicleRepository;
-import com.fiapchallenge.garage.application.customer.CreateCustomerUseCase;
+import com.fiapchallenge.garage.application.customer.create.CreateCustomerUseCase;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.utils.CustomerMockUtils;
 import org.junit.jupiter.api.DisplayName;

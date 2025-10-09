@@ -1,8 +1,6 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.customer;
 
 import com.fiapchallenge.garage.adapters.inbound.controller.customer.dto.UpdateCustomerDTO;
-import com.fiapchallenge.garage.application.commands.customer.CustomerFilterCmd;
-import com.fiapchallenge.garage.application.commands.customer.UpdateCustomerCmd;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.adapters.inbound.controller.customer.dto.CustomerRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +14,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,7 +47,7 @@ public interface CustomerControllerOpenApiSpec {
     @PutMapping(value = "/{id}", consumes = "application/json")
     ResponseEntity<Customer> update(
         @Parameter(name = "id", description = "ID do cliente") @PathVariable UUID id,
-        @Parameter(name = "updateCustomer", description = "Dados para atualizar cliente", schema = @Schema(implementation = UpdateCustomerCmd.class))
+        @Parameter(name = "updateCustomer", description = "Dados para atualizar cliente", schema = @Schema(implementation = UpdateCustomerDTO.class))
         @Valid @RequestBody UpdateCustomerDTO updateCustomerDTO);
 
     @Operation(summary = "Listar clientes", description = "Retorna uma lista de clientes com filtros opcionais")
@@ -61,4 +60,13 @@ public interface CustomerControllerOpenApiSpec {
         @Parameter(name = "name", description = "Filtrar por nome do cliente") @RequestParam(required = false) String name,
         @Parameter(name = "email", description = "Filtrar por email do cliente") @RequestParam(required = false) String email,
         @Parameter(name = "cpfCnpj", description = "Filtrar por CPF/CNPJ do cliente") @RequestParam(required = false) String cpfCnpj);
+
+    @Operation(summary = "Deletar um cliente", description = "Remove um cliente existente")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Cliente deletado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Cliente não encontrado", content = @Content)
+    })
+    @DeleteMapping("/{id}")
+    ResponseEntity<Void> delete(
+        @Parameter(name = "id", description = "ID do cliente") @PathVariable UUID id);
 }

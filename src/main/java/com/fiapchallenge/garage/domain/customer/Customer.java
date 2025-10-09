@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.domain.customer;
 
-import com.fiapchallenge.garage.domain.customer.command.CreateCustomerCommand;
+import com.fiapchallenge.garage.application.customer.create.CreateCustomerUseCase;
 
 import java.util.UUID;
 
@@ -12,7 +12,7 @@ public class Customer {
     private String phone;
     private String cpfCnpj;
 
-    public Customer(CreateCustomerCommand customerRequestDTO) {
+    public Customer(CreateCustomerUseCase.CreateCustomerCommand customerRequestDTO) {
         this.name = customerRequestDTO.name();
         this.email = customerRequestDTO.email();
         this.phone = customerRequestDTO.phone();

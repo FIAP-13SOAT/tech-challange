@@ -1,6 +1,5 @@
-package com.fiapchallenge.garage.application.customer;
+package com.fiapchallenge.garage.application.customer.list;
 
-import com.fiapchallenge.garage.application.commands.customer.CustomerFilterCmd;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.customer.CustomerRepository;
 import org.springframework.stereotype.Service;
@@ -10,7 +9,7 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-public class ListCustomersService {
+public class ListCustomersService implements ListCustomerUseCase {
 
     private final CustomerRepository customerRepository;
 
@@ -18,11 +17,7 @@ public class ListCustomersService {
         this.customerRepository = customerRepository;
     }
 
-    public List<Customer> list() {
-        return customerRepository.findAll();
-    }
-
-    public List<Customer> list(CustomerFilterCmd filter) {
+    public List<Customer> handle(ListCustomerUseCase.CustomerFilterCmd filter) {
         if (!filter.hasFilters()) {
             return customerRepository.findAll();
         }

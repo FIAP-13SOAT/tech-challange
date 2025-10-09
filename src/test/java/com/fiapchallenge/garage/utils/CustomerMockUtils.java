@@ -1,8 +1,8 @@
 package com.fiapchallenge.garage.utils;
 
-import com.fiapchallenge.garage.application.customer.CreateCustomerUseCase;
+import com.fiapchallenge.garage.application.customer.create.CreateCustomerUseCase;
+import com.fiapchallenge.garage.application.customer.create.CreateCustomerUseCase.CreateCustomerCommand;
 import com.fiapchallenge.garage.domain.customer.Customer;
-import com.fiapchallenge.garage.domain.customer.command.CreateCustomerCommand;
 
 public class CustomerMockUtils {
 

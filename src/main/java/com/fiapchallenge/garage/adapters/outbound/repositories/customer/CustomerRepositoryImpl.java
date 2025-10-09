@@ -76,4 +76,9 @@ public class CustomerRepositoryImpl implements CustomerRepository {
                 ))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void deleteById(UUID id) {
+        jpaCustomerRepository.deleteById(id);
+    }
 }

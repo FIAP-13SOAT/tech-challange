@@ -2,7 +2,7 @@ package com.fiapchallenge.garage.integration;
 
 import com.fiapchallenge.garage.adapters.outbound.repositories.customer.JpaCustomerRepository;
 import com.fiapchallenge.garage.adapters.outbound.entities.CustomerEntity;
-import com.fiapchallenge.garage.application.customer.CreateCustomerUseCase;
+import com.fiapchallenge.garage.application.customer.create.CreateCustomerUseCase;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.utils.CustomerMockUtils;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +14,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -130,5 +133,23 @@ public class CustomerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(status().isBadRequest());
 
         assertThat(customerRepository.findAll()).hasSize(0);
+    }
+
+    @Test
+    @DisplayName("Deve deletar um cliente existente")
+    void shouldDeleteExistingCustomer() throws Exception {
+        Customer createdCustomer = CustomerMockUtils.createCustomer(createCustomerUseCase);
+
+        mockMvc.perform(delete("/customers/" + createdCustomer.getId()))
+                .andExpect(status().isNoContent());
+
+        assertThat(customerRepository.findById(createdCustomer.getId())).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Deve retornar erro 404 ao tentar deletar cliente inexistente")
+    void shouldReturnNotFoundWhenDeletingNonExistentCustomer() throws Exception {
+        mockMvc.perform(delete("/customers/" + UUID.randomUUID()))
+                .andExpect(status().isBadRequest());
     }
 }
