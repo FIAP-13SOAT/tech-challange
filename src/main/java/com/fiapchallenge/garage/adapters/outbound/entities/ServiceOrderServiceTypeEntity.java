@@ -11,9 +11,6 @@ public class ServiceOrderServiceTypeEntity {
     @EmbeddedId
     private ServiceOrderServiceTypeId id;
 
-    private UUID serviceOrderId;
-    private UUID serviceTypeId;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("serviceOrderId")
     @JoinColumn(name = "service_order_id", insertable = false, updatable = false)
@@ -27,8 +24,13 @@ public class ServiceOrderServiceTypeEntity {
     public ServiceOrderServiceTypeEntity() {
     }
 
-    public ServiceOrderServiceTypeEntity(UUID serviceOrderId, UUID serviceTypeId) {
-        this.serviceOrderId = serviceOrderId;
-        this.serviceTypeId = serviceTypeId;
+    public ServiceOrderServiceTypeEntity(ServiceOrderEntity serviceOrder, ServiceTypeEntity serviceType) {
+        this.serviceOrder = serviceOrder;
+        this.serviceType = serviceType;
+        this.id = new ServiceOrderServiceTypeId(serviceOrder.getId(), serviceType.getId());
+    }
+
+    public ServiceTypeEntity getServiceType() {
+        return this.serviceType;
     }
 }
