@@ -62,4 +62,11 @@ public class ServiceOrder {
         }
         this.status = ServiceOrderStatus.IN_DIAGNOSIS;
     }
+
+    public void sendToApproval() {
+        if (this.status != ServiceOrderStatus.IN_DIAGNOSIS) {
+            throw new IllegalStateException("Service order must be in IN_DIAGNOSIS status to finish diagnostic.");
+        }
+        this.status = ServiceOrderStatus.AWAITING_APPROVAL;
+    }
 }
