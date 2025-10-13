@@ -17,11 +17,13 @@ public class StartServiceOrderDiagnosticService implements StartServiceOrderDiag
     }
 
     @Override
-    public void handle(StartServiceOrderDiagnosticCommand command) {
+    public ServiceOrder handle(StartServiceOrderDiagnosticCommand command) {
         ServiceOrder serviceOrder = serviceOrderRepository.findById(command.id())
                 .orElseThrow(() -> new IllegalArgumentException("Ordem de Serviço não encontrada"));
 
         serviceOrder.startDiagnostic();
         serviceOrderRepository.save(serviceOrder);
+
+        return serviceOrder;
     }
 }

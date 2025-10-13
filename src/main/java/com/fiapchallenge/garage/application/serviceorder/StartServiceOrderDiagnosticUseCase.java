@@ -1,8 +1,9 @@
 package com.fiapchallenge.garage.application.serviceorder;
 
 import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrderDiagnosticCommand;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 
 public interface StartServiceOrderDiagnosticUseCase {
 
-    void handle(StartServiceOrderDiagnosticCommand command);
+    ServiceOrder handle(StartServiceOrderDiagnosticCommand command);
 }
