@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("users")
-public class UserController {
+public class UserController implements UserControllerOpenApiSpec {
 
     private final CreateUserUseCase createUserUseCase;
     private final LoginUserUseCase loginUserUseCase;
@@ -29,6 +29,7 @@ public class UserController {
     }
 
     @PostMapping
+    @Override
     public ResponseEntity<User> create(@Valid @RequestBody CreateUserRequestDTO createUserDTO) {
         CreateUserCommand command = new CreateUserCommand(
                 createUserDTO.fullname(),
@@ -39,6 +40,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
+    @Override
     public ResponseEntity<LoginUserResponseDTO> login(@Valid @RequestBody LoginUserRequestDTO loginUserDTO) {
         LoginUserCommand command = new LoginUserCommand(loginUserDTO.email(), loginUserDTO.password());
         JwtTokenVO tokenVo = loginUserUseCase.handle(command);

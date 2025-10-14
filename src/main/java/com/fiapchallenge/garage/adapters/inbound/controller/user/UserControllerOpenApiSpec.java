@@ -1,6 +1,8 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.user;
 
 import com.fiapchallenge.garage.adapters.inbound.controller.user.dto.CreateUserRequestDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.user.dto.LoginUserRequestDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.user.dto.LoginUserResponseDTO;
 import com.fiapchallenge.garage.domain.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,5 +30,16 @@ public interface UserControllerOpenApiSpec {
     ResponseEntity<User> create(
         @Parameter(name = "CreateUser", description = "Dados do usuário", schema = @Schema(implementation = CreateUserRequestDTO.class))
         @Valid @RequestBody CreateUserRequestDTO createUserRequestDTO);
+
+    @Operation(summary = "Autenticar usuário", description = "Autentica usuário com os dados fornecidos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuário autenticado com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginUserResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content)
+    })
+    @PostMapping(consumes = "application/json")
+    ResponseEntity<LoginUserResponseDTO> login(
+            @Parameter(name = "LoginUser", description = "Dados da autenticação", schema = @Schema(implementation = LoginUserRequestDTO.class))
+            @Valid @RequestBody LoginUserRequestDTO loginUserRequestDTO);
 
 }
