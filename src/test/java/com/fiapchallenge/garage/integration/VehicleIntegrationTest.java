@@ -4,6 +4,8 @@ import com.fiapchallenge.garage.adapters.outbound.entities.CustomerEntity;
 import com.fiapchallenge.garage.adapters.outbound.entities.VehicleEntity;
 import com.fiapchallenge.garage.adapters.outbound.repositories.customer.JpaCustomerRepository;
 import com.fiapchallenge.garage.adapters.outbound.repositories.vehicle.JpaVehicleRepository;
+import com.fiapchallenge.garage.application.user.CreateUserService;
+import com.fiapchallenge.garage.application.user.LoginUserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,9 @@ public class VehicleIntegrationTest extends BaseIntegrationTest {
     private final JpaCustomerRepository customerRepository;
 
     @Autowired
-    public VehicleIntegrationTest(MockMvc mockMvc, JpaVehicleRepository vehicleRepository, JpaCustomerRepository customerRepository) {
+    public VehicleIntegrationTest(MockMvc mockMvc, JpaVehicleRepository vehicleRepository, JpaCustomerRepository customerRepository, CreateUserService createUserService, LoginUserService loginUserService) {
+        super(createUserService, loginUserService);
+
         this.mockMvc = mockMvc;
         this.vehicleRepository = vehicleRepository;
         this.customerRepository = customerRepository;
@@ -54,6 +58,7 @@ public class VehicleIntegrationTest extends BaseIntegrationTest {
         """.formatted(customerId.toString());
 
         mockMvc.perform(post("/vehicles")
+                        .header("Authorization", getAuthToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(vehicleJson)
                 )
@@ -83,6 +88,7 @@ public class VehicleIntegrationTest extends BaseIntegrationTest {
                 """;
 
         mockMvc.perform(post("/customers")
+                        .header("Authorization", getAuthToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(customerJson))
                 .andExpect(status().isOk())

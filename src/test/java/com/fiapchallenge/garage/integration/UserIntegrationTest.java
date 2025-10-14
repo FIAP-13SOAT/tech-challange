@@ -2,6 +2,8 @@ package com.fiapchallenge.garage.integration;
 
 import com.fiapchallenge.garage.adapters.outbound.entities.UserEntity;
 import com.fiapchallenge.garage.adapters.outbound.repositories.user.JpaUserRepository;
+import com.fiapchallenge.garage.application.user.CreateUserService;
+import com.fiapchallenge.garage.application.user.LoginUserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,9 @@ public class UserIntegrationTest extends BaseIntegrationTest {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserIntegrationTest(MockMvc mockMvc, JpaUserRepository jpaUserRepository, PasswordEncoder passwordEncoder) {
+    public UserIntegrationTest(MockMvc mockMvc, JpaUserRepository jpaUserRepository, PasswordEncoder passwordEncoder, CreateUserService createUserService, LoginUserService loginUserService) {
+        super(createUserService, loginUserService);
+
         this.mockMvc = mockMvc;
         this.jpaUserRepository = jpaUserRepository;
         this.passwordEncoder = passwordEncoder;
