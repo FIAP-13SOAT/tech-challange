@@ -11,6 +11,7 @@ public class UserTestFactory {
     public static final String FULLNAME = "John Doe";
     public static final String EMAIL = "john.doe@gmail.com";
     public static final String PASSWORD = "V9t#qZ3m!Fp8@rL2";
+    public static final String ENCRYPTED_PASSWORD = "hashedPassword123";
 
     public static CreateUserCommand createUserCommand() {
         return new CreateUserCommand(
@@ -25,7 +26,7 @@ public class UserTestFactory {
                 ID,
                 FULLNAME,
                 EMAIL,
-                PASSWORD
+                ENCRYPTED_PASSWORD
         );
     }
 }
