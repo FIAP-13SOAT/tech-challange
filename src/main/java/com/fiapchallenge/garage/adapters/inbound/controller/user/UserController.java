@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.user;
 
-import com.fiapchallenge.garage.adapters.inbound.controller.user.dto.CreateUserDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.user.dto.CreateUserRequestDTO;
 import com.fiapchallenge.garage.application.user.CreateUserUseCase;
 import com.fiapchallenge.garage.application.user.command.CreateUserCommand;
 import com.fiapchallenge.garage.domain.user.User;
@@ -22,7 +22,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> create(@Valid @RequestBody CreateUserDTO createUserDTO) {
+    public ResponseEntity<User> create(@Valid @RequestBody CreateUserRequestDTO createUserDTO) {
         CreateUserCommand command = new CreateUserCommand(
                 createUserDTO.fullname(),
                 createUserDTO.email(),
