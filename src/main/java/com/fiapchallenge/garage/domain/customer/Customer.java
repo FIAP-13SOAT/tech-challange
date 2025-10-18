@@ -1,5 +1,6 @@
 package com.fiapchallenge.garage.domain.customer;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fiapchallenge.garage.domain.customer.command.CreateCustomerCommand;
 
 import java.util.UUID;
@@ -10,13 +11,13 @@ public class Customer {
     private String name;
     private String email;
     private String phone;
-    private String cpfCnpj;
+    private CpfCnpj cpfCnpj;
 
-    public Customer(CreateCustomerCommand customerRequestDTO) {
-        this.name = customerRequestDTO.name();
-        this.email = customerRequestDTO.email();
-        this.phone = customerRequestDTO.phone();
-        this.cpfCnpj = customerRequestDTO.cpfCnpj();
+    public Customer(CreateCustomerCommand createCustomerCommand) {
+        this.name = createCustomerCommand.name();
+        this.email = createCustomerCommand.email();
+        this.phone = createCustomerCommand.phone();
+        this.cpfCnpj = createCustomerCommand.cpfCnpj();
     }
 
     public Customer(UUID id, String name, String email, String phone, String cpfCnpj) {
@@ -24,7 +25,7 @@ public class Customer {
         this.name = name;
         this.email = email;
         this.phone = phone;
-        this.cpfCnpj = cpfCnpj;
+        this.cpfCnpj = new CpfCnpj(cpfCnpj);
     }
 
     public UUID getId() {
@@ -63,12 +64,17 @@ public class Customer {
         return this;
     }
 
-    public String getCpfCnpj() {
+    public CpfCnpj getCpfCnpj() {
         return cpfCnpj;
     }
 
+    @JsonProperty("cpfCnpj")
+    public String getCpfCnpjValue() {
+        return cpfCnpj.getValue();
+    }
+
     public Customer setCpfCnpj(String cpfCnpj) {
-        this.cpfCnpj = cpfCnpj;
+        this.cpfCnpj = new CpfCnpj(cpfCnpj);
         return this;
     }
 }

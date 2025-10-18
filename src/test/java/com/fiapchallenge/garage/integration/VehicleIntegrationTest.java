@@ -4,7 +4,7 @@ import com.fiapchallenge.garage.adapters.outbound.entities.VehicleEntity;
 import com.fiapchallenge.garage.adapters.outbound.repositories.vehicle.JpaVehicleRepository;
 import com.fiapchallenge.garage.application.customer.CreateCustomerUseCase;
 import com.fiapchallenge.garage.domain.customer.Customer;
-import com.fiapchallenge.garage.utils.CustomerFixture;
+import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class VehicleIntegrationTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Deve criar um veículo vinculado a um cliente existente e persistir")
     void shouldCreateVehicleAndPersistToDatabase() throws Exception {
-        Customer customer = CustomerFixture.createCustomer(createCustomerUseCase, "Pix JR", "pixjr@example.com", "9871111", "11144477735");
+        Customer customer = CustomerFixture.createCustomer(createCustomerUseCase, "Pix JR", "pixjr@example.com", "9871111");
         UUID customerId = customer.getId();
 
         String vehicleJson = """

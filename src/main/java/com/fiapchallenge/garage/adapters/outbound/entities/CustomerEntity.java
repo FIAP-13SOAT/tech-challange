@@ -28,7 +28,7 @@ public class CustomerEntity {
         this.name = customer.getName();
         this.email = customer.getEmail();
         this.phone = customer.getPhone();
-        this.cpfCnpj = customer.getCpfCnpj();
+        this.cpfCnpj = customer.getCpfCnpj().toString();
     }
 
     public UUID getId() {

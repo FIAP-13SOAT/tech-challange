@@ -1,6 +1,5 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.customer.dto;
 
-import com.fiapchallenge.garage.application.validation.CpfCnpj;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 

@@ -17,8 +17,8 @@ public class CreateCustomerService implements CreateCustomerUseCase {
     }
 
     @Override
-    public Customer handle(CreateCustomerCommand data) {
-        Customer customer = new Customer(data);
+    public Customer handle(CreateCustomerCommand cmd) {
+        Customer customer = new Customer(cmd);
         customer = customerRepository.save(customer);
 
         return customer;

@@ -1,12 +1,19 @@
-package com.fiapchallenge.garage.application.validation;
+package com.fiapchallenge.garage.domain.customer;
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+import java.util.Objects;
 
-public class CpfCnpjValidator implements ConstraintValidator<CpfCnpj, String> {
-
-    @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
+public class CpfCnpj {
+    
+    private final String value;
+    
+    public CpfCnpj(String value) {
+        if (!isValid(value)) {
+            throw new IllegalArgumentException("Invalid CPF/CNPJ: " + value);
+        }
+        this.value = value;
+    }
+    
+    private boolean isValid(String value) {
         if (value == null || value.trim().isEmpty()) {
             return false;
         }
@@ -64,5 +71,27 @@ public class CpfCnpjValidator implements ConstraintValidator<CpfCnpj, String> {
         int secondCheck = sum % 11 < 2 ? 0 : 11 - (sum % 11);
 
         return digits[12] == firstCheck && digits[13] == secondCheck;
+    }
+    
+    public String getValue() {
+        return value;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CpfCnpj cpfCnpj = (CpfCnpj) o;
+        return Objects.equals(value, cpfCnpj.value);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
+    
+    @Override
+    public String toString() {
+        return value;
     }
 }

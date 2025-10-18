@@ -6,6 +6,7 @@ import com.fiapchallenge.garage.application.customer.CreateCustomerUseCase;
 import com.fiapchallenge.garage.application.customer.ListCustomersService;
 import com.fiapchallenge.garage.application.customer.UpdateCustomerService;
 
+import com.fiapchallenge.garage.domain.customer.CpfCnpj;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.adapters.inbound.controller.customer.dto.CustomerRequestDTO;
 import com.fiapchallenge.garage.adapters.inbound.controller.customer.dto.UpdateCustomerDTO;
@@ -52,11 +53,13 @@ public class CustomerController implements CustomerControllerOpenApiSpec {
     @Override
     @PostMapping
     public ResponseEntity<Customer> create(@Valid @RequestBody CustomerRequestDTO customerRequestDTO) {
+        CpfCnpj cpfCnpj = new CpfCnpj(customerRequestDTO.cpfCnpj());
+
         CreateCustomerCommand command = new CreateCustomerCommand(
                 customerRequestDTO.name(),
                 customerRequestDTO.email(),
                 customerRequestDTO.phone(),
-                customerRequestDTO.cpfCnpj()
+                cpfCnpj
         );
 
         Customer customer = createCustomerUseCase.handle(command);

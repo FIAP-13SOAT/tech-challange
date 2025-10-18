@@ -5,7 +5,7 @@ import com.fiapchallenge.garage.adapters.outbound.entities.CustomerEntity;
 import com.fiapchallenge.garage.application.customer.CreateCustomerUseCase;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
-import com.fiapchallenge.garage.utils.CustomerFixture;
+import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
