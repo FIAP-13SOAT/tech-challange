@@ -2,8 +2,12 @@ package com.fiapchallenge.garage.domain.internalnotification;
 
 public enum NotificationType {
 
-    INFO,
-    WARNING,
-    ERROR,
-    SUCCESS
+    LOW_STOCK("Low Stock"),
+    OUT_OF_STOCK("Out of Stock");
+
+    public final String label;
+
+    NotificationType(String label) {
+        this.label = label;
+    }
 }

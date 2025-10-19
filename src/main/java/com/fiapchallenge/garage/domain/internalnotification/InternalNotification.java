@@ -6,20 +6,36 @@ import java.util.UUID;
 public class InternalNotification {
 
     private UUID id;
-    private NotificationType type;
-    private boolean acknowledged;
     private UUID userId;
+    private String message;
+    private UUID resourceId;
+    private boolean acknowledged;
+    private NotificationType type;
     private LocalDateTime createdAt;
     private LocalDateTime acknowledgedAt;
 
     public InternalNotification() {
     }
 
-    public InternalNotification(UUID id, NotificationType type, boolean acknowledged, UUID userId, LocalDateTime createdAt, LocalDateTime acknowledgedAt) {
+    public static InternalNotification fromType(NotificationType type, UUID resourceId, String message) {
+        InternalNotification notification = new InternalNotification();
+
+        notification.type = type;
+        notification.acknowledged = false;
+        notification.resourceId = resourceId;
+        notification.message = message;
+        notification.createdAt = LocalDateTime.now();
+
+        return notification;
+    }
+
+    public InternalNotification(UUID id, NotificationType type, boolean acknowledged, UUID userId, UUID resourceId, String message, LocalDateTime createdAt, LocalDateTime acknowledgedAt) {
         this.id = id;
         this.type = type;
         this.acknowledged = acknowledged;
         this.userId = userId;
+        this.resourceId = resourceId;
+        this.message = message;
         this.createdAt = createdAt;
         this.acknowledgedAt = acknowledgedAt;
     }
@@ -28,53 +44,31 @@ public class InternalNotification {
         return id;
     }
 
-    public InternalNotification setId(UUID id) {
-        this.id = id;
-        return this;
-    }
-
     public NotificationType getType() {
         return type;
-    }
-
-    public InternalNotification setType(NotificationType type) {
-        this.type = type;
-        return this;
     }
 
     public boolean isAcknowledged() {
         return acknowledged;
     }
 
-    public InternalNotification setAcknowledged(boolean acknowledged) {
-        this.acknowledged = acknowledged;
-        return this;
-    }
-
     public UUID getUserId() {
         return userId;
-    }
-
-    public InternalNotification setUserId(UUID userId) {
-        this.userId = userId;
-        return this;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public InternalNotification setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-        return this;
-    }
-
     public LocalDateTime getAcknowledgedAt() {
         return acknowledgedAt;
     }
 
-    public InternalNotification setAcknowledgedAt(LocalDateTime acknowledgedAt) {
-        this.acknowledgedAt = acknowledgedAt;
-        return this;
+    public UUID getResourceId() {
+        return resourceId;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }
