@@ -2,8 +2,7 @@ package com.fiapchallenge.garage.integration;
 
 import com.fiapchallenge.garage.adapters.outbound.entities.VehicleEntity;
 import com.fiapchallenge.garage.adapters.outbound.repositories.vehicle.JpaVehicleRepository;
-import com.fiapchallenge.garage.application.customer.CreateCustomerUseCase;
-import com.fiapchallenge.garage.domain.customer.Customer;
+import com.fiapchallenge.garage.application.customer.CreateCustomerService;
 import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,20 +27,19 @@ public class VehicleIntegrationTest extends BaseIntegrationTest {
 
     private final MockMvc mockMvc;
     private final JpaVehicleRepository vehicleRepository;
-    private final CreateCustomerUseCase createCustomerUseCase;
+    private final CreateCustomerService createCustomerService;
 
     @Autowired
-    public VehicleIntegrationTest(MockMvc mockMvc, JpaVehicleRepository vehicleRepository, CreateCustomerUseCase createCustomerUseCase) {
+    public VehicleIntegrationTest(MockMvc mockMvc, JpaVehicleRepository vehicleRepository, CreateCustomerService createCustomerService) {
         this.mockMvc = mockMvc;
         this.vehicleRepository = vehicleRepository;
-        this.createCustomerUseCase = createCustomerUseCase;
+        this.createCustomerService = createCustomerService;
     }
 
     @Test
     @DisplayName("Deve criar um veículo vinculado a um cliente existente e persistir")
     void shouldCreateVehicleAndPersistToDatabase() throws Exception {
-        Customer customer = CustomerFixture.createCustomer(createCustomerUseCase, "Pix JR", "pixjr@example.com", "9871111");
-        UUID customerId = customer.getId();
+        UUID customerId = CustomerFixture.createCustomer(createCustomerService).getId();
 
         String vehicleJson = """
             {
