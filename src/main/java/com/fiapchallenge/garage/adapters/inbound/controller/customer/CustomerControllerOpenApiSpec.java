@@ -1,5 +1,7 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.customer;
 
+import com.fiapchallenge.garage.adapters.inbound.controller.customer.dto.UpdateCustomerDTO;
+import com.fiapchallenge.garage.application.commands.customer.CustomerFilterCmd;
 import com.fiapchallenge.garage.application.commands.customer.UpdateCustomerCmd;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.adapters.inbound.controller.customer.dto.CustomerRequestDTO;
@@ -12,12 +14,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
 
 @Tag(name = "Customer", description = "Customer management API")
 public interface CustomerControllerOpenApiSpec {
@@ -44,5 +50,18 @@ public interface CustomerControllerOpenApiSpec {
     ResponseEntity<Customer> update(
         @Parameter(name = "id", description = "ID do cliente") @PathVariable UUID id,
         @Parameter(name = "updateCustomer", description = "Dados para atualizar cliente", schema = @Schema(implementation = UpdateCustomerCmd.class))
-        @Valid @RequestBody UpdateCustomerCmd updateCustomerCmd);
+        @Valid @RequestBody UpdateCustomerDTO updateCustomerDTO);
+
+    @Operation(summary = "Listar clientes", description = "Retorna uma lista paginada de clientes com filtros opcionais")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de clientes retornada com sucesso",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Customer.class)))
+    })
+    @GetMapping
+    ResponseEntity<Page<Customer>> list(
+        @Parameter(name = "name", description = "Filtrar por nome do cliente") @RequestParam(required = false) String name,
+        @Parameter(name = "email", description = "Filtrar por email do cliente") @RequestParam(required = false) String email,
+        @Parameter(name = "cpfCnpj", description = "Filtrar por CPF/CNPJ do cliente") @RequestParam(required = false) String cpfCnpj,
+        @Parameter(name = "page", description = "Número da página (inicia em 0)") @RequestParam(required = false) Integer page,
+        @Parameter(name = "size", description = "Tamanho da página") @RequestParam(required = false) Integer size);
 }

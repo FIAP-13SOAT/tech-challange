@@ -18,6 +18,7 @@ public class CustomerEntity {
     private String name;
     private String email;
     private String phone;
+    private String cpfCnpj;
 
     public CustomerEntity() {
     }
@@ -27,6 +28,7 @@ public class CustomerEntity {
         this.name = customer.getName();
         this.email = customer.getEmail();
         this.phone = customer.getPhone();
+        this.cpfCnpj = customer.getCpfCnpj().toString();
     }
 
     public UUID getId() {
@@ -62,6 +64,15 @@ public class CustomerEntity {
 
     public CustomerEntity setPhone(String phone) {
         this.phone = phone;
+        return this;
+    }
+
+    public String getCpfCnpj() {
+        return cpfCnpj;
+    }
+
+    public CustomerEntity setCpfCnpj(String cpfCnpj) {
+        this.cpfCnpj = cpfCnpj;
         return this;
     }
 }
