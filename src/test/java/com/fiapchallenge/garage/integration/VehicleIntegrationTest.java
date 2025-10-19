@@ -1,9 +1,9 @@
 package com.fiapchallenge.garage.integration;
 
-import com.fiapchallenge.garage.adapters.outbound.entities.CustomerEntity;
 import com.fiapchallenge.garage.adapters.outbound.entities.VehicleEntity;
-import com.fiapchallenge.garage.adapters.outbound.repositories.customer.JpaCustomerRepository;
 import com.fiapchallenge.garage.adapters.outbound.repositories.vehicle.JpaVehicleRepository;
+import com.fiapchallenge.garage.application.customer.CreateCustomerService;
+import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,19 +27,19 @@ public class VehicleIntegrationTest extends BaseIntegrationTest {
 
     private final MockMvc mockMvc;
     private final JpaVehicleRepository vehicleRepository;
-    private final JpaCustomerRepository customerRepository;
+    private final CreateCustomerService createCustomerService;
 
     @Autowired
-    public VehicleIntegrationTest(MockMvc mockMvc, JpaVehicleRepository vehicleRepository, JpaCustomerRepository customerRepository) {
+    public VehicleIntegrationTest(MockMvc mockMvc, JpaVehicleRepository vehicleRepository, CreateCustomerService createCustomerService) {
         this.mockMvc = mockMvc;
         this.vehicleRepository = vehicleRepository;
-        this.customerRepository = customerRepository;
+        this.createCustomerService = createCustomerService;
     }
 
     @Test
     @DisplayName("Deve criar um veículo vinculado a um cliente existente e persistir")
     void shouldCreateVehicleAndPersistToDatabase() throws Exception {
-        UUID customerId = createCustomer();
+        UUID customerId = CustomerFixture.createCustomer(createCustomerService).getId();
 
         String vehicleJson = """
             {
@@ -71,31 +71,5 @@ public class VehicleIntegrationTest extends BaseIntegrationTest {
         assertThat(savedVehicle.getObservations()).isEqualTo("Troca de óleo recente");
         assertThat(savedVehicle.getCustomerId()).isEqualTo(customerId);
         assertThat(savedVehicle.getId()).isNotNull();
-    }
-
-    private UUID createCustomer() throws Exception {
-        String customerJson = """
-                {
-                  "name": "Pix JR",
-                  "email": "pixjr@example.com",
-                  "phone": "9871111"
-                }
-                """;
-
-        mockMvc.perform(post("/customers")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(customerJson))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Pix JR"))
-                .andExpect(jsonPath("$.email").value("pixjr@example.com"))
-                .andExpect(jsonPath("$.phone").value("9871111"));
-
-        CustomerEntity savedCustomer = customerRepository.findAll().get(0);
-        assertThat(savedCustomer.getName()).isEqualTo("Pix JR");
-        assertThat(savedCustomer.getEmail()).isEqualTo("pixjr@example.com");
-        assertThat(savedCustomer.getPhone()).isEqualTo("9871111");
-        assertThat(savedCustomer.getId()).isNotNull();
-
-        return savedCustomer.getId();
     }
 }
