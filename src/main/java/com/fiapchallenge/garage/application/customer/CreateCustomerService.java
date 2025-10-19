@@ -3,7 +3,7 @@ package com.fiapchallenge.garage.application.customer;
 import com.fiapchallenge.garage.domain.customer.CpfCnpj;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.customer.CustomerRepository;
-import com.fiapchallenge.garage.domain.customer.command.CreateCustomerCommand;
+import com.fiapchallenge.garage.application.commands.customer.CreateCustomerCommand;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -6,11 +6,10 @@ import com.fiapchallenge.garage.application.customer.CreateCustomerUseCase;
 import com.fiapchallenge.garage.application.customer.ListCustomersService;
 import com.fiapchallenge.garage.application.customer.UpdateCustomerService;
 
-import com.fiapchallenge.garage.domain.customer.CpfCnpj;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.adapters.inbound.controller.customer.dto.CustomerRequestDTO;
 import com.fiapchallenge.garage.adapters.inbound.controller.customer.dto.UpdateCustomerDTO;
-import com.fiapchallenge.garage.domain.customer.command.CreateCustomerCommand;
+import com.fiapchallenge.garage.application.commands.customer.CreateCustomerCommand;
 
 import java.util.UUID;
 import jakarta.validation.Valid;

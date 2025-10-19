@@ -37,7 +37,7 @@ public class ListCustomerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Deve listar todos os clientes")
     void shouldListAllCustomers() throws Exception {
         CustomerFixture.createCustomer(createCustomerService);
-        CustomerFixture.createCustomer(createCustomerService, "Jane Smith", "jane@example.com", "987654321");
+        CustomerFixture.createCustomer(createCustomerService, "Jane Smith", "jane@example.com", "987654321", "73525879008");
 
         mockMvc.perform(get("/customers"))
                 .andExpect(status().isOk())
@@ -54,8 +54,9 @@ public class ListCustomerIntegrationTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Deve paginar corretamente os clientes")
     void shouldPaginateCustomersCorrectly() throws Exception {
+        String[] validCpfs = {"11144477735", "22255588846", "33366699957", "35178293070", "80316061026"};
         for (int i = 1; i <= 5; i++) {
-            CustomerFixture.createCustomer(createCustomerService, "Customer " + i, "customer" + i + "@example.com", "12345678" + i);
+            CustomerFixture.createCustomer(createCustomerService, "Customer " + i, "customer" + i + "@example.com", "12345678" + i, validCpfs[i-1]);
         }
 
         mockMvc.perform(get("/customers?page=0&size=2"))

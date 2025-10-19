@@ -1,7 +1,6 @@
 package com.fiapchallenge.garage.domain.customer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fiapchallenge.garage.domain.customer.command.CreateCustomerCommand;
 
 import java.util.UUID;
 
