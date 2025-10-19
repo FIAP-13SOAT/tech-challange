@@ -1,5 +1,6 @@
 package com.fiapchallenge.garage.config;
 
+import com.fiapchallenge.garage.shared.exception.SoatValidationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -7,8 +8,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+    @ExceptionHandler(SoatValidationException.class)
+    public ResponseEntity<String> handleSoatValidationException(SoatValidationException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 }
