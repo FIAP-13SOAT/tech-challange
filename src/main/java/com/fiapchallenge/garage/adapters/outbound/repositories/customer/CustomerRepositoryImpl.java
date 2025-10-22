@@ -52,6 +52,11 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         return jpaCustomerRepository.findByFilters(name, email, cpfCnpj, pageable).map(this::convertFromEntity);
     }
 
+    @Override
+    public void deleteById(UUID id) {
+        jpaCustomerRepository.deleteById(id);
+    }
+
     private Customer convertFromEntity(CustomerEntity entity) {
         return new Customer(
             entity.getId(),
@@ -60,10 +65,5 @@ public class CustomerRepositoryImpl implements CustomerRepository {
             entity.getPhone(),
             new CpfCnpj(entity.getCpfCnpj())
         );
-    }
-
-    @Override
-    public void deleteById(UUID id) {
-        jpaCustomerRepository.deleteById(id);
     }
 }
