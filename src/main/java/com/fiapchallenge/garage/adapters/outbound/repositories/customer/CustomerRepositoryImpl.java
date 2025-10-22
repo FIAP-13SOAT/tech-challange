@@ -43,22 +43,6 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
-    public List<Customer> findAll() {
-        return jpaCustomerRepository.findAll()
-            .stream()
-            .map(this::convertFromEntity)
-            .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Customer> findByFilters(String name, String email, String cpfCnpj) {
-        return jpaCustomerRepository.findByFilters(name, email, cpfCnpj)
-            .stream()
-            .map(this::convertFromEntity)
-            .collect(Collectors.toList());
-    }
-
-    @Override
     public Page<Customer> findAll(Pageable pageable) {
         return jpaCustomerRepository.findAll(pageable).map(this::convertFromEntity);
     }

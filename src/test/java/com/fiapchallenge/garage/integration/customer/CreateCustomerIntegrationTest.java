@@ -2,8 +2,10 @@ package com.fiapchallenge.garage.integration.customer;
 
 import com.fiapchallenge.garage.adapters.outbound.repositories.customer.JpaCustomerRepository;
 import com.fiapchallenge.garage.adapters.outbound.entities.CustomerEntity;
+import com.fiapchallenge.garage.application.customer.create.CreateCustomerService;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.domain.customer.Customer;
+import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
 @SpringBootTest
@@ -26,11 +30,13 @@ public class CreateCustomerIntegrationTest extends BaseIntegrationTest {
 
     private final MockMvc mockMvc;
     private final JpaCustomerRepository customerRepository;
+    private final CreateCustomerService createCustomerService;
 
     @Autowired
-    public CreateCustomerIntegrationTest(MockMvc mockMvc, JpaCustomerRepository customerRepository) {
+    public CreateCustomerIntegrationTest(MockMvc mockMvc, CreateCustomerService createCustomerService, JpaCustomerRepository customerRepository) {
         this.mockMvc = mockMvc;
         this.customerRepository = customerRepository;
+        this.createCustomerService = createCustomerService;
     }
 
     @Test
@@ -85,7 +91,7 @@ public class CreateCustomerIntegrationTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Deve deletar um cliente existente")
     void shouldDeleteExistingCustomer() throws Exception {
-        Customer createdCustomer = CustomerMockUtils.createCustomer(createCustomerUseCase);
+        Customer createdCustomer = CustomerFixture.createCustomer(createCustomerService);
 
         mockMvc.perform(delete("/customers/" + createdCustomer.getId()))
                 .andExpect(status().isNoContent());
