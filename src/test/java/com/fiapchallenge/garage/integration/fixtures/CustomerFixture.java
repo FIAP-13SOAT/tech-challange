@@ -1,16 +1,12 @@
 package com.fiapchallenge.garage.integration.fixtures;
 
-import com.fiapchallenge.garage.application.customer.CreateCustomerUseCase;
+import com.fiapchallenge.garage.application.customer.create.CreateCustomerUseCase;
+import com.fiapchallenge.garage.application.customer.create.CreateCustomerUseCase.CreateCustomerCommand;
 import com.fiapchallenge.garage.domain.customer.Customer;
-import com.fiapchallenge.garage.application.commands.customer.CreateCustomerCommand;
-
-import java.util.Random;
 
 public class CustomerFixture {
-    private static final Random random = new Random();
 
     public static Customer createCustomer(CreateCustomerUseCase createCustomerUseCase) {
-
         CreateCustomerCommand command = new CreateCustomerCommand(
             "John Doe",
             "john@example.com",

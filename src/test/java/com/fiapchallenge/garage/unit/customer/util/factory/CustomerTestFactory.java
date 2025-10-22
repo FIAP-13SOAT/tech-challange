@@ -1,8 +1,8 @@
 package com.fiapchallenge.garage.unit.customer.util.factory;
 
+import com.fiapchallenge.garage.application.customer.create.CreateCustomerUseCase;
 import com.fiapchallenge.garage.domain.customer.CpfCnpj;
 import com.fiapchallenge.garage.domain.customer.Customer;
-import com.fiapchallenge.garage.application.commands.customer.CreateCustomerCommand;
 
 import java.util.UUID;
 
@@ -18,7 +18,7 @@ public class CustomerTestFactory {
         return new Customer(ID, NAME, EMAIL, PHONE, CPF_CNPJ);
     }
 
-    public static CreateCustomerCommand buildCommand() {
-        return new CreateCustomerCommand(NAME, EMAIL, PHONE, CPF_CNPJ.getValue());
+    public static CreateCustomerUseCase.CreateCustomerCommand buildCommand() {
+        return new CreateCustomerUseCase.CreateCustomerCommand(NAME, EMAIL, PHONE, CPF_CNPJ.getValue());
     }
 }
