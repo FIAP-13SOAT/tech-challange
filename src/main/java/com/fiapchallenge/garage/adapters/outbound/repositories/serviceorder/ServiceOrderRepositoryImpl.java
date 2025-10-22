@@ -9,6 +9,9 @@ import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
+
+import java.util.UUID;
 
 @Component
 public class ServiceOrderRepositoryImpl implements ServiceOrderRepository {
@@ -30,6 +33,12 @@ public class ServiceOrderRepositoryImpl implements ServiceOrderRepository {
         serviceOrderEntity = jpaServiceOrderRepository.save(serviceOrderEntity);
 
         return convertFromEntity(serviceOrderEntity);
+    }
+
+    @Override
+    public Optional<ServiceOrder> findById(UUID id) {
+        Optional<ServiceOrderEntity> serviceOrderEntity = jpaServiceOrderRepository.findById(id);
+        return serviceOrderEntity.map(this::convertFromEntity);
     }
 
     private ServiceOrder convertFromEntity(ServiceOrderEntity serviceOrderEntity) {

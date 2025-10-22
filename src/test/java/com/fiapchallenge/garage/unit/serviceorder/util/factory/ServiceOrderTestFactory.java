@@ -34,6 +34,16 @@ public class ServiceOrderTestFactory {
         );
     }
 
+    public static ServiceOrder createServiceOrder(UUID vehicleId, ServiceOrderStatus status) {
+        return new ServiceOrder(
+                ID,
+                OBSERVATIONS,
+                vehicleId,
+                status,
+                SERVICE_TYPE_LIST
+        );
+    }
+
     public static List<UUID> getServiceTypeListIds() {
         return SERVICE_TYPE_LIST.stream().map(ServiceType::getId).toList();
     }
