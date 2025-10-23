@@ -2,9 +2,6 @@ package com.fiapchallenge.garage.integration;
 
 import com.fiapchallenge.garage.adapters.outbound.repositories.customer.JpaCustomerRepository;
 import com.fiapchallenge.garage.adapters.outbound.entities.CustomerEntity;
-import com.fiapchallenge.garage.application.customer.CreateCustomerService;
-import com.fiapchallenge.garage.application.user.CreateUserService;
-import com.fiapchallenge.garage.application.user.LoginUserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +25,7 @@ public class CustomerIntegrationTest extends BaseIntegrationTest {
     private final JpaCustomerRepository customerRepository;
 
     @Autowired
-    public CustomerIntegrationTest(MockMvc mockMvc, JpaCustomerRepository customerRepository, CreateUserService createUserService, LoginUserService loginUserService) {
-        super(createUserService, loginUserService);
+    public CustomerIntegrationTest(MockMvc mockMvc, JpaCustomerRepository customerRepository) {
         this.mockMvc = mockMvc;
         this.customerRepository = customerRepository;
     }
@@ -46,7 +42,6 @@ public class CustomerIntegrationTest extends BaseIntegrationTest {
                 """;
 
         mockMvc.perform(post("/customers")
-                        .header("Authorization", getAuthToken())
                 .contentType(MediaType.APPLICATION_JSON)
                         .content(customerJson))
                 .andExpect(status().isOk())

@@ -34,7 +34,6 @@
         <sonar.projectKey>garage-tech-challenge</sonar.projectKey>
         <sonar.token>sqp_57baccf38dce58b0f202e1fe45cb0a81f1f29256</sonar.token>
         <sonar.projectName>garage-tech-challenge</sonar.projectName>
-        <jwt.version>0.11.2</jwt.version>
     </properties>
 	<dependencies>
 		<dependency>
@@ -89,32 +88,9 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
+            <version>7.0.0-M3</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-
-        <!-- JWT -->
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-api</artifactId>
-            <version>${jwt.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-impl</artifactId>
-            <version>${jwt.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-jackson</artifactId>
-            <version>${jwt.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-    </dependencies>
+	</dependencies>
 
 	<build>
 		<plugins>

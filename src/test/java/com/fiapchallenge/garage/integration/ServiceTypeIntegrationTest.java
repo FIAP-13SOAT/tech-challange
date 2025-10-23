@@ -2,10 +2,6 @@ package com.fiapchallenge.garage.integration;
 
 import com.fiapchallenge.garage.adapters.outbound.entities.ServiceTypeEntity;
 import com.fiapchallenge.garage.adapters.outbound.repositories.servicetype.JpaServiceTypeRepository;
-import com.fiapchallenge.garage.application.user.CreateUserService;
-import com.fiapchallenge.garage.application.user.LoginUserService;
-import com.fiapchallenge.garage.domain.user.User;
-import com.fiapchallenge.garage.integration.fixtures.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +27,7 @@ public class ServiceTypeIntegrationTest extends BaseIntegrationTest {
     private final JpaServiceTypeRepository serviceTypeRepository;
 
     @Autowired
-    public ServiceTypeIntegrationTest(MockMvc mockMvc, JpaServiceTypeRepository serviceTypeRepository, CreateUserService createUserService, LoginUserService loginUserService) {
-        super(createUserService, loginUserService);
-
+    public ServiceTypeIntegrationTest(MockMvc mockMvc, JpaServiceTypeRepository serviceTypeRepository) {
         this.mockMvc = mockMvc;
         this.serviceTypeRepository = serviceTypeRepository;
     }
@@ -49,7 +43,6 @@ public class ServiceTypeIntegrationTest extends BaseIntegrationTest {
         """;
 
         mockMvc.perform(post("/service-types")
-                        .header("Authorization", getAuthToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceTypeJson)
                 )
