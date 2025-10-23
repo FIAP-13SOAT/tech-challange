@@ -1,7 +1,10 @@
 package com.fiapchallenge.garage.adapters.outbound.entities;
 
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.util.UUID;

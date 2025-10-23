@@ -1,6 +1,5 @@
 package com.fiapchallenge.garage.domain.vehicle;
 
-import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto.VehicleRequestDTO;
 import com.fiapchallenge.garage.domain.vehicle.command.CreateVehicleCommand;
 
 import java.util.UUID;

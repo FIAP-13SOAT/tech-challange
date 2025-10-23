@@ -1,9 +1,9 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.servicetype;
 
+import com.fiapchallenge.garage.adapters.inbound.controller.servicetype.dto.ServiceTypeRequestDTO;
 import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeUseCase;
 import com.fiapchallenge.garage.application.servicetype.command.CreateServiceTypeCommand;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
-import com.fiapchallenge.garage.adapters.inbound.controller.servicetype.dto.ServiceTypeRequestDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
