@@ -31,9 +31,7 @@ public class ServiceTypeIntegrationTest extends BaseIntegrationTest {
     private final JpaServiceTypeRepository serviceTypeRepository;
 
     @Autowired
-    public ServiceTypeIntegrationTest(MockMvc mockMvc, JpaServiceTypeRepository serviceTypeRepository, CreateUserService createUserService, LoginUserService loginUserService) {
-        super(createUserService, loginUserService);
-
+    public ServiceTypeIntegrationTest(MockMvc mockMvc, JpaServiceTypeRepository serviceTypeRepository) {
         this.mockMvc = mockMvc;
         this.serviceTypeRepository = serviceTypeRepository;
     }

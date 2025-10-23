@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,7 +54,7 @@ public class CreateCustomerIntegrationTest extends BaseIntegrationTest {
 
         mockMvc.perform(post("/customers")
                 .contentType(MediaType.APPLICATION_JSON)
-                        .content(customerJson))
+                        .content(customerJson).header("Authorization", getAuthToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("John Doe"))
                 .andExpect(jsonPath("$.email").value("john@example.com"))
@@ -80,7 +81,7 @@ public class CreateCustomerIntegrationTest extends BaseIntegrationTest {
                 }
                 """;
 
-        mockMvc.perform(post("/customers")
+        mockMvc.perform(post("/customers").header("Authorization", getAuthToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidCustomerJson))
                 .andExpect(status().isBadRequest());
@@ -93,8 +94,10 @@ public class CreateCustomerIntegrationTest extends BaseIntegrationTest {
     void shouldDeleteExistingCustomer() throws Exception {
         Customer createdCustomer = CustomerFixture.createCustomer(createCustomerService);
 
-        mockMvc.perform(delete("/customers/" + createdCustomer.getId()))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(
+            delete("/customers/" + createdCustomer.getId())
+                .header("Authorization", getAuthToken()))
+            .andExpect(status().isNoContent());
 
         assertThat(customerRepository.findById(createdCustomer.getId())).isEmpty();
     }
@@ -102,7 +105,7 @@ public class CreateCustomerIntegrationTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Deve retornar erro 404 ao tentar deletar cliente inexistente")
     void shouldReturnNotFoundWhenDeletingNonExistentCustomer() throws Exception {
-        mockMvc.perform(delete("/customers/" + UUID.randomUUID()))
+        mockMvc.perform(delete("/customers/" + UUID.randomUUID()).header("Authorization", getAuthToken()))
                 .andExpect(status().isBadRequest());
     }
 }

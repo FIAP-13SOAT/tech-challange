@@ -4,6 +4,7 @@ import com.fiapchallenge.garage.adapters.outbound.repositories.customer.JpaCusto
 import com.fiapchallenge.garage.adapters.outbound.entities.CustomerEntity;
 import com.fiapchallenge.garage.application.customer.create.CreateCustomerUseCase;
 import com.fiapchallenge.garage.domain.customer.Customer;
+import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UpdateCustomerIntegrationTest {
+public class UpdateCustomerIntegrationTest extends BaseIntegrationTest {
 
     private final MockMvc mockMvc;
     private final JpaCustomerRepository customerRepository;
@@ -48,6 +49,7 @@ public class UpdateCustomerIntegrationTest {
                 """;
 
         mockMvc.perform(put("/customers/" + createdCustomer.getId())
+                .header("Authorization", getAuthToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updateCustomerJson))
                 .andExpect(status().isOk())

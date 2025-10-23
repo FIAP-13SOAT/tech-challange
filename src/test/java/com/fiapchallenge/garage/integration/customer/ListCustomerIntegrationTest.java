@@ -2,6 +2,8 @@ package com.fiapchallenge.garage.integration.customer;
 
 import com.fiapchallenge.garage.adapters.outbound.repositories.customer.JpaCustomerRepository;
 import com.fiapchallenge.garage.application.customer.create.CreateCustomerService;
+import com.fiapchallenge.garage.application.user.CreateUserService;
+import com.fiapchallenge.garage.application.user.LoginUserService;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +40,7 @@ public class ListCustomerIntegrationTest extends BaseIntegrationTest {
         CustomerFixture.createCustomer(createCustomerService);
         CustomerFixture.createCustomer(createCustomerService, "Jane Smith", "jane@example.com", "987654321", "73525879008");
 
-        mockMvc.perform(get("/customers"))
+        mockMvc.perform(get("/customers").header("Authorization", getAuthToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content.length()").value(2))
@@ -58,7 +60,7 @@ public class ListCustomerIntegrationTest extends BaseIntegrationTest {
             CustomerFixture.createCustomer(createCustomerService, "Customer " + i, "customer" + i + "@example.com", "12345678" + i, validCpfs[i-1]);
         }
 
-        mockMvc.perform(get("/customers?page=0&size=2"))
+        mockMvc.perform(get("/customers?page=0&size=2").header("Authorization", getAuthToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(2))
                 .andExpect(jsonPath("$.totalElements").value(5))
@@ -68,7 +70,7 @@ public class ListCustomerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.first").value(true))
                 .andExpect(jsonPath("$.last").value(false));
 
-        mockMvc.perform(get("/customers?page=2&size=2"))
+        mockMvc.perform(get("/customers?page=2&size=2").header("Authorization", getAuthToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(1))
                 .andExpect(jsonPath("$.number").value(2))

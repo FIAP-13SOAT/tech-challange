@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-public class VehicleIntegrationTest {
+public class VehicleIntegrationTest extends BaseIntegrationTest {
 
     private final MockMvc mockMvc;
     private final JpaVehicleRepository vehicleRepository;
@@ -54,6 +54,7 @@ public class VehicleIntegrationTest {
         """.formatted(customerId.toString());
 
         mockMvc.perform(post("/vehicles")
+                        .header("Authorization", getAuthToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(vehicleJson)
                 )
