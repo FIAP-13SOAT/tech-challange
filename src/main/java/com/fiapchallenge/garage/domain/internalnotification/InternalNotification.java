@@ -71,4 +71,10 @@ public class InternalNotification {
     public String getMessage() {
         return message;
     }
+
+    public void acknowledge(UUID userId) {
+        this.acknowledged = true;
+        this.userId = userId;
+        this.acknowledgedAt = LocalDateTime.now();
+    }
 }

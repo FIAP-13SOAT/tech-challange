@@ -6,11 +6,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.UUID;
 
 @Tag(name = "Internal Notifications", description = "API para gerenciamento de notificações internas")
 public interface InternalNotificationControllerOpenApiSpec {
@@ -28,4 +32,11 @@ public interface InternalNotificationControllerOpenApiSpec {
         @ApiResponse(responseCode = "400", description = "Requisição inválida")
     })
     ResponseEntity<Page<InternalNotification>> list(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size);
+
+    @Operation(summary = "Reconhecer notificação interna", description = "Marca uma notificação interna como reconhecida")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Notificação reconhecida com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Notificação não encontrada")
+    })
+    ResponseEntity<InternalNotification> acknowledge(@PathVariable UUID id, HttpServletRequest request);
 }
