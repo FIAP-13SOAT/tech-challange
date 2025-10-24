@@ -5,6 +5,8 @@ import com.fiapchallenge.garage.domain.vehicle.Vehicle;
 import com.fiapchallenge.garage.domain.vehicle.VehicleRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class VehicleRepositoryImpl implements VehicleRepository {
 
@@ -29,5 +31,10 @@ public class VehicleRepositoryImpl implements VehicleRepository {
                 vehicleEntity.getYear(),
                 vehicleEntity.getObservations()
         );
+    }
+
+    @Override
+    public UUID findCustomerIdByVehicleId(UUID vehicleId) {
+        return jpaVehicleRepository.findCustomerIdByVehicleId(vehicleId);
     }
 }

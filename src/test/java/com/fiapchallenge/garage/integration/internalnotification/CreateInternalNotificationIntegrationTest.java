@@ -2,7 +2,10 @@ package com.fiapchallenge.garage.integration.internalnotification;
 
 import com.fiapchallenge.garage.adapters.outbound.entities.InternalNotificationEntity;
 import com.fiapchallenge.garage.adapters.outbound.repositories.internalnotification.JpaInternalNotificationRepository;
+import com.fiapchallenge.garage.application.user.CreateUserService;
+import com.fiapchallenge.garage.domain.user.User;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
+import com.fiapchallenge.garage.integration.fixtures.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,8 @@ public class CreateInternalNotificationIntegrationTest extends BaseIntegrationTe
 
     private final MockMvc mockMvc;
     private final JpaInternalNotificationRepository internalNotificationRepository;
+    @Autowired
+    private CreateUserService createUserService;
 
     @Autowired
     public CreateInternalNotificationIntegrationTest(MockMvc mockMvc, JpaInternalNotificationRepository internalNotificationRepository) {
@@ -35,6 +40,7 @@ public class CreateInternalNotificationIntegrationTest extends BaseIntegrationTe
     @Test
     @DisplayName("Deve criar notificação interna e persistir")
     void shouldCreateInternalNotificationAndPersistToDatabase() throws Exception {
+        User user = UserFixture.createUser(createUserService);
         UUID resourceId = UUID.randomUUID();
         String notificationJson = String.format("""
                 {
@@ -45,6 +51,7 @@ public class CreateInternalNotificationIntegrationTest extends BaseIntegrationTe
                 """, resourceId);
 
         mockMvc.perform(post("/internal-notifications")
+                .header("Authorization", getAuthToken(user))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(notificationJson))
                 .andExpect(status().isOk())

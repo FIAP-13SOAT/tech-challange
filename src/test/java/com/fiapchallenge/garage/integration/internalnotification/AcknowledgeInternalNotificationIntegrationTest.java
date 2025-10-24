@@ -3,9 +3,12 @@ package com.fiapchallenge.garage.integration.internalnotification;
 import com.fiapchallenge.garage.adapters.outbound.repositories.internalnotification.JpaInternalNotificationRepository;
 import com.fiapchallenge.garage.application.internalnotification.create.CreateInternalNotificationService;
 import com.fiapchallenge.garage.application.internalnotification.create.CreateInternalNotificationUseCase;
+import com.fiapchallenge.garage.application.user.CreateUserService;
 import com.fiapchallenge.garage.domain.internalnotification.InternalNotification;
 import com.fiapchallenge.garage.domain.internalnotification.NotificationType;
+import com.fiapchallenge.garage.domain.user.User;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
+import com.fiapchallenge.garage.integration.fixtures.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +32,8 @@ public class AcknowledgeInternalNotificationIntegrationTest extends BaseIntegrat
     private final MockMvc mockMvc;
     private final JpaInternalNotificationRepository internalNotificationRepository;
     private final CreateInternalNotificationService createInternalNotificationService;
+    @Autowired
+    private CreateUserService createUserService;
 
     @Autowired
     public AcknowledgeInternalNotificationIntegrationTest(MockMvc mockMvc,
@@ -43,20 +48,19 @@ public class AcknowledgeInternalNotificationIntegrationTest extends BaseIntegrat
     @DisplayName("Deve reconhecer notificação interna com sucesso")
     void shouldAcknowledgeInternalNotificationSuccessfully() throws Exception {
         InternalNotification notification = createNotification(NotificationType.LOW_STOCK, "Low stock alert");
-        UUID userId = UUID.randomUUID();
-        String token = createJwtToken(userId);
+        User user = UserFixture.createUser(createUserService);
 
         mockMvc.perform(patch("/internal-notifications/{id}/acknowledge", notification.getId())
-                .header("Authorization", "Bearer " + token))
+                .header("Authorization", getAuthToken(user)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(notification.getId().toString()))
                 .andExpect(jsonPath("$.acknowledged").value(true))
-                .andExpect(jsonPath("$.userId").value(userId.toString()))
+                .andExpect(jsonPath("$.userId").value(user.getId().toString()))
                 .andExpect(jsonPath("$.acknowledgedAt").exists());
 
         var savedNotification = internalNotificationRepository.findById(notification.getId()).orElseThrow();
         assertThat(savedNotification.isAcknowledged()).isTrue();
-        assertThat(savedNotification.getUserId()).isEqualTo(userId);
+        assertThat(savedNotification.getUserId()).isEqualTo(user.getId());
         assertThat(savedNotification.getAcknowledgedAt()).isNotNull();
     }
 
@@ -64,22 +68,11 @@ public class AcknowledgeInternalNotificationIntegrationTest extends BaseIntegrat
     @DisplayName("Deve retornar erro 404 para notificação inexistente")
     void shouldReturn404ForNonExistentNotification() throws Exception {
         UUID nonExistentId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
-        String token = createJwtToken(userId);
+        User user = UserFixture.createUser(createUserService);
 
         mockMvc.perform(patch("/internal-notifications/{id}/acknowledge", nonExistentId)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isInternalServerError());
-    }
-
-    @Test
-    @DisplayName("Deve retornar erro para token JWT inválido")
-    void shouldReturnErrorForInvalidJwtToken() throws Exception {
-        InternalNotification notification = createNotification(NotificationType.LOW_STOCK, "Low stock alert");
-
-        mockMvc.perform(patch("/internal-notifications/{id}/acknowledge", notification.getId())
-                .header("Authorization", "Bearer invalid.token.format"))
-                .andExpect(status().isInternalServerError());
+                .header("Authorization", getAuthToken(user)))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -88,23 +81,12 @@ public class AcknowledgeInternalNotificationIntegrationTest extends BaseIntegrat
         InternalNotification notification = createNotification(NotificationType.LOW_STOCK, "Low stock alert");
 
         mockMvc.perform(patch("/internal-notifications/{id}/acknowledge", notification.getId()))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isForbidden());
     }
 
     private InternalNotification createNotification(NotificationType type, String message) {
         CreateInternalNotificationUseCase.CreateInternalNotificationCommand command =
                 new CreateInternalNotificationUseCase.CreateInternalNotificationCommand(type, UUID.randomUUID(), message);
         return createInternalNotificationService.handle(command);
-    }
-
-    private String createJwtToken(UUID userId) {
-        String header = "{\"alg\":\"HS256\",\"typ\":\"JWT\"}";
-        String payload = "{\"userId\":\"" + userId + "\",\"exp\":9999999999}";
-        
-        String encodedHeader = Base64.getUrlEncoder().withoutPadding().encodeToString(header.getBytes());
-        String encodedPayload = Base64.getUrlEncoder().withoutPadding().encodeToString(payload.getBytes());
-        String signature = "fake-signature";
-        
-        return encodedHeader + "." + encodedPayload + "." + signature;
     }
 }

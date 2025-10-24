@@ -54,6 +54,7 @@ public class VehicleIntegrationTest extends BaseIntegrationTest {
         """.formatted(customerId.toString());
 
         mockMvc.perform(post("/vehicles")
+                        .header("Authorization", getAuthToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(vehicleJson)
                 )

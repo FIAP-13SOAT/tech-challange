@@ -31,7 +31,7 @@ public class JwtUtil {
             String payload = new String(Base64.getUrlDecoder().decode(parts[1]));
             JsonNode payloadNode = objectMapper.readTree(payload);
             
-            String userIdStr = payloadNode.get("userId").asText();
+            String userIdStr = payloadNode.get("user_id").asText();
             return UUID.fromString(userIdStr);
         } catch (Exception e) {
             throw new RuntimeException("Failed to extract user ID from token", e);

@@ -39,7 +39,7 @@ public class ListInternalNotificationIntegrationtest extends BaseIntegrationTest
         InternalNotificationFixture.createNotification(createInternalNotificationService, NotificationType.LOW_STOCK, "Low stock alert");
         InternalNotificationFixture.createNotification(createInternalNotificationService, NotificationType.OUT_OF_STOCK, "Out of stock alert");
 
-        mockMvc.perform(get("/internal-notifications"))
+        mockMvc.perform(get("/internal-notifications").header("Authorization", getAuthToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content.length()").value(2))
@@ -58,7 +58,7 @@ public class ListInternalNotificationIntegrationtest extends BaseIntegrationTest
             InternalNotificationFixture.createNotification(createInternalNotificationService, NotificationType.LOW_STOCK, "Message " + i);
         }
 
-        mockMvc.perform(get("/internal-notifications?page=0&size=2"))
+        mockMvc.perform(get("/internal-notifications?page=0&size=2").header("Authorization", getAuthToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(2))
                 .andExpect(jsonPath("$.totalElements").value(5))
@@ -68,7 +68,7 @@ public class ListInternalNotificationIntegrationtest extends BaseIntegrationTest
                 .andExpect(jsonPath("$.first").value(true))
                 .andExpect(jsonPath("$.last").value(false));
 
-        mockMvc.perform(get("/internal-notifications?page=2&size=2"))
+        mockMvc.perform(get("/internal-notifications?page=2&size=2").header("Authorization", getAuthToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(1))
                 .andExpect(jsonPath("$.number").value(2))

@@ -49,6 +49,7 @@ public class UpdateCustomerIntegrationTest extends BaseIntegrationTest {
                 """;
 
         mockMvc.perform(put("/customers/" + createdCustomer.getId())
+                .header("Authorization", getAuthToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updateCustomerJson))
                 .andExpect(status().isOk())
