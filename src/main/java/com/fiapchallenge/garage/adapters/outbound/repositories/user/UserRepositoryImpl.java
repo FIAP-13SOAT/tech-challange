@@ -5,10 +5,12 @@ import com.fiapchallenge.garage.domain.user.User;
 import com.fiapchallenge.garage.domain.user.UserRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class UserRepositoryImpl implements UserRepository {
 
-    JpaUserRepository jpaUserRepository;
+    private final JpaUserRepository jpaUserRepository;
 
     public UserRepositoryImpl(JpaUserRepository jpaUserRepository) {
         this.jpaUserRepository = jpaUserRepository;
@@ -23,6 +25,14 @@ public class UserRepositoryImpl implements UserRepository {
         );
         userEntity = jpaUserRepository.save(userEntity);
         return convertFromEntity(userEntity);
+    }
+
+    public Optional<User> findByEmail(String email) {
+        UserEntity userEntity = jpaUserRepository.findByEmail(email);
+        if (userEntity == null) {
+            return Optional.empty();
+        }
+        return Optional.of(convertFromEntity(userEntity));
     }
 
     private User convertFromEntity(UserEntity userEntity) {
