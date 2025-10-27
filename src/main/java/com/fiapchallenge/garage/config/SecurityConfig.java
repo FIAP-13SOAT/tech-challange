@@ -49,12 +49,8 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                        .requestMatchers("/users/login").permitAll()
-                        .requestMatchers(ENDPOINT_SWAGGER).permitAll()
-                        .anyRequest().authenticated()
-                ).sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                        .anyRequest().permitAll()
+                ).sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
