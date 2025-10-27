@@ -14,8 +14,10 @@ public class Stock {
     private String category;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Integer minThreshold;
 
-    public Stock(UUID id, String productName, String description, Integer quantity, BigDecimal unitPrice, String category, LocalDateTime createdAt, LocalDateTime updatedAt) {
+
+    public Stock(UUID id, String productName, String description, Integer quantity, BigDecimal unitPrice, String category, LocalDateTime createdAt, LocalDateTime updatedAt, Integer minThreshold) {
         this.id = id;
         this.productName = productName;
         this.description = description;
@@ -24,6 +26,7 @@ public class Stock {
         this.category = category;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.minThreshold = minThreshold;
     }
 
     public UUID getId() {
@@ -96,5 +99,18 @@ public class Stock {
     public Stock setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
         return this;
+    }
+
+    public Integer getMinThreshold() {
+        return minThreshold;
+    }
+
+    public Stock setMinThreshold(Integer minThreshold) {
+        this.minThreshold = minThreshold;
+        return this;
+    }
+
+    public boolean isLowStock() {
+        return minThreshold != null && quantity <= minThreshold;
     }
 }

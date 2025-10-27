@@ -34,9 +34,12 @@ public class StockEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "min_threshold")
+    private Integer minThreshold;
+
     public StockEntity() {}
 
-    public StockEntity(UUID id, String productName, String description, Integer quantity, BigDecimal unitPrice, String category, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public StockEntity(UUID id, String productName, String description, Integer quantity, BigDecimal unitPrice, String category, LocalDateTime createdAt, LocalDateTime updatedAt, Integer minThreshold) {
         this.id = id;
         this.productName = productName;
         this.description = description;
@@ -45,6 +48,7 @@ public class StockEntity {
         this.category = category;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.minThreshold = minThreshold;
     }
 
     public UUID getId() {
@@ -110,4 +114,8 @@ public class StockEntity {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public Integer getMinThreshold() { return minThreshold; }
+
+    public void setMinThreshold(Integer minThreshold) { this.minThreshold = minThreshold; }
 }

@@ -7,6 +7,7 @@ public record CreateStockCommand(
         String description,
         Integer quantity,
         BigDecimal unitPrice,
-        String category
+        String category,
+        Integer minThreshold
 ) {
 }

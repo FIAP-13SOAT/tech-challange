@@ -26,7 +26,8 @@ public class CreateStockService implements CreateStockUseCase {
                 command.unitPrice(),
                 command.category(),
                 LocalDateTime.now(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                command.minThreshold()
         );
 
         return stockRepository.save(stock);

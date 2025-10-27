@@ -1,0 +1,1 @@
+ALTER TABLE stock ADD COLUMN min_threshold INTEGER DEFAULT 5;

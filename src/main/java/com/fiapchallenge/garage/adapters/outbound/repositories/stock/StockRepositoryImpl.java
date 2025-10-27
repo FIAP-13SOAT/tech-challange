@@ -60,7 +60,8 @@ public class StockRepositoryImpl implements StockRepository {
                 stock.getUnitPrice(),
                 stock.getCategory(),
                 stock.getCreatedAt(),
-                stock.getUpdatedAt()
+                stock.getUpdatedAt(),
+                stock.getMinThreshold()
         );
     }
 
@@ -73,7 +74,8 @@ public class StockRepositoryImpl implements StockRepository {
                 entity.getUnitPrice(),
                 entity.getCategory(),
                 entity.getCreatedAt(),
-                entity.getUpdatedAt()
+                entity.getUpdatedAt(),
+                entity.getMinThreshold()
         );
     }
 }

@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.fiapchallenge.garage.domain.stock.command.ConsumeStockCommand;
+import com.fiapchallenge.garage.application.stock.consume.ConsumeStockUseCase;
 
 import java.util.UUID;
 
@@ -26,13 +28,15 @@ public class StockController implements StockControllerOpenApiSpec {
     private final ListStockUseCase listStockUseCase;
     private final UpdateStockUseCase updateStockUseCase;
     private final DeleteStockUseCase deleteStockUseCase;
+    private final ConsumeStockUseCase consumeStockUseCase;
 
     public StockController(CreateStockUseCase createStockUseCase, ListStockUseCase listStockUseCase, 
-                          UpdateStockUseCase updateStockUseCase, DeleteStockUseCase deleteStockUseCase) {
+                          UpdateStockUseCase updateStockUseCase, DeleteStockUseCase deleteStockUseCase, ConsumeStockUseCase consumeStockUseCase) {
         this.createStockUseCase = createStockUseCase;
         this.listStockUseCase = listStockUseCase;
         this.updateStockUseCase = updateStockUseCase;
         this.deleteStockUseCase = deleteStockUseCase;
+        this.consumeStockUseCase = consumeStockUseCase;
     }
 
     @PostMapping
@@ -80,4 +84,11 @@ public class StockController implements StockControllerOpenApiSpec {
         deleteStockUseCase.handle(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/consume")
+    public ResponseEntity<Stock> consumeStock(@PathVariable UUID id, @RequestParam Integer quantity) {
+        ConsumeStockCommand command = new ConsumeStockCommand(id, quantity);
+        return ResponseEntity.ok(consumeStockUseCase.handle(command));
+    }
+
 }
