@@ -2,8 +2,10 @@ package com.fiapchallenge.garage.integration;
 
 import com.fiapchallenge.garage.adapters.outbound.entities.ServiceOrderEntity;
 import com.fiapchallenge.garage.adapters.outbound.repositories.serviceorder.JpaServiceOrderRepository;
-import com.fiapchallenge.garage.application.customer.CreateCustomerService;
+import com.fiapchallenge.garage.application.customer.create.CreateCustomerService;
 import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeService;
+import com.fiapchallenge.garage.application.user.CreateUserService;
+import com.fiapchallenge.garage.application.user.LoginUserService;
 import com.fiapchallenge.garage.application.vehicle.CreateVehicleService;
 import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
 import com.fiapchallenge.garage.integration.fixtures.ServiceTypeFixture;
@@ -54,7 +56,6 @@ public class ServiceOrderIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Criação de Ordem de Serviço")
     void shouldCreateServiceOrder() throws Exception {
         UUID customerId = CustomerFixture.createCustomer(createCustomerService).getId();
-        System.out.println(customerId);
         UUID vehicleId = VehicleFixture.createVehicle(customerId, createVehicleService).getId();
         UUID serviceTypeId = ServiceTypeFixture.createServiceType(createServiceTypeService).getId();
 
@@ -69,6 +70,7 @@ public class ServiceOrderIntegrationTest extends BaseIntegrationTest {
         """.formatted(vehicleId.toString(), serviceTypeId.toString());
 
         mockMvc.perform(post("/service-orders")
+                        .header("Authorization", getAuthToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceOrderJson)
                 )

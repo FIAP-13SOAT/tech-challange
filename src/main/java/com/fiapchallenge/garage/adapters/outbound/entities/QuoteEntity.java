@@ -17,11 +17,15 @@ public class QuoteEntity {
     @OneToOne
     private ServiceOrderEntity serviceOrder;
 
-    public  QuoteEntity() {
+    @ManyToOne
+    private CustomerEntity customer;
+
+    public QuoteEntity() {
     }
 
-    public QuoteEntity(BigDecimal value, ServiceOrderEntity serviceOrder) {
+    public QuoteEntity(BigDecimal value, CustomerEntity customer, ServiceOrderEntity serviceOrder) {
         this.value = value;
+        this.customer = customer;
         this.serviceOrder = serviceOrder;
     }
 
@@ -49,6 +53,15 @@ public class QuoteEntity {
 
     public QuoteEntity setServiceOrder(ServiceOrderEntity serviceOrder) {
         this.serviceOrder = serviceOrder;
+        return this;
+    }
+
+    public CustomerEntity getCustomer() {
+        return customer;
+    }
+
+    public QuoteEntity setCustomer(CustomerEntity customer) {
+        this.customer = customer;
         return this;
     }
 }

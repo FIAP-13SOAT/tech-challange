@@ -4,6 +4,37 @@
 - Java 21
 - Maven
 - Spring Boot
+- PostgreSQL
+- Docker
+
+## Requisitos Mínimos
+- Docker 20.10+
+- Docker Compose 2.0+
+- 4GB RAM disponível
+- 2GB espaço em disco
+
+## Como Executar
+
+### 1. Clone o repositório
+```bash
+git clone <url-do-repositorio>
+cd tech-challange
+```
+
+### 2. Execute com Docker
+```bash
+docker-compose up --build
+```
+
+### 3. Acesse a aplicação
+- **API**: http://localhost:8080
+- **Swagger UI**: http://localhost:8080/swagger-ui/index.html
+- **PostgreSQL**: localhost:5432
+
+### 4. Para parar a aplicação
+```bash
+docker-compose down
+```
 
 ## Documentação
 

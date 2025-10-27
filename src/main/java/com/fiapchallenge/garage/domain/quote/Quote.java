@@ -1,7 +1,5 @@
 package com.fiapchallenge.garage.domain.quote;
 
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
-
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -10,9 +8,11 @@ public class Quote {
     private final UUID id;
     private final UUID serviceOrderId;
     private final BigDecimal value;
+    private final UUID customerId;
 
-    public Quote(UUID id, UUID serviceOrderId, BigDecimal value) {
+    public Quote(UUID id, UUID customerId, UUID serviceOrderId, BigDecimal value) {
         this.id = id;
+        this.customerId = customerId;
         this.serviceOrderId = serviceOrderId;
         this.value = value;
     }
@@ -27,5 +27,9 @@ public class Quote {
 
     public BigDecimal getValue() {
         return value;
+    }
+
+    public UUID getCustomerId() {
+        return customerId;
     }
 }

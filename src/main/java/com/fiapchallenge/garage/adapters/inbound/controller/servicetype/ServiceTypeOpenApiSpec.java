@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.servicetype;
 
-import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import com.fiapchallenge.garage.adapters.inbound.controller.servicetype.dto.ServiceTypeRequestDTO;
+import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

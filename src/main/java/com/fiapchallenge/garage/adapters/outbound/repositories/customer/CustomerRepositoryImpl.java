@@ -1,8 +1,11 @@
 package com.fiapchallenge.garage.adapters.outbound.repositories.customer;
 
 import com.fiapchallenge.garage.adapters.outbound.entities.CustomerEntity;
+import com.fiapchallenge.garage.domain.customer.CpfCnpj;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.customer.CustomerRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -20,14 +23,10 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     @Override
     public Customer save(Customer customer) {
         CustomerEntity customerEntity = new CustomerEntity(customer);
+
         customerEntity = jpaCustomerRepository.save(customerEntity);
 
-        return new Customer(
-                customerEntity.getId(),
-                customerEntity.getName(),
-                customerEntity.getEmail(),
-                customerEntity.getPhone()
-        );
+        return convertFromEntity(customerEntity);
     }
 
     @Override
@@ -38,11 +37,31 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     @Override
     public Optional<Customer> findById(UUID id) {
         return jpaCustomerRepository.findById(id)
-                .map(entity -> new Customer(
-                        entity.getId(),
-                        entity.getName(),
-                        entity.getEmail(),
-                        entity.getPhone()
-                ));
+            .map(this::convertFromEntity);
+    }
+
+    @Override
+    public Page<Customer> findAll(Pageable pageable) {
+        return jpaCustomerRepository.findAll(pageable).map(this::convertFromEntity);
+    }
+
+    @Override
+    public Page<Customer> findByFilters(String name, String email, String cpfCnpj, Pageable pageable) {
+        return jpaCustomerRepository.findByFilters(name, email, cpfCnpj, pageable).map(this::convertFromEntity);
+    }
+
+    @Override
+    public void deleteById(UUID id) {
+        jpaCustomerRepository.deleteById(id);
+    }
+
+    private Customer convertFromEntity(CustomerEntity entity) {
+        return new Customer(
+            entity.getId(),
+            entity.getName(),
+            entity.getEmail(),
+            entity.getPhone(),
+            new CpfCnpj(entity.getCpfCnpj())
+        );
     }
 }

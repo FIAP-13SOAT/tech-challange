@@ -12,6 +12,26 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - garage-network
+
+  app:
+    build: .
+    container_name: garage-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/garage
+      SPRING_DATASOURCE_USERNAME: secret
+      SPRING_DATASOURCE_PASSWORD: secret
+    depends_on:
+      - postgres
+    networks:
+      - garage-network
 
 volumes:
   postgres_data:
+
+networks:
+  garage-network:
+    driver: bridge

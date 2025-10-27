@@ -10,6 +10,7 @@ import com.fiapchallenge.garage.domain.quote.QuoteRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
+import com.fiapchallenge.garage.domain.vehicle.VehicleRepository;
 import com.fiapchallenge.garage.unit.quote.util.factory.QuoteTestFactory;
 import com.fiapchallenge.garage.unit.serviceorder.util.factory.ServiceOrderTestFactory;
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +37,9 @@ public class QuoteUnitTest {
     @Mock
     private QuoteRepository quoteRepository;
 
+    @Mock
+    private VehicleRepository vehicleRepository;
+
     @InjectMocks
     private ApproveQuoteService approveQuoteService;
 
@@ -49,9 +53,11 @@ public class QuoteUnitTest {
     @DisplayName("Criação de Orçamento")
     void shouldCreateQuote() {
         UUID vehicleId = UUID.randomUUID();
+        UUID customerId = UUID.randomUUID();
         Optional<ServiceOrder> mockedServiceOrder = Optional.of(ServiceOrderTestFactory.createServiceOrder(vehicleId, ServiceOrderStatus.AWAITING_APPROVAL));
 
-        when(quoteRepository.save(any(Quote.class))).thenReturn(QuoteTestFactory.createQuote(mockedServiceOrder.get().getId()));
+        when(vehicleRepository.findCustomerIdByVehicleId(vehicleId)).thenReturn(customerId);
+        when(quoteRepository.save(any(Quote.class))).thenReturn(QuoteTestFactory.createQuote(mockedServiceOrder.get().getId(), customerId));
 
         Quote quote = createQuoteService.handle(new CreateQuoteCommand(mockedServiceOrder.get()));
 
