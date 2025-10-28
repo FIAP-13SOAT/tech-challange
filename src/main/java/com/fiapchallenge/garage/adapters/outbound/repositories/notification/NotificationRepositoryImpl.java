@@ -22,8 +22,7 @@ public class NotificationRepositoryImpl implements NotificationRepository {
     @Override
     public Notification save(Notification notification) {
         NotificationEntity entity = toEntity(notification);
-        
-        // Se ID é null, é um create (gerar novo UUID)
+
         if (entity.getId() == null) {
             entity.setId(UUID.randomUUID());
         }

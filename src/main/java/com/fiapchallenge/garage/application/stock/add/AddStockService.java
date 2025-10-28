@@ -32,8 +32,7 @@ public class AddStockService implements AddStockUseCase {
              .setUpdatedAt(LocalDateTime.now());
 
         Stock updatedStock = stockRepository.save(stock);
-        
-        // Registrar movimentação
+
         createStockMovementUseCase.logMovement(
             stock.getId(),
             StockMovement.MovementType.IN,
