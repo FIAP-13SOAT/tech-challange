@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,4 +50,24 @@ public interface StockControllerOpenApiSpec {
             @ApiResponse(responseCode = "404", description = "Item não encontrado")
     })
     ResponseEntity<Void> delete(@Parameter(description = "ID do item") @PathVariable UUID id);
+
+    @Operation(summary = "Consumir estoque", description = "Consome uma quantidade específica de um item do estoque")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Estoque consumido com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Quantidade inválida ou estoque insuficiente"),
+            @ApiResponse(responseCode = "404", description = "Item não encontrado")
+    })
+    ResponseEntity<Stock> consumeStock(
+            @Parameter(description = "ID do item") @PathVariable UUID id,
+            @Parameter(description = "Quantidade a consumir") @RequestParam @Positive(message = "Quantidade deve ser positiva") Integer quantity);
+
+    @Operation(summary = "Adicionar estoque", description = "Adiciona uma quantidade específica a um item do estoque")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Estoque adicionado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Quantidade inválida"),
+            @ApiResponse(responseCode = "404", description = "Item não encontrado")
+    })
+    ResponseEntity<Stock> addStock(
+            @Parameter(description = "ID do item") @PathVariable UUID id,
+            @Parameter(description = "Quantidade a adicionar") @RequestParam @Positive(message = "Quantidade deve ser positiva") Integer quantity);
 }

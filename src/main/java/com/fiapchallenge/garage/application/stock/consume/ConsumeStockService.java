@@ -1,8 +1,12 @@
 package com.fiapchallenge.garage.application.stock.consume;
 
+import com.fiapchallenge.garage.application.notification.create.CreateNotificationUseCase;
+import com.fiapchallenge.garage.application.stockmovement.create.CreateStockMovementUseCase;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
 import com.fiapchallenge.garage.domain.stock.command.ConsumeStockCommand;
+import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
+import com.fiapchallenge.garage.shared.exception.InsufficientStockException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +16,13 @@ import java.time.LocalDateTime;
 public class ConsumeStockService implements ConsumeStockUseCase {
 
     private final StockRepository stockRepository;
+    private final CreateNotificationUseCase createNotificationUseCase;
+    private final CreateStockMovementUseCase createStockMovementUseCase;
 
-    public ConsumeStockService(StockRepository stockRepository) {
+    public ConsumeStockService(StockRepository stockRepository, CreateNotificationUseCase createNotificationUseCase, CreateStockMovementUseCase createStockMovementUseCase) {
         this.stockRepository = stockRepository;
+        this.createNotificationUseCase = createNotificationUseCase;
+        this.createStockMovementUseCase = createStockMovementUseCase;
     }
 
     @Override
@@ -22,14 +30,32 @@ public class ConsumeStockService implements ConsumeStockUseCase {
         Stock stock = stockRepository.findById(command.stockId())
                 .orElseThrow(() -> new RuntimeException("Stock not found"));
 
-        if (stock.getQuantity() < command.quantity()) {
-            throw new RuntimeException("Insufficient stock");
+        if (stock.getQuantity() == null || stock.getQuantity() < command.quantity()) {
+            throw new InsufficientStockException(
+                String.format("Estoque insuficiente para %s. Disponível: %d, Solicitado: %d", 
+                    stock.getProductName(), 
+                    stock.getQuantity() != null ? stock.getQuantity() : 0, 
+                    command.quantity())
+            );
         }
 
-        stock.setQuantity(stock.getQuantity() - command.quantity())
+        Integer previousQuantity = stock.getQuantity();
+        Integer newQuantity = previousQuantity - command.quantity();
+        
+        stock.setQuantity(newQuantity)
                 .setUpdatedAt(LocalDateTime.now());
 
         Stock updatedStock = stockRepository.save(stock);
+
+        createStockMovementUseCase.logMovement(
+            stock.getId(),
+            StockMovement.MovementType.OUT,
+            command.quantity(),
+            previousQuantity,
+            newQuantity,
+            "Saída de estoque"
+        );
+        
         checkStockLevelAsync(updatedStock);
 
         return updatedStock;
@@ -38,7 +64,7 @@ public class ConsumeStockService implements ConsumeStockUseCase {
     @Async
     public void checkStockLevelAsync(Stock stock) {
         if (stock.isLowStock()) {
-            System.out.println("ALERTA: Estoque baixo para " + stock.getProductName());
+            createNotificationUseCase.createLowStockNotification(stock);
         }
     }
 }

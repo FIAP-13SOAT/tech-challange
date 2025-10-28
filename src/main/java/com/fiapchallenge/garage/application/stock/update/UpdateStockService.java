@@ -25,11 +25,12 @@ public class UpdateStockService implements UpdateStockUseCase {
                 command.id(),
                 command.productName(),
                 command.description(),
-                command.quantity(),
+                existingStock.getQuantity(),
                 command.unitPrice(),
                 command.category(),
                 existingStock.getCreatedAt(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                command.minThreshold()
         );
 
         return stockRepository.save(updatedStock);

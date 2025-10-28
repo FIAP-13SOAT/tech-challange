@@ -1,18 +1,35 @@
-package com.fiapchallenge.garage.domain.notification;
+package com.fiapchallenge.garage.adapters.outbound.entities;
+
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class Notification {
+@Entity
+@Table(name = "notification")
+public class NotificationEntity {
 
+    @Id
     private UUID id;
+
+    @Column(name = "type", nullable = false)
     private String type;
+
+    @Column(name = "message", nullable = false)
     private String message;
+
+    @Column(name = "stock_id")
     private UUID stockId;
+
+    @Column(name = "is_read", nullable = false)
     private boolean read;
+
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    public Notification(UUID id, String type, String message, UUID stockId, boolean read, LocalDateTime createdAt) {
+    public NotificationEntity() {}
+
+    public NotificationEntity(UUID id, String type, String message, UUID stockId, boolean read, LocalDateTime createdAt) {
         this.id = id;
         this.type = type;
         this.message = message;
@@ -25,53 +42,47 @@ public class Notification {
         return id;
     }
 
-    public Notification setId(UUID id) {
+    public void setId(UUID id) {
         this.id = id;
-        return this;
     }
 
     public String getType() {
         return type;
     }
 
-    public Notification setType(String type) {
+    public void setType(String type) {
         this.type = type;
-        return this;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public Notification setMessage(String message) {
+    public void setMessage(String message) {
         this.message = message;
-        return this;
     }
 
     public UUID getStockId() {
         return stockId;
     }
 
-    public Notification setStockId(UUID stockId) {
+    public void setStockId(UUID stockId) {
         this.stockId = stockId;
-        return this;
     }
 
     public boolean isRead() {
         return read;
     }
 
-    public Notification setRead(boolean read) {
+    public void setRead(boolean read) {
         this.read = read;
-        return this;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public Notification setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-        return this;
     }
 }

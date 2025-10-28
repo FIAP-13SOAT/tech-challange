@@ -26,6 +26,11 @@ cd tech-challange
 docker-compose up --build
 ```
 
+### 2.1. Para desenvolvimento (banco em debug)
+```bash
+docker-compose -f docker-compose-dev.yml up --build
+```
+
 ### 3. Acesse a aplicação
 - **API**: http://localhost:8080
 - **Swagger UI**: http://localhost:8080/swagger-ui/index.html

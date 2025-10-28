@@ -10,18 +10,23 @@ import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.domain.stock.command.CreateStockCommand;
 import com.fiapchallenge.garage.domain.stock.command.UpdateStockCommand;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.fiapchallenge.garage.domain.stock.command.ConsumeStockCommand;
 import com.fiapchallenge.garage.application.stock.consume.ConsumeStockUseCase;
+import com.fiapchallenge.garage.domain.stock.command.AddStockCommand;
+import com.fiapchallenge.garage.application.stock.add.AddStockUseCase;
 
 import java.util.UUID;
 
 @RestController
 @RequestMapping("stock")
+@Validated
 public class StockController implements StockControllerOpenApiSpec {
 
     private final CreateStockUseCase createStockUseCase;
@@ -29,14 +34,17 @@ public class StockController implements StockControllerOpenApiSpec {
     private final UpdateStockUseCase updateStockUseCase;
     private final DeleteStockUseCase deleteStockUseCase;
     private final ConsumeStockUseCase consumeStockUseCase;
+    private final AddStockUseCase addStockUseCase;
 
     public StockController(CreateStockUseCase createStockUseCase, ListStockUseCase listStockUseCase, 
-                          UpdateStockUseCase updateStockUseCase, DeleteStockUseCase deleteStockUseCase, ConsumeStockUseCase consumeStockUseCase) {
+                          UpdateStockUseCase updateStockUseCase, DeleteStockUseCase deleteStockUseCase, 
+                          ConsumeStockUseCase consumeStockUseCase, AddStockUseCase addStockUseCase) {
         this.createStockUseCase = createStockUseCase;
         this.listStockUseCase = listStockUseCase;
         this.updateStockUseCase = updateStockUseCase;
         this.deleteStockUseCase = deleteStockUseCase;
         this.consumeStockUseCase = consumeStockUseCase;
+        this.addStockUseCase = addStockUseCase;
     }
 
     @PostMapping
@@ -45,9 +53,9 @@ public class StockController implements StockControllerOpenApiSpec {
         CreateStockCommand command = new CreateStockCommand(
                 createStockDTO.productName(),
                 createStockDTO.description(),
-                createStockDTO.quantity(),
                 createStockDTO.unitPrice(),
-                createStockDTO.category()
+                createStockDTO.category(),
+                createStockDTO.minThreshold()
         );
         return ResponseEntity.ok(createStockUseCase.handle(command));
     }
@@ -71,9 +79,9 @@ public class StockController implements StockControllerOpenApiSpec {
                 id,
                 updateStockDTO.productName(),
                 updateStockDTO.description(),
-                updateStockDTO.quantity(),
                 updateStockDTO.unitPrice(),
-                updateStockDTO.category()
+                updateStockDTO.category(),
+                updateStockDTO.minThreshold()
         );
         return ResponseEntity.ok(updateStockUseCase.handle(command));
     }
@@ -86,9 +94,19 @@ public class StockController implements StockControllerOpenApiSpec {
     }
 
     @PostMapping("/{id}/consume")
-    public ResponseEntity<Stock> consumeStock(@PathVariable UUID id, @RequestParam Integer quantity) {
+    @Override
+    public ResponseEntity<Stock> consumeStock(@PathVariable UUID id, 
+                                            @RequestParam @Positive(message = "Quantidade deve ser positiva") Integer quantity) {
         ConsumeStockCommand command = new ConsumeStockCommand(id, quantity);
         return ResponseEntity.ok(consumeStockUseCase.handle(command));
+    }
+
+    @PostMapping("/{id}/add")
+    @Override
+    public ResponseEntity<Stock> addStock(@PathVariable UUID id, 
+                                         @RequestParam @Positive(message = "Quantidade deve ser positiva") Integer quantity) {
+        AddStockCommand command = new AddStockCommand(id, quantity);
+        return ResponseEntity.ok(addStockUseCase.handle(command));
     }
 
 }

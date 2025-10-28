@@ -7,8 +7,8 @@ public record UpdateStockCommand(
         UUID id,
         String productName,
         String description,
-        Integer quantity,
         BigDecimal unitPrice,
-        String category
+        String category,
+        Integer minThreshold
 ) {
 }

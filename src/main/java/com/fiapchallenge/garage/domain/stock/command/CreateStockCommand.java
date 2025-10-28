@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 public record CreateStockCommand(
         String productName,
         String description,
-        Integer quantity,
         BigDecimal unitPrice,
         String category,
         Integer minThreshold

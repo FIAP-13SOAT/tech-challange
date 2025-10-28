@@ -10,8 +10,8 @@ import java.math.BigDecimal;
 public record CreateStockRequestDTO(
         @NotNull(message = "Nome do produto é obrigatório") String productName,
         String description,
-        @NotNull(message = "Quantidade é obrigatória") @Positive(message = "Quantidade deve ser positiva") Integer quantity,
         @NotNull(message = "Preço unitário é obrigatório") @Positive(message = "Preço deve ser positivo") BigDecimal unitPrice,
-        String category
+        String category,
+        @Positive(message = "Threshold mínimo deve ser positivo") Integer minThreshold
 ) {
 }

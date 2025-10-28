@@ -22,7 +22,7 @@ public class CreateStockService implements CreateStockUseCase {
                 null,
                 command.productName(),
                 command.description(),
-                command.quantity(),
+                0,
                 command.unitPrice(),
                 command.category(),
                 LocalDateTime.now(),
