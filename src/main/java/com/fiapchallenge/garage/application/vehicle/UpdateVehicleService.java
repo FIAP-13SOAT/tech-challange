@@ -23,8 +23,8 @@ public class UpdateVehicleService implements UpdateVehicleUseCase {
                 command.id(),
                 command.model(),
                 command.brand(),
-                existingVehicle.getLicensePlate(), // Keep original
-                existingVehicle.getCustomerId(),   // Keep original
+                existingVehicle.getLicensePlate(),
+                existingVehicle.getCustomerId(),
                 command.color(),
                 command.year(),
                 command.observations()
