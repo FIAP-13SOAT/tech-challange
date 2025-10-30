@@ -2,16 +2,14 @@ package com.fiapchallenge.garage.unit.serviceorder;
 
 import com.fiapchallenge.garage.application.quote.CreateQuoteUseCase;
 import com.fiapchallenge.garage.application.quote.command.CreateQuoteCommand;
-import com.fiapchallenge.garage.application.serviceorder.CreateServiceOrderService;
-import com.fiapchallenge.garage.application.serviceorder.FinishServiceOrderDiagnosticService;
-import com.fiapchallenge.garage.application.serviceorder.StartServiceOrderDiagnosticService;
-import com.fiapchallenge.garage.application.serviceorder.StartServiceOrderDiagnosticUseCase;
+import com.fiapchallenge.garage.application.serviceorder.*;
 import com.fiapchallenge.garage.application.serviceorder.command.FinishServiceOrderDiagnosticCommand;
+import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrderExecutionCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrderDiagnosticCommand;
-import com.fiapchallenge.garage.domain.customer.CustomerRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
+import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionRepository;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
 import com.fiapchallenge.garage.unit.serviceorder.util.factory.ServiceOrderTestFactory;
@@ -32,13 +30,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ServiceOrderUnitTest {
+class ServiceOrderUnitTest {
 
     @Mock
     ServiceTypeRepository serviceTypeRepository;
 
     @Mock
     ServiceOrderRepository serviceOrderRepository;
+
+    @Mock
+    ServiceOrderExecutionRepository serviceOrderExecutionRepository;
 
     @Mock
     private CreateQuoteUseCase createQuoteUseCase;
@@ -51,6 +52,9 @@ public class ServiceOrderUnitTest {
 
     @InjectMocks
     private FinishServiceOrderDiagnosticService finishServiceOrderDiagnosticService;
+
+    @InjectMocks
+    private StartServiceOrderExecutionService startServiceOrderService;
 
     @Test
     @DisplayName("Criação de Ordem de Serviço")
@@ -97,5 +101,18 @@ public class ServiceOrderUnitTest {
         assertEquals(ServiceOrderStatus.AWAITING_APPROVAL, serviceOrder.getStatus());
         verify(serviceOrderRepository).save(serviceOrder);
         verify(createQuoteUseCase).handle(any(CreateQuoteCommand.class));
+    }
+
+    @Test
+    @DisplayName("Iniciar Ordem de Serviço")
+    void shouldStartServiceOrder() {
+        UUID vehicleId = UUID.randomUUID();
+        Optional<ServiceOrder> mockedServiceOrder = Optional.of(ServiceOrderTestFactory.createServiceOrder(vehicleId, ServiceOrderStatus.AWAITING_APPROVAL));
+        when(serviceOrderRepository.findById(any(UUID.class))).thenReturn(mockedServiceOrder);
+
+        ServiceOrder serviceOrder = startServiceOrderService.handle(new StartServiceOrderExecutionCommand(ServiceOrderTestFactory.ID));
+
+        assertEquals(ServiceOrderStatus.IN_PROGRESS, serviceOrder.getStatus());
+        verify(serviceOrderRepository).save(serviceOrder);
     }
 }

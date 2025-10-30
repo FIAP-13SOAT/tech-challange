@@ -2,8 +2,6 @@ package com.fiapchallenge.garage.integration.customer;
 
 import com.fiapchallenge.garage.adapters.outbound.repositories.customer.JpaCustomerRepository;
 import com.fiapchallenge.garage.application.customer.create.CreateCustomerService;
-import com.fiapchallenge.garage.application.user.CreateUserService;
-import com.fiapchallenge.garage.application.user.LoginUserService;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ListCustomerIntegrationTest extends BaseIntegrationTest {
+class ListCustomerIntegrationTest extends BaseIntegrationTest {
 
     private final MockMvc mockMvc;
     private final JpaCustomerRepository customerRepository;

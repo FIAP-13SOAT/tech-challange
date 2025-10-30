@@ -4,8 +4,6 @@ import com.fiapchallenge.garage.adapters.outbound.entities.ServiceOrderEntity;
 import com.fiapchallenge.garage.adapters.outbound.repositories.serviceorder.JpaServiceOrderRepository;
 import com.fiapchallenge.garage.application.customer.create.CreateCustomerService;
 import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeService;
-import com.fiapchallenge.garage.application.user.CreateUserService;
-import com.fiapchallenge.garage.application.user.LoginUserService;
 import com.fiapchallenge.garage.application.vehicle.CreateVehicleService;
 import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
 import com.fiapchallenge.garage.integration.fixtures.ServiceTypeFixture;
@@ -29,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ServiceOrderIntegrationTest extends BaseIntegrationTest {
+class ServiceOrderIntegrationTest extends BaseIntegrationTest {
 
     private final MockMvc mockMvc;
     private final JpaServiceOrderRepository serviceOrderRepository;
@@ -82,7 +80,7 @@ public class ServiceOrderIntegrationTest extends BaseIntegrationTest {
         ServiceOrderEntity serviceOrderEntity = serviceOrderRepository.findAll().getLast();
         assertThat(serviceOrderEntity.getObservations()).isEqualTo("Barulho ao trocar marcha");
         assertThat(serviceOrderEntity.getVehicleId()).isEqualTo(vehicleId);
-        assertThat(serviceOrderEntity.getServiceTypeList().size()).isEqualTo(1);
+        assertThat(serviceOrderEntity.getServiceTypeList()).hasSize(1);
         assertThat(serviceOrderEntity.getServiceTypeList().getFirst().getId()).isEqualTo(serviceTypeId);
     }
 }

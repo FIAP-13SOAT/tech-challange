@@ -26,9 +26,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("O Usuário não foi encontrado"));
 
-//        var perfis = user.getPerfis().stream()
-//                .map(perfil -> new SimpleGrantedAuthority(perfil.name())).toList();
-
         var authorities = List.of(new SimpleGrantedAuthority("ADM"));
 
         return new UserDetailsImpl(user, authorities);

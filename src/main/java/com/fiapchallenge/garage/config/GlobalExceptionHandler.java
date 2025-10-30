@@ -2,6 +2,7 @@ package com.fiapchallenge.garage.config;
 
 import com.fiapchallenge.garage.shared.exception.InsufficientStockException;
 import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
+import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
 import com.fiapchallenge.garage.shared.exception.SoatValidationException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
@@ -34,5 +35,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+    @ExceptionHandler(SoatNotFoundException.class)
+    public ResponseEntity<String> handleSoatNotFoundException(SoatNotFoundException ex) {
+        return ResponseEntity.notFound().build();
     }
 }
