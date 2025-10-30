@@ -9,6 +9,7 @@ import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrd
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
+import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionRepository;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
 import com.fiapchallenge.garage.unit.serviceorder.util.factory.ServiceOrderTestFactory;
@@ -36,6 +37,9 @@ public class ServiceOrderUnitTest {
 
     @Mock
     ServiceOrderRepository serviceOrderRepository;
+
+    @Mock
+    ServiceOrderExecutionRepository serviceOrderExecutionRepository;
 
     @Mock
     private CreateQuoteUseCase createQuoteUseCase;
