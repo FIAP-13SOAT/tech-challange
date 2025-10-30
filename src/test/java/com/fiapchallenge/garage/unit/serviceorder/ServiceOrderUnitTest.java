@@ -4,11 +4,13 @@ import com.fiapchallenge.garage.application.quote.CreateQuoteUseCase;
 import com.fiapchallenge.garage.application.quote.command.CreateQuoteCommand;
 import com.fiapchallenge.garage.application.serviceorder.*;
 import com.fiapchallenge.garage.application.serviceorder.command.FinishServiceOrderDiagnosticCommand;
+import com.fiapchallenge.garage.application.serviceorder.command.FinishServiceOrderExecutionCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrderExecutionCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrderDiagnosticCommand;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
+import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecution;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionRepository;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
@@ -21,10 +23,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -55,6 +59,9 @@ class ServiceOrderUnitTest {
 
     @InjectMocks
     private StartServiceOrderExecutionService startServiceOrderService;
+
+    @InjectMocks
+    private FinishServiceOrderExecutionService finishServiceOrderExecutionService;
 
     @Test
     @DisplayName("Criação de Ordem de Serviço")
@@ -95,7 +102,6 @@ class ServiceOrderUnitTest {
         UUID vehicleId = UUID.randomUUID();
         Optional<ServiceOrder> mockedServiceOrder = Optional.of(ServiceOrderTestFactory.createServiceOrder(vehicleId, ServiceOrderStatus.IN_DIAGNOSIS));
         when(serviceOrderRepository.findById(any(UUID.class))).thenReturn(mockedServiceOrder);
-
         ServiceOrder serviceOrder = finishServiceOrderDiagnosticService.handle(new FinishServiceOrderDiagnosticCommand(ServiceOrderTestFactory.ID));
 
         assertEquals(ServiceOrderStatus.AWAITING_APPROVAL, serviceOrder.getStatus());
@@ -109,10 +115,28 @@ class ServiceOrderUnitTest {
         UUID vehicleId = UUID.randomUUID();
         Optional<ServiceOrder> mockedServiceOrder = Optional.of(ServiceOrderTestFactory.createServiceOrder(vehicleId, ServiceOrderStatus.AWAITING_APPROVAL));
         when(serviceOrderRepository.findById(any(UUID.class))).thenReturn(mockedServiceOrder);
-
         ServiceOrder serviceOrder = startServiceOrderService.handle(new StartServiceOrderExecutionCommand(ServiceOrderTestFactory.ID));
 
         assertEquals(ServiceOrderStatus.IN_PROGRESS, serviceOrder.getStatus());
         verify(serviceOrderRepository).save(serviceOrder);
+        verify(serviceOrderExecutionRepository).save(any());
     }
+
+    @Test
+    @DisplayName("Finalizar Execucao de Ordem de Serviço")
+    void shouldFinishServiceOrderExecution() {
+        UUID vehicleId = UUID.randomUUID();
+        Optional<ServiceOrder> mockedServiceOrder = Optional.of(ServiceOrderTestFactory.createServiceOrder(vehicleId, ServiceOrderStatus.IN_PROGRESS));
+        ServiceOrderExecution serviceOrderExecution = new ServiceOrderExecution(ServiceOrderTestFactory.ID);
+        serviceOrderExecution.start();
+
+        when(serviceOrderRepository.findById(any(UUID.class))).thenReturn(mockedServiceOrder);
+        when(serviceOrderExecutionRepository.findById(any(UUID.class))).thenReturn(Optional.of(serviceOrderExecution));
+        ServiceOrder serviceOrder = finishServiceOrderExecutionService.handle(new FinishServiceOrderExecutionCommand(ServiceOrderTestFactory.ID));
+        assertEquals(ServiceOrderStatus.COMPLETED, serviceOrder.getStatus());
+        assertNotNull(serviceOrderExecution.getEndDate());
+        verify(serviceOrderRepository).save(serviceOrder);
+        verify(serviceOrderExecutionRepository).save(serviceOrderExecution);
+    }
+
 }

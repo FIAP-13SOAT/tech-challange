@@ -5,8 +5,11 @@ import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecuti
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionRepository;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class ServiceOrderExecutionRepositoryImpl implements ServiceOrderExecutionRepository {
@@ -26,6 +29,13 @@ public class ServiceOrderExecutionRepositoryImpl implements ServiceOrderExecutio
     public Optional<ServiceOrderExecution> findById(UUID id) {
         Optional<ServiceOrderExecutionEntity> serviceOrderExecutionEntity = jpaServiceOrderExecutionRepository.findById(id);
         return serviceOrderExecutionEntity.map(this::convertFromEntity);
+    }
+
+    public List<ServiceOrderExecution> findByStartDateBetweenOrderByStartDateAsc(
+            LocalDateTime startRange,
+            LocalDateTime endRange
+    ){
+        return jpaServiceOrderExecutionRepository.findByStartDateBetweenOrderByStartDateAsc(startRange, endRange).stream().map(this::convertFromEntity).collect(Collectors.toList());
     }
 
     private ServiceOrderExecution convertFromEntity(ServiceOrderExecutionEntity serviceOrderExecutionEntity) {
