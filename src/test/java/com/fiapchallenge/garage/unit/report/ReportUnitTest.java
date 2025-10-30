@@ -5,6 +5,7 @@ import com.fiapchallenge.garage.application.report.service.command.GenerateServi
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecution;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -48,7 +49,8 @@ class ReportUnitTest {
 
 
     @Test
-    void handle_ShouldReturnNonEmptyByteArrayWhenServiceOrderExecutionsAreFound() {
+    @DisplayName("Criacao de relatorio")
+    void shouldReturnNonEmptyByteArrayWhenServiceOrderExecutionsAreFound() {
         ServiceOrderExecution soe = mock(ServiceOrderExecution.class);
         UUID serviceOrderId = UUID.randomUUID();
         LocalDateTime executionStart = LocalDateTime.of(2023, 10, 15, 9, 0);
@@ -73,6 +75,7 @@ class ReportUnitTest {
     }
 
     @Test
+    @DisplayName("Criacao de relatorio quando nao há execucoes.")
     void shouldReturnNonEmptyByteArrayWhenNoServiceOrderExecutionsAreFound() {
         when(serviceOrderExecutionRepository.findByStartDateBetweenOrderByStartDateAsc(startDateTime, endDateTime))
                 .thenReturn(Collections.emptyList());

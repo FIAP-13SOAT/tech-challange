@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.application.report.service;
 
-import com.fiapchallenge.garage.application.report.service.command.GenerateServiceOrderExecutionReportCommand;
+import com.fiapchallenge.garage.application.report.command.GenerateServiceOrderExecutionReportCommand;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecution;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionRepository;
 import com.fiapchallenge.garage.shared.exception.ReportErrorException;
@@ -11,7 +11,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -19,10 +19,10 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Component
+@Service
 public class GenerateServiceOrderExecutionReportService implements GenerateServiceOrderExecutionReportUseCase {
 
-    ServiceOrderExecutionRepository serviceOrderExecutionRepository;
+    private final ServiceOrderExecutionRepository serviceOrderExecutionRepository;
 
     public GenerateServiceOrderExecutionReportService(ServiceOrderExecutionRepository serviceOrderExecutionRepository) {
         this.serviceOrderExecutionRepository = serviceOrderExecutionRepository;

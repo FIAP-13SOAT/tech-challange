@@ -1,4 +1,4 @@
-package com.fiapchallenge.garage.application.report.service.command;
+package com.fiapchallenge.garage.application.report.command;
 
 import java.time.LocalDate;
 

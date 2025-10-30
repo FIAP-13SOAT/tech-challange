@@ -1,4 +1,4 @@
-package com.fiapchallenge.garage.adapters.outbound.repositories.serviceOrderExecution;
+package com.fiapchallenge.garage.adapters.outbound.repositories.serviceorderexecution;
 
 import com.fiapchallenge.garage.adapters.outbound.entities.ServiceOrderExecutionEntity;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecution;

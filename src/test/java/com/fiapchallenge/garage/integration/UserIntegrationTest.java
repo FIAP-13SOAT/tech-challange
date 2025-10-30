@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserIntegrationTest extends BaseIntegrationTest {
+class UserIntegrationTest extends BaseIntegrationTest {
 
     private final MockMvc mockMvc;
     private final JpaUserRepository jpaUserRepository;
@@ -65,7 +65,7 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         assertThat(userEntity.getFullname()).isEqualTo("João Silva");
         assertThat(userEntity.getEmail()).isEqualTo("joao@gmail.com");
         assertThat(userEntity.getPassword()).isNotEqualTo("senhaSegura123");
-        assertThat(passwordEncoder.matches("senhaSegura123", userEntity.getPassword()));
+        assertThat(passwordEncoder.matches("senhaSegura123", userEntity.getPassword())).isTrue();
 
         assertThat(userEntity.getId()).isNotNull();
     }

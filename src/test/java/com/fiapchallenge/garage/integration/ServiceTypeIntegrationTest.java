@@ -2,10 +2,6 @@ package com.fiapchallenge.garage.integration;
 
 import com.fiapchallenge.garage.adapters.outbound.entities.ServiceTypeEntity;
 import com.fiapchallenge.garage.adapters.outbound.repositories.servicetype.JpaServiceTypeRepository;
-import com.fiapchallenge.garage.application.user.CreateUserService;
-import com.fiapchallenge.garage.application.user.LoginUserService;
-import com.fiapchallenge.garage.domain.user.User;
-import com.fiapchallenge.garage.integration.fixtures.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -25,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ServiceTypeIntegrationTest extends BaseIntegrationTest {
+class ServiceTypeIntegrationTest extends BaseIntegrationTest {
 
     private final MockMvc mockMvc;
     private final JpaServiceTypeRepository serviceTypeRepository;

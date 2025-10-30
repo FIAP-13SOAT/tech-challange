@@ -1,4 +1,4 @@
-package com.fiapchallenge.garage.domain.vehicle.command;
+package com.fiapchallenge.garage.application.vehicle.command;
 
 import java.util.UUID;
 
