@@ -8,8 +8,10 @@ import com.fiapchallenge.garage.domain.stock.StockRepository;
 import com.fiapchallenge.garage.domain.stock.command.ConsumeStockCommand;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
 import com.fiapchallenge.garage.shared.exception.InsufficientStockException;
+import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
 import com.fiapchallenge.garage.unit.stock.factory.StockTestFactory;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,6 +49,7 @@ class ConsumeStockUnitTest {
     }
 
     @Test
+    @DisplayName("Deve consumir estoque com sucesso")
     void shouldConsumeStockSuccessfully() {
         when(stockRepository.findById(stock.getId())).thenReturn(Optional.of(stock));
         when(stockRepository.save(any(Stock.class))).thenReturn(stock);
@@ -66,14 +69,16 @@ class ConsumeStockUnitTest {
     }
 
     @Test
+    @DisplayName("Deve lançar exceção quando estoque não for encontrado")
     void shouldThrowExceptionWhenStockNotFound() {
         when(stockRepository.findById(stock.getId())).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> consumeStockService.handle(command));
+        assertThrows(ResourceNotFoundException.class, () -> consumeStockService.handle(command));
         verify(stockRepository, never()).save(any(Stock.class));
     }
 
     @Test
+    @DisplayName("Deve lançar exceção quando estoque for insuficiente")
     void shouldThrowExceptionWhenInsufficientStock() {
         ConsumeStockCommand largeCommand = StockTestFactory.consumeStockCommand(stock.getId(), 100);
         when(stockRepository.findById(stock.getId())).thenReturn(Optional.of(stock));
@@ -88,6 +93,7 @@ class ConsumeStockUnitTest {
     }
 
     @Test
+    @DisplayName("Deve criar notificação quando estoque ficar baixo")
     void shouldCreateNotificationWhenStockBecomesLow() {
         Stock lowStock = StockTestFactory.createLowStock();
         ConsumeStockCommand lowCommand = StockTestFactory.consumeStockCommand(lowStock.getId(), 1);

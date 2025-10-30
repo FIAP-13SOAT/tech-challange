@@ -4,6 +4,7 @@ import com.fiapchallenge.garage.application.stockmovement.create.CreateStockMove
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovementRepository;
 import com.fiapchallenge.garage.unit.stockmovement.factory.StockMovementTestFactory;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,6 +27,7 @@ class CreateStockMovementUnitTest {
     private CreateStockMovementService createStockMovementService;
 
     @Test
+    @DisplayName("Deve registrar movimentação de entrada com sucesso")
     void shouldLogInMovementSuccessfully() {
         StockMovement movement = StockMovementTestFactory.createInMovement();
         when(stockMovementRepository.save(any(StockMovement.class))).thenReturn(movement);
@@ -43,6 +45,7 @@ class CreateStockMovementUnitTest {
     }
 
     @Test
+    @DisplayName("Deve registrar movimentação de saída com sucesso")
     void shouldLogOutMovementSuccessfully() {
         StockMovement movement = StockMovementTestFactory.createOutMovement();
         when(stockMovementRepository.save(any(StockMovement.class))).thenReturn(movement);

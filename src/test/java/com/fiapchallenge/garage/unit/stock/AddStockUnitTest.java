@@ -6,8 +6,10 @@ import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
 import com.fiapchallenge.garage.domain.stock.command.AddStockCommand;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
+import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
 import com.fiapchallenge.garage.unit.stock.factory.StockTestFactory;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -42,6 +44,7 @@ class AddStockUnitTest {
     }
 
     @Test
+    @DisplayName("Deve adicionar estoque com sucesso")
     void shouldAddStockSuccessfully() {
         when(stockRepository.findById(stock.getId())).thenReturn(Optional.of(stock));
         when(stockRepository.save(any(Stock.class))).thenReturn(stock);
@@ -61,14 +64,16 @@ class AddStockUnitTest {
     }
 
     @Test
+    @DisplayName("Deve lançar exceção quando estoque não for encontrado")
     void shouldThrowExceptionWhenStockNotFound() {
         when(stockRepository.findById(stock.getId())).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> addStockService.handle(command));
+        assertThrows(ResourceNotFoundException.class, () -> addStockService.handle(command));
         verify(stockRepository, never()).save(any(Stock.class));
     }
 
     @Test
+    @DisplayName("Deve atualizar timestamp ao adicionar estoque")
     void shouldUpdateTimestamp() {
         when(stockRepository.findById(stock.getId())).thenReturn(Optional.of(stock));
         when(stockRepository.save(any(Stock.class))).thenReturn(stock);

@@ -4,6 +4,7 @@ import com.fiapchallenge.garage.application.notification.list.ListNotificationSe
 import com.fiapchallenge.garage.domain.notification.Notification;
 import com.fiapchallenge.garage.domain.notification.NotificationRepository;
 import com.fiapchallenge.garage.unit.notification.factory.NotificationTestFactory;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,6 +30,7 @@ class ListNotificationUnitTest {
     private ListNotificationService listNotificationService;
 
     @Test
+    @DisplayName("Deve listar todas as notificações")
     void shouldListAllNotifications() {
         Pageable pageable = PageRequest.of(0, 10);
         List<Notification> notifications = List.of(
@@ -46,6 +48,7 @@ class ListNotificationUnitTest {
     }
 
     @Test
+    @DisplayName("Deve listar apenas notificações não lidas")
     void shouldListOnlyUnreadNotifications() {
         Pageable pageable = PageRequest.of(0, 10);
         List<Notification> unreadNotifications = List.of(
@@ -63,6 +66,7 @@ class ListNotificationUnitTest {
     }
 
     @Test
+    @DisplayName("Deve retornar página vazia quando não houver notificações")
     void shouldReturnEmptyPageWhenNoNotifications() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Notification> emptyPage = new PageImpl<>(List.of(), pageable, 0);

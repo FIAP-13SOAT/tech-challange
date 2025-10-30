@@ -7,6 +7,7 @@ import com.fiapchallenge.garage.domain.stock.StockRepository;
 import com.fiapchallenge.garage.domain.stock.command.ConsumeStockCommand;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
 import com.fiapchallenge.garage.shared.exception.InsufficientStockException;
+import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class ConsumeStockService implements ConsumeStockUseCase {
     @Override
     public Stock handle(ConsumeStockCommand command) {
         Stock stock = stockRepository.findById(command.stockId())
-                .orElseThrow(() -> new RuntimeException("Stock not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Stock", command.stockId().toString()));
 
         if (stock.getQuantity() == null || stock.getQuantity() < command.quantity()) {
             throw new InsufficientStockException(

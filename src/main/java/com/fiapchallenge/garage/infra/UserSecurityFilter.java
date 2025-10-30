@@ -37,7 +37,6 @@ public class UserSecurityFilter extends OncePerRequestFilter {
                path.startsWith("/v3/api-docs") || 
                path.equals("/swagger-ui.html") ||
                path.startsWith("/swagger-resources") ||
-               path.startsWith("/webjars") ||
                path.startsWith("/actuator/health") ||
                path.equals("/users/login") ||
                (path.equals("/users") && "POST".equals(request.getMethod()));

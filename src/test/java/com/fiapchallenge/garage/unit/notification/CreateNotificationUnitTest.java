@@ -7,6 +7,7 @@ import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.unit.notification.factory.NotificationTestFactory;
 import com.fiapchallenge.garage.unit.stock.factory.StockTestFactory;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,6 +37,7 @@ class CreateNotificationUnitTest {
     }
 
     @Test
+    @DisplayName("Deve criar notificação de estoque baixo com sucesso")
     void shouldCreateLowStockNotificationSuccessfully() {
         when(notificationRepository.save(any(Notification.class))).thenAnswer(invocation -> {
             Notification savedNotification = invocation.getArgument(0);
@@ -54,6 +56,7 @@ class CreateNotificationUnitTest {
     }
 
     @Test
+    @DisplayName("Deve criar mensagem com formato correto")
     void shouldCreateCorrectMessageFormat() {
         when(notificationRepository.save(any(Notification.class))).thenReturn(notification);
 
@@ -68,6 +71,7 @@ class CreateNotificationUnitTest {
     }
 
     @Test
+    @DisplayName("Deve marcar notificação como não lida")
     void shouldSetNotificationAsUnread() {
         when(notificationRepository.save(any(Notification.class))).thenReturn(notification);
 
@@ -77,6 +81,7 @@ class CreateNotificationUnitTest {
     }
 
     @Test
+    @DisplayName("Deve definir ID do estoque corretamente")
     void shouldSetCorrectStockId() {
         when(notificationRepository.save(any(Notification.class))).thenReturn(notification);
 
