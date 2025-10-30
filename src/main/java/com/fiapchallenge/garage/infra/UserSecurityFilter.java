@@ -26,7 +26,7 @@ public class UserSecurityFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
     private final JwtHelper jwtHelper;
-    private final Logger logger = LoggerFactory.getLogger(UserSecurityFilter.class);
+    private final Logger log = LoggerFactory.getLogger(UserSecurityFilter.class);
 
     public UserSecurityFilter(UserDetailsService userDetailsService, JwtHelper jwtHelper) {
         this.userDetailsService = userDetailsService;
@@ -46,9 +46,9 @@ public class UserSecurityFilter extends OncePerRequestFilter {
             try {
                 username = jwtHelper.extractUsername(jwt);
             } catch (ExpiredJwtException e) {
-                logger.error("Token JWT expirado!");
+                log.error("Token JWT expirado!");
             } catch (Exception e) {
-                logger.error("Não é possível analisar o token JWT");
+                log.error("Não é possível analisar o token JWT");
             }
         }
 
