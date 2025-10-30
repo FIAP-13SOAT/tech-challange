@@ -46,7 +46,7 @@ docker-compose down
 
 1. Subir container docker do SonarQube:
 ```bash
-    docker-compose -f docker-compose-sonar.yml up -d
+    docker compose -f docker-compose-sonar.yml up -d
 ```
 
 2. Acessar o SonarQube em http://localhost:9000 (usuário e senha padrão: admin/admin)

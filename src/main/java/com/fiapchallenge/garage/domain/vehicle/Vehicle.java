@@ -1,7 +1,5 @@
 package com.fiapchallenge.garage.domain.vehicle;
 
-import com.fiapchallenge.garage.domain.vehicle.command.CreateVehicleCommand;
-
 import java.util.UUID;
 
 public class Vehicle {
@@ -14,16 +12,6 @@ public class Vehicle {
     String color;
     Integer year;
     String observations;
-
-    public Vehicle(CreateVehicleCommand command) {
-        this.model = command.model();
-        this.brand = command.brand();
-        this.licensePlate = command.licensePlate();
-        this.customerId = command.customerId();
-        this.color = command.color();
-        this.year = command.year();
-        this.observations = command.observations();
-    }
 
     public Vehicle(
             UUID id,
