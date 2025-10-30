@@ -20,7 +20,7 @@ public class CpfCnpj {
             return false;
         }
 
-        String cleanValue = value.replaceAll("[^0-9]", "");
+        String cleanValue = value.replaceAll("\\D", "");
 
         if (cleanValue.length() == 11) {
             return isValidCpf(cleanValue);

@@ -5,6 +5,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +26,7 @@ public class UserSecurityFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
     private final JwtHelper jwtHelper;
+    private final Logger log = LoggerFactory.getLogger(UserSecurityFilter.class);
 
     public UserSecurityFilter(UserDetailsService userDetailsService, JwtHelper jwtHelper) {
         this.userDetailsService = userDetailsService;
@@ -43,9 +46,9 @@ public class UserSecurityFilter extends OncePerRequestFilter {
             try {
                 username = jwtHelper.extractUsername(jwt);
             } catch (ExpiredJwtException e) {
-                System.out.println("Token JWT expirado");
+                log.error("Token JWT expirado!");
             } catch (Exception e) {
-                System.out.println("Não é possível analisar o token JWT");
+                log.error("Não é possível analisar o token JWT");
             }
         }
 

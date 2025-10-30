@@ -1,7 +1,5 @@
 package com.fiapchallenge.garage.domain.user;
 
-import com.fiapchallenge.garage.adapters.outbound.entities.UserEntity;
-
 import java.util.Optional;
 
 public interface UserRepository {

@@ -16,7 +16,7 @@ public class VehicleFixture {
     public static final String LICENSE_PLATE = "ABC-1234";
     public static final String OBSERVATIONS = "V8, 2 portas";
 
-    public static Vehicle createVehicle(UUID customerId, CreateVehicleService createVehicleService) throws Exception {
+    public static Vehicle createVehicle(UUID customerId, CreateVehicleService createVehicleService) {
         CreateVehicleCommand command = new CreateVehicleCommand(MODEL, BRAND, LICENSE_PLATE, COLOR, YEAR, OBSERVATIONS, customerId);
 
         return createVehicleService.handle(command);
