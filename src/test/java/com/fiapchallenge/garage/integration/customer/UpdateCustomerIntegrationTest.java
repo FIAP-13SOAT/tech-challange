@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UpdateCustomerIntegrationTest extends BaseIntegrationTest {
+class UpdateCustomerIntegrationTest extends BaseIntegrationTest {
 
     private final MockMvc mockMvc;
     private final JpaCustomerRepository customerRepository;
