@@ -16,6 +16,7 @@ public class ServiceOrderExecutionEntity {
     private LocalDateTime endDate;
     private long executionTime;
 
+    public ServiceOrderExecutionEntity(){}
 
     public ServiceOrderExecutionEntity(ServiceOrderExecution serviceOrderExcecution) {
         this.serviceOrderId = serviceOrderExcecution.getServiceOrderId();
