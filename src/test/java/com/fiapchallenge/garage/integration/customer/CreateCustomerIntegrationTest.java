@@ -19,7 +19,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -27,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-public class CreateCustomerIntegrationTest extends BaseIntegrationTest {
+class CreateCustomerIntegrationTest extends BaseIntegrationTest {
 
     private final MockMvc mockMvc;
     private final JpaCustomerRepository customerRepository;
@@ -86,7 +85,7 @@ public class CreateCustomerIntegrationTest extends BaseIntegrationTest {
                 .content(invalidCustomerJson))
                 .andExpect(status().isBadRequest());
 
-        assertThat(customerRepository.findAll()).hasSize(0);
+        assertThat(customerRepository.findAll()).isEmpty();
     }
 
     @Test

@@ -9,6 +9,9 @@ import com.fiapchallenge.garage.domain.quote.Quote;
 import com.fiapchallenge.garage.domain.quote.QuoteRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Component
 public class QuoteRepositoryImpl implements QuoteRepository {
 
@@ -28,9 +31,15 @@ public class QuoteRepositoryImpl implements QuoteRepository {
         CustomerEntity customer = jpaCustomerRepository.getReferenceById(quote.getCustomerId());
 
         QuoteEntity quoteEntity = new QuoteEntity(quote.getValue(), customer, serviceOrderEntity);
-        jpaQuoteRepository.save(quoteEntity);
+        quoteEntity = jpaQuoteRepository.save(quoteEntity);
 
         return convertFromEntity(quoteEntity);
+    }
+
+    @Override
+    public Optional<Quote> findById(UUID id) {
+        Optional<QuoteEntity> quoteEntity = jpaQuoteRepository.findById(id);
+        return quoteEntity.map(this::convertFromEntity);
     }
 
     private Quote convertFromEntity(QuoteEntity entity) {

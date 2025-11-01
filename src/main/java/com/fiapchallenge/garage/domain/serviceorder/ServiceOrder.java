@@ -90,6 +90,10 @@ public class ServiceOrder {
     public void startProgress() {
         if (this.status != ServiceOrderStatus.AWAITING_APPROVAL) {
             throw new IllegalStateException("Service order must be in AWAITING_APPROVAL status to start progress.");
+
+    public void startExecution() {
+        if (this.status != ServiceOrderStatus.AWAITING_APPROVAL) {
+            throw new IllegalStateException("Service order must be in AWAITING_APPROVAL status to be approved.");
         }
         this.status = ServiceOrderStatus.IN_PROGRESS;
     }
