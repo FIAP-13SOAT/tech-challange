@@ -11,7 +11,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "ServiceType", description = "ServiceType management API")
 public interface ServiceTypeOpenApiSpec {
@@ -25,4 +27,8 @@ public interface ServiceTypeOpenApiSpec {
     ResponseEntity<ServiceType> create(
         @Parameter(name = "CreateServiceType", description = "Dados do Tipo de Serviço", schema = @Schema(implementation = ServiceTypeRequestDTO.class))
         @Valid @RequestBody ServiceTypeRequestDTO serviceTypeRequestDTO);
+
+    @Operation(summary = "Listar tipos de serviço", description = "Lista todos os tipos de serviço disponíveis")
+    @GetMapping
+    ResponseEntity<List<ServiceType>> getAll();
 }

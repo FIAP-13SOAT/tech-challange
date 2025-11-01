@@ -5,6 +5,7 @@ import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -28,6 +29,13 @@ public class ServiceTypeRepositoryImpl implements ServiceTypeRepository {
     public ServiceType findByIdOrThrow(UUID serviceTypeId) {
         ServiceTypeEntity entity = jpaServiceTypeRepository.findById(serviceTypeId).orElseThrow();
         return convertFromEntity(entity);
+    }
+
+    @Override
+    public List<ServiceType> findAll() {
+        return jpaServiceTypeRepository.findAll().stream()
+                .map(this::convertFromEntity)
+                .toList();
     }
 
     private ServiceType convertFromEntity(ServiceTypeEntity serviceTypeEntity) {

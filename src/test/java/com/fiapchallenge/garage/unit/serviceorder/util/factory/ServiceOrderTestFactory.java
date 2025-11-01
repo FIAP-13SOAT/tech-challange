@@ -20,7 +20,8 @@ public class ServiceOrderTestFactory {
         return new CreateServiceOrderCommand(
                 OBSERVATIONS,
                 vehicleId,
-                getServiceTypeListIds()
+                getServiceTypeListIds(),
+                List.of()
         );
     }
 
@@ -30,7 +31,8 @@ public class ServiceOrderTestFactory {
                 OBSERVATIONS,
                 vehicleId,
                 STATUS,
-                SERVICE_TYPE_LIST
+                SERVICE_TYPE_LIST,
+                List.of()
         );
     }
 
@@ -40,7 +42,8 @@ public class ServiceOrderTestFactory {
                 OBSERVATIONS,
                 vehicleId,
                 status,
-                SERVICE_TYPE_LIST
+                SERVICE_TYPE_LIST,
+                List.of()
         );
     }
 

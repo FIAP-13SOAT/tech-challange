@@ -6,6 +6,7 @@ import java.util.UUID;
 public record CreateServiceOrderCommand(
         String observations,
         UUID vehicleId,
-        List<UUID> serviceTypeIdList
+        List<UUID> serviceTypeIdList,
+        List<StockItemCommand> stockItems
 ) {
 }

@@ -13,6 +13,7 @@ public class ServiceOrder {
     private UUID vehicleId;
     private ServiceOrderStatus status;
     private List<ServiceType> serviceTypeList;
+    private List<ServiceOrderItem> stockItems;
 
     public ServiceOrder(CreateServiceOrderCommand command) {
         this.observations = command.observations();
@@ -20,12 +21,13 @@ public class ServiceOrder {
         this.status = ServiceOrderStatus.CREATED;
     }
 
-    public ServiceOrder(UUID id, String observations, UUID vehicleId, ServiceOrderStatus status, List<ServiceType> serviceTypeList) {
+    public ServiceOrder(UUID id, String observations, UUID vehicleId, ServiceOrderStatus status, List<ServiceType> serviceTypeList, List<ServiceOrderItem> stockItems) {
         this.id = id;
         this.observations = observations;
         this.vehicleId = vehicleId;
         this.status = status;
         this.serviceTypeList = serviceTypeList;
+        this.stockItems = stockItems;
     }
 
     public UUID getId() {
@@ -52,6 +54,14 @@ public class ServiceOrder {
         this.serviceTypeList = serviceTypeList;
     }
 
+    public List<ServiceOrderItem> getStockItems() {
+        return stockItems;
+    }
+
+    public void setStockItems(List<ServiceOrderItem> stockItems) {
+        this.stockItems = stockItems;
+    }
+
     public List<UUID> getServiceTypeListIds() {
         return serviceTypeList.stream().map(ServiceType::getId).toList();
     }
@@ -68,5 +78,33 @@ public class ServiceOrder {
             throw new IllegalStateException("Service order must be in IN_DIAGNOSIS status to finish diagnostic.");
         }
         this.status = ServiceOrderStatus.AWAITING_APPROVAL;
+    }
+
+    public void cancel() {
+        if (this.status == ServiceOrderStatus.COMPLETED || this.status == ServiceOrderStatus.DELIVERED || this.status == ServiceOrderStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot cancel service order in status: " + this.status);
+        }
+        this.status = ServiceOrderStatus.CANCELLED;
+    }
+
+    public void startProgress() {
+        if (this.status != ServiceOrderStatus.AWAITING_APPROVAL) {
+            throw new IllegalStateException("Service order must be in AWAITING_APPROVAL status to start progress.");
+        }
+        this.status = ServiceOrderStatus.IN_PROGRESS;
+    }
+
+    public void complete() {
+        if (this.status != ServiceOrderStatus.IN_PROGRESS) {
+            throw new IllegalStateException("Service order must be in IN_PROGRESS status to complete.");
+        }
+        this.status = ServiceOrderStatus.COMPLETED;
+    }
+
+    public void deliver() {
+        if (this.status != ServiceOrderStatus.COMPLETED) {
+            throw new IllegalStateException("Service order must be in COMPLETED status to deliver.");
+        }
+        this.status = ServiceOrderStatus.DELIVERED;
     }
 }

@@ -2,18 +2,7 @@ package com.fiapchallenge.garage.adapters.outbound.entities;
 
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +33,9 @@ public class ServiceOrderEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicle_id", insertable = false, updatable = false)
     private VehicleEntity vehicle;
+
+    @OneToMany(mappedBy = "serviceOrderId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ServiceOrderItemEntity> stockItems;
 
     public ServiceOrderEntity() {
     }
@@ -106,6 +98,15 @@ public class ServiceOrderEntity {
 
     public ServiceOrderEntity setVehicle(VehicleEntity vehicle) {
         this.vehicle = vehicle;
+        return this;
+    }
+
+    public List<ServiceOrderItemEntity> getStockItems() {
+        return stockItems;
+    }
+
+    public ServiceOrderEntity setStockItems(List<ServiceOrderItemEntity> stockItems) {
+        this.stockItems = stockItems;
         return this;
     }
 }

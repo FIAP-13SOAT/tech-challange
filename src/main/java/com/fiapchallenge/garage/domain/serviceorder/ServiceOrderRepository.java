@@ -8,4 +8,6 @@ public interface ServiceOrderRepository {
     ServiceOrder save(ServiceOrder serviceOrder);
 
     Optional<ServiceOrder> findById(UUID id);
+
+    ServiceOrder findByIdOrThrow(UUID id);
 }
