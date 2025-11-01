@@ -1,0 +1,16 @@
+INSERT INTO stock (id, product_name, description, quantity, unit_price, category, min_threshold, created_at, updated_at) VALUES
+(gen_random_uuid(), 'Óleo Motor 5W30', 'Óleo sintético para motor', 50, 45.90, 'Lubrificantes', 10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(gen_random_uuid(), 'Filtro de Ar', 'Filtro de ar para veículos populares', 25, 28.50, 'Filtros', 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(gen_random_uuid(), 'Pastilha de Freio', 'Pastilha de freio dianteira', 15, 89.90, 'Freios', 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(gen_random_uuid(), 'Bateria 60Ah', 'Bateria automotiva 60 amperes', 8, 320.00, 'Elétrica', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(gen_random_uuid(), 'Pneu 185/65R15', 'Pneu radial aro 15', 12, 280.00, 'Pneus', 4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(gen_random_uuid(), 'Vela de Ignição', 'Vela de ignição iridium', 30, 18.90, 'Ignição', 8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(gen_random_uuid(), 'Correia Dentada', 'Correia dentada para motor 1.0', 20, 65.00, 'Transmissão', 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(gen_random_uuid(), 'Amortecedor Dianteiro', 'Amortecedor pressurizado', 6, 180.00, 'Suspensão', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(gen_random_uuid(), 'Radiador', 'Radiador de água com reservatório', 4, 450.00, 'Arrefecimento', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(gen_random_uuid(), 'Filtro de Combustível', 'Filtro de combustível flex', 18, 35.50, 'Filtros', 6, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(gen_random_uuid(), 'Disco de Freio', 'Disco de freio ventilado', 10, 120.00, 'Freios', 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(gen_random_uuid(), 'Alternador', 'Alternador 90A recondicionado', 3, 280.00, 'Elétrica', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(gen_random_uuid(), 'Cabo de Vela', 'Jogo de cabos de vela silicone', 12, 75.00, 'Ignição', 4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(gen_random_uuid(), 'Bomba de Combustível', 'Bomba elétrica de combustível', 5, 195.00, 'Combustível', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(gen_random_uuid(), 'Filtro de Óleo', 'Filtro de óleo lubrificante', 35, 22.90, 'Filtros', 10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

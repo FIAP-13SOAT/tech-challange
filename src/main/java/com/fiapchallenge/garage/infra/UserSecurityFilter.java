@@ -34,6 +34,18 @@ public class UserSecurityFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return path.startsWith("/swagger-ui") || 
+               path.startsWith("/v3/api-docs") || 
+               path.equals("/swagger-ui.html") ||
+               path.startsWith("/swagger-resources") ||
+               path.startsWith("/actuator/health") ||
+               path.equals("/users/login") ||
+               (path.equals("/users") && "POST".equals(request.getMethod()));
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
         final String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -45,11 +57,14 @@ public class UserSecurityFilter extends OncePerRequestFilter {
             jwt = authorizationHeader.substring(BEARER.length());
             try {
                 username = jwtHelper.extractUsername(jwt);
+                System.out.println("Token processado para usuário: " + username);
             } catch (ExpiredJwtException e) {
                 log.error("Token JWT expirado!");
             } catch (Exception e) {
                 log.error("Não é possível analisar o token JWT");
             }
+        } else {
+            System.out.println("Header Authorization não encontrado ou inválido para: " + request.getRequestURI());
         }
 
         if (Objects.nonNull(username) && Objects.isNull(SecurityContextHolder.getContext().getAuthentication())) {
