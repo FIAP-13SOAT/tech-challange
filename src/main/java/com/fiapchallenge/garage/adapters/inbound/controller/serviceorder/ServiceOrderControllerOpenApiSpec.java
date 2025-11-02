@@ -39,10 +39,6 @@ public interface ServiceOrderControllerOpenApiSpec {
     @PostMapping("/{id}/awaiting-approval")
     ResponseEntity<ServiceOrder> setAwaitingApproval(@PathVariable UUID id);
 
-    @Operation(summary = "Iniciar progresso", description = "Muda status para IN_PROGRESS")
-    @PostMapping("/{id}/in-progress")
-    ResponseEntity<ServiceOrder> setInProgress(@PathVariable UUID id);
-
     @Operation(summary = "Completar serviço", description = "Muda status para COMPLETED")
     @PostMapping("/{id}/completed")
     ResponseEntity<ServiceOrder> setCompleted(@PathVariable UUID id);
@@ -58,4 +54,24 @@ public interface ServiceOrderControllerOpenApiSpec {
     @Operation(summary = "Listar status", description = "Lista todos os status possíveis")
     @GetMapping("/status")
     ResponseEntity<List<ServiceOrderStatus>> getAllStatus();
+
+    @Operation(summary = "Obter detalhes da ordem de serviço", description = "Retorna os detalhes de uma ordem de serviço")
+    @GetMapping("/{id}")
+    ResponseEntity<ServiceOrder> getServiceOrderDetails(@PathVariable UUID id);
+
+    @Operation(summary = "Adicionar itens de estoque", description = "Adiciona itens de estoque à ordem de serviço")
+    @PostMapping("/{id}/stock-items")
+    ResponseEntity<ServiceOrder> addStockItems(@PathVariable UUID id, @RequestBody List<com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.StockItemDTO> stockItems);
+
+    @Operation(summary = "Remover itens de estoque", description = "Remove itens de estoque da ordem de serviço")
+    @DeleteMapping("/{id}/stock-items")
+    ResponseEntity<ServiceOrder> removeStockItems(@PathVariable UUID id, @RequestBody List<com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.StockItemDTO> stockItems);
+
+    @Operation(summary = "Adicionar tipos de serviço", description = "Adiciona tipos de serviço à ordem de serviço")
+    @PostMapping("/{id}/service-types")
+    ResponseEntity<ServiceOrder> addServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds);
+
+    @Operation(summary = "Remover tipos de serviço", description = "Remove tipos de serviço da ordem de serviço")
+    @DeleteMapping("/{id}/service-types")
+    ResponseEntity<ServiceOrder> removeServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds);
 }

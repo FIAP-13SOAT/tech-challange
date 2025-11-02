@@ -90,10 +90,6 @@ public class ServiceOrder {
     public void startProgress() {
         if (this.status != ServiceOrderStatus.AWAITING_APPROVAL) {
             throw new IllegalStateException("Service order must be in AWAITING_APPROVAL status to start progress.");
-
-    public void startExecution() {
-        if (this.status != ServiceOrderStatus.AWAITING_APPROVAL) {
-            throw new IllegalStateException("Service order must be in AWAITING_APPROVAL status to be approved.");
         }
         this.status = ServiceOrderStatus.IN_PROGRESS;
     }
@@ -110,5 +106,37 @@ public class ServiceOrder {
             throw new IllegalStateException("Service order must be in COMPLETED status to deliver.");
         }
         this.status = ServiceOrderStatus.DELIVERED;
+    }
+
+    public void addStockItems(List<ServiceOrderItem> items) {
+        if (this.stockItems == null) {
+            this.stockItems = new java.util.ArrayList<>();
+        }
+        this.stockItems.addAll(items);
+    }
+
+    public void removeStockItems(List<ServiceOrderItem> items) {
+        if (this.stockItems != null) {
+            for (ServiceOrderItem item : items) {
+                this.stockItems.removeIf(existing -> 
+                    existing.getStockId().equals(item.getStockId()) && 
+                    existing.getQuantity().equals(item.getQuantity()));
+            }
+        }
+    }
+
+    public void addServiceTypes(List<ServiceType> services) {
+        if (this.serviceTypeList == null) {
+            this.serviceTypeList = new java.util.ArrayList<>();
+        }
+        this.serviceTypeList.addAll(services);
+    }
+
+    public void removeServiceTypes(List<ServiceType> services) {
+        if (this.serviceTypeList != null) {
+            for (ServiceType service : services) {
+                this.serviceTypeList.removeIf(existing -> existing.getId().equals(service.getId()));
+            }
+        }
     }
 }

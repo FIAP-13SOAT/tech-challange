@@ -1,22 +1,27 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.serviceorder;
 
 import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.CreateServiceOrderDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.StockItemDTO;
 import com.fiapchallenge.garage.application.serviceorder.CancelServiceOrderUseCase;
+import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
 import com.fiapchallenge.garage.application.serviceorder.CompleteServiceOrderUseCase;
 import com.fiapchallenge.garage.application.serviceorder.CreateServiceOrderUseCase;
 import com.fiapchallenge.garage.application.serviceorder.DeliverServiceOrderUseCase;
 import com.fiapchallenge.garage.application.serviceorder.FinishServiceOrderDiagnosticUseCase;
 import com.fiapchallenge.garage.application.serviceorder.StartServiceOrderDiagnosticUseCase;
-import com.fiapchallenge.garage.application.serviceorder.StartServiceOrderProgressUseCase;
+
 import com.fiapchallenge.garage.application.serviceorder.command.CancelServiceOrderCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.CompleteServiceOrderCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.CreateServiceOrderCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.DeliverServiceOrderCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.FinishServiceOrderDiagnosticCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrderDiagnosticCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrderProgressCommand;
+
 import com.fiapchallenge.garage.application.serviceorder.command.StockItemCommand;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderItem;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -33,25 +38,31 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     private final CreateServiceOrderUseCase createServiceOrderUseCase;
     private final StartServiceOrderDiagnosticUseCase startServiceOrderDiagnosticUseCase;
     private final FinishServiceOrderDiagnosticUseCase finishServiceOrderDiagnosticUseCase;
-    private final StartServiceOrderProgressUseCase startServiceOrderProgressUseCase;
+
     private final CompleteServiceOrderUseCase completeServiceOrderUseCase;
     private final DeliverServiceOrderUseCase deliverServiceOrderUseCase;
     private final CancelServiceOrderUseCase cancelServiceOrderUseCase;
+    private final ServiceOrderRepository serviceOrderRepository;
+    private final ServiceTypeRepository serviceTypeRepository;
 
     public ServiceOrderController(CreateServiceOrderUseCase createServiceOrderUseCase,
                                  StartServiceOrderDiagnosticUseCase startServiceOrderDiagnosticUseCase,
                                  FinishServiceOrderDiagnosticUseCase finishServiceOrderDiagnosticUseCase,
-                                 StartServiceOrderProgressUseCase startServiceOrderProgressUseCase,
+
                                  CompleteServiceOrderUseCase completeServiceOrderUseCase,
                                  DeliverServiceOrderUseCase deliverServiceOrderUseCase,
-                                 CancelServiceOrderUseCase cancelServiceOrderUseCase) {
+                                 CancelServiceOrderUseCase cancelServiceOrderUseCase,
+                                 ServiceOrderRepository serviceOrderRepository,
+                                 ServiceTypeRepository serviceTypeRepository) {
         this.createServiceOrderUseCase = createServiceOrderUseCase;
         this.startServiceOrderDiagnosticUseCase = startServiceOrderDiagnosticUseCase;
         this.finishServiceOrderDiagnosticUseCase = finishServiceOrderDiagnosticUseCase;
-        this.startServiceOrderProgressUseCase = startServiceOrderProgressUseCase;
+
         this.completeServiceOrderUseCase = completeServiceOrderUseCase;
         this.deliverServiceOrderUseCase = deliverServiceOrderUseCase;
         this.cancelServiceOrderUseCase = cancelServiceOrderUseCase;
+        this.serviceOrderRepository = serviceOrderRepository;
+        this.serviceTypeRepository = serviceTypeRepository;
     }
 
     @PostMapping
@@ -86,13 +97,6 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         return ResponseEntity.ok(serviceOrder);
     }
 
-    @PostMapping("/{id}/in-progress")
-    public ResponseEntity<ServiceOrder> setInProgress(@PathVariable UUID id) {
-        StartServiceOrderProgressCommand command = new StartServiceOrderProgressCommand(id);
-        ServiceOrder serviceOrder = startServiceOrderProgressUseCase.handle(command);
-        return ResponseEntity.ok(serviceOrder);
-    }
-
     @PostMapping("/{id}/completed")
     public ResponseEntity<ServiceOrder> setCompleted(@PathVariable UUID id) {
         CompleteServiceOrderCommand command = new CompleteServiceOrderCommand(id);
@@ -117,5 +121,51 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     @GetMapping("/status")
     public ResponseEntity<List<ServiceOrderStatus>> getAllStatus() {
         return ResponseEntity.ok(Arrays.asList(ServiceOrderStatus.values()));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ServiceOrder> getServiceOrderDetails(@PathVariable UUID id) {
+        ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(id);
+        return ResponseEntity.ok(serviceOrder);
+    }
+
+    @PostMapping("/{id}/stock-items")
+    public ResponseEntity<ServiceOrder> addStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
+        ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(id);
+        List<ServiceOrderItem> items = stockItems.stream()
+                .map(item -> new ServiceOrderItem(null, item.stockId(), item.quantity()))
+                .collect(java.util.stream.Collectors.toList());
+        serviceOrder.addStockItems(items);
+        return ResponseEntity.ok(serviceOrderRepository.save(serviceOrder));
+    }
+
+    @DeleteMapping("/{id}/stock-items")
+    public ResponseEntity<ServiceOrder> removeStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
+        ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(id);
+        List<ServiceOrderItem> items = stockItems.stream()
+                .map(item -> new ServiceOrderItem(null, item.stockId(), item.quantity()))
+                .collect(java.util.stream.Collectors.toList());
+        serviceOrder.removeStockItems(items);
+        return ResponseEntity.ok(serviceOrderRepository.save(serviceOrder));
+    }
+
+    @PostMapping("/{id}/service-types")
+    public ResponseEntity<ServiceOrder> addServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds) {
+        ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(id);
+        List<ServiceType> serviceTypes = serviceTypeIds.stream()
+                .map(serviceTypeRepository::findByIdOrThrow)
+                .collect(java.util.stream.Collectors.toList());
+        serviceOrder.addServiceTypes(serviceTypes);
+        return ResponseEntity.ok(serviceOrderRepository.save(serviceOrder));
+    }
+
+    @DeleteMapping("/{id}/service-types")
+    public ResponseEntity<ServiceOrder> removeServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds) {
+        ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(id);
+        List<ServiceType> serviceTypes = serviceTypeIds.stream()
+                .map(serviceTypeRepository::findByIdOrThrow)
+                .collect(java.util.stream.Collectors.toList());
+        serviceOrder.removeServiceTypes(serviceTypes);
+        return ResponseEntity.ok(serviceOrderRepository.save(serviceOrder));
     }
 }

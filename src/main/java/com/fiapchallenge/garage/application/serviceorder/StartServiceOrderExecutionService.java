@@ -25,7 +25,7 @@ public class StartServiceOrderExecutionService implements StartServiceOrderExecu
         ServiceOrder serviceOrder = serviceOrderRepository.findById(command.id())
                 .orElseThrow(() -> new IllegalArgumentException("Ordem de serviço não encontrada"));
 
-        serviceOrder.startExecution();
+        serviceOrder.startProgress();
         serviceOrderRepository.save(serviceOrder);
         ServiceOrderExecution serviceOrderExecution = new ServiceOrderExecution(command.id());
         serviceOrderExecution.start();

@@ -25,7 +25,7 @@ public class FinishServiceOrderExecutionService implements FinishServiceOrderExe
         ServiceOrder serviceOrder = serviceOrderRepository.findById(command.id())
                 .orElseThrow(() -> new IllegalArgumentException("Ordem de serviço não encontrada"));
 
-        serviceOrder.finishExecution();
+        serviceOrder.complete();
         serviceOrderRepository.save(serviceOrder);
         ServiceOrderExecution serviceOrderExecution = serviceOrderExecutionRepository.findById(command.id())
                 .orElseThrow(() -> new IllegalArgumentException("Execução da ordem de serviço não encontrada"));
