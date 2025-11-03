@@ -37,18 +37,48 @@ public class StockEntity {
     @Column(name = "min_threshold")
     private Integer minThreshold;
 
-    public StockEntity() {}
+    public StockEntity() {
+        // Default constructor required by JPA
+    }
 
-    public StockEntity(UUID id, String productName, String description, Integer quantity, BigDecimal unitPrice, String category, LocalDateTime createdAt, LocalDateTime updatedAt, Integer minThreshold) {
-        this.id = id;
-        this.productName = productName;
-        this.description = description;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.category = category;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.minThreshold = minThreshold;
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private UUID id;
+        private String productName;
+        private String description;
+        private Integer quantity;
+        private BigDecimal unitPrice;
+        private String category;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        private Integer minThreshold;
+
+        public Builder id(UUID id) { this.id = id; return this; }
+        public Builder productName(String productName) { this.productName = productName; return this; }
+        public Builder description(String description) { this.description = description; return this; }
+        public Builder quantity(Integer quantity) { this.quantity = quantity; return this; }
+        public Builder unitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; return this; }
+        public Builder category(String category) { this.category = category; return this; }
+        public Builder createdAt(LocalDateTime createdAt) { this.createdAt = createdAt; return this; }
+        public Builder updatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; return this; }
+        public Builder minThreshold(Integer minThreshold) { this.minThreshold = minThreshold; return this; }
+
+        public StockEntity build() {
+            StockEntity entity = new StockEntity();
+            entity.id = this.id;
+            entity.productName = this.productName;
+            entity.description = this.description;
+            entity.quantity = this.quantity;
+            entity.unitPrice = this.unitPrice;
+            entity.category = this.category;
+            entity.createdAt = this.createdAt;
+            entity.updatedAt = this.updatedAt;
+            entity.minThreshold = this.minThreshold;
+            return entity;
+        }
     }
 
     public UUID getId() {

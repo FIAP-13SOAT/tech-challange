@@ -47,11 +47,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) //NOSONAR para essa API, desabilitar o csrf é correto
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                        .anyRequest().permitAll()
-                ).sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers("/users/login").permitAll()
+                        .requestMatchers(ENDPOINT_SWAGGER).permitAll()
+                        .anyRequest().authenticated()
+                ).sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

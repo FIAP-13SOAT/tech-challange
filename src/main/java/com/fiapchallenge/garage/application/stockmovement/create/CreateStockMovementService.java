@@ -19,16 +19,15 @@ public class CreateStockMovementService implements CreateStockMovementUseCase {
     @Override
     public void logMovement(UUID stockId, StockMovement.MovementType type, Integer quantity, 
                            Integer previousQuantity, Integer newQuantity, String reason) {
-        StockMovement movement = new StockMovement(
-                null,
-                stockId,
-                type,
-                quantity,
-                previousQuantity,
-                newQuantity,
-                reason,
-                LocalDateTime.now()
-        );
+        StockMovement movement = StockMovement.builder()
+                .stockId(stockId)
+                .movementType(type)
+                .quantity(quantity)
+                .previousQuantity(previousQuantity)
+                .newQuantity(newQuantity)
+                .reason(reason)
+                .createdAt(LocalDateTime.now())
+                .build();
         
         stockMovementRepository.save(movement);
     }

@@ -32,7 +32,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <sonar.host.url>http://localhost:9000</sonar.host.url>
         <sonar.projectKey>garage-tech-challenge</sonar.projectKey>
-        <sonar.token>sqp_57baccf38dce58b0f202e1fe45cb0a81f1f29256</sonar.token>
+        <sonar.token>sqp_63038a3a7f07045885599f809be7fc53c10bb89d</sonar.token>
         <sonar.projectName>garage-tech-challenge</sonar.projectName>
         <jwt.version>0.11.2</jwt.version>
     </properties>

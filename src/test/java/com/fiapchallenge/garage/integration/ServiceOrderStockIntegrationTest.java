@@ -3,11 +3,9 @@ package com.fiapchallenge.garage.integration;
 import com.fiapchallenge.garage.adapters.outbound.repositories.serviceorder.JpaServiceOrderRepository;
 import com.fiapchallenge.garage.application.customer.create.CreateCustomerService;
 import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeService;
-import com.fiapchallenge.garage.application.stock.create.CreateStockService;
 import com.fiapchallenge.garage.application.vehicle.CreateVehicleService;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
-import com.fiapchallenge.garage.domain.stock.command.CreateStockCommand;
 import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
 import com.fiapchallenge.garage.integration.fixtures.ServiceTypeFixture;
 import com.fiapchallenge.garage.integration.fixtures.VehicleFixture;
@@ -29,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
+class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -100,10 +98,6 @@ public class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceOrderJson))
                 .andExpect(status().isOk());
-                
-        com.fiapchallenge.garage.adapters.outbound.entities.ServiceOrderEntity createdOrder = 
-            serviceOrderRepository.findAll().getLast();
-        UUID orderId = createdOrder.getId();
 
         Stock stockAfterOrder = stockRepository.findById(stockId).orElseThrow();
         assertThat(stockAfterOrder.getQuantity()).isEqualTo(initialStock.getQuantity() - 5);
@@ -163,12 +157,11 @@ public class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
                 
         com.fiapchallenge.garage.adapters.outbound.entities.ServiceOrderEntity createdOrder = 
             serviceOrderRepository.findAll().getLast();
-        UUID orderId = createdOrder.getId();
         
         Stock stockAfterOrder = stockRepository.findById(stockId).orElseThrow();
         assertThat(stockAfterOrder.getQuantity()).isEqualTo(initialStock.getQuantity() - 3);
         
-        mockMvc.perform(post("/service-orders/" + orderId + "/cancelled")
+        mockMvc.perform(post("/service-orders/" + createdOrder.getId() + "/cancelled")
                         .header("Authorization", getAuthToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

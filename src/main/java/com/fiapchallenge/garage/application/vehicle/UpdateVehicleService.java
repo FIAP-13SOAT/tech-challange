@@ -19,16 +19,16 @@ public class UpdateVehicleService implements UpdateVehicleUseCase {
         Vehicle existingVehicle = vehicleRepository.findById(command.id())
                 .orElseThrow(() -> new RuntimeException("Vehicle not found"));
 
-        Vehicle updatedVehicle = new Vehicle(
-                command.id(),
-                command.model(),
-                command.brand(),
-                existingVehicle.getLicensePlate(),
-                existingVehicle.getCustomerId(),
-                command.color(),
-                command.year(),
-                command.observations()
-        );
+        Vehicle updatedVehicle = Vehicle.builder()
+                .id(command.id())
+                .model(command.model())
+                .brand(command.brand())
+                .licensePlate(existingVehicle.getLicensePlate())
+                .customerId(existingVehicle.getCustomerId())
+                .color(command.color())
+                .year(command.year())
+                .observations(command.observations())
+                .build();
 
         return vehicleRepository.update(updatedVehicle);
     }

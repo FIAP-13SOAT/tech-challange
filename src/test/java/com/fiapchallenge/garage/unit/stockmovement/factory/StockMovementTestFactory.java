@@ -8,28 +8,28 @@ import java.util.UUID;
 public class StockMovementTestFactory {
 
     public static StockMovement createInMovement() {
-        return new StockMovement(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                StockMovement.MovementType.IN,
-                20,
-                50,
-                70,
-                "Entrada de estoque",
-                LocalDateTime.now()
-        );
+        return StockMovement.builder()
+                .id(UUID.randomUUID())
+                .stockId(UUID.randomUUID())
+                .movementType(StockMovement.MovementType.IN)
+                .quantity(20)
+                .previousQuantity(50)
+                .newQuantity(70)
+                .reason("Entrada de estoque")
+                .createdAt(LocalDateTime.now())
+                .build();
     }
 
     public static StockMovement createOutMovement() {
-        return new StockMovement(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                StockMovement.MovementType.OUT,
-                10,
-                50,
-                40,
-                "Saída de estoque",
-                LocalDateTime.now()
-        );
+        return StockMovement.builder()
+                .id(UUID.randomUUID())
+                .stockId(UUID.randomUUID())
+                .movementType(StockMovement.MovementType.OUT)
+                .quantity(10)
+                .previousQuantity(50)
+                .newQuantity(40)
+                .reason("Saída de estoque")
+                .createdAt(LocalDateTime.now())
+                .build();
     }
 }

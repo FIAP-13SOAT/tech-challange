@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Component
 public class VehicleRepositoryImpl implements VehicleRepository {
@@ -23,17 +22,7 @@ public class VehicleRepositoryImpl implements VehicleRepository {
     public Vehicle save(Vehicle vehicle) {
         VehicleEntity vehicleEntity = new VehicleEntity(vehicle);
         vehicleEntity = jpaVehicleRepository.save(vehicleEntity);
-
-        return new Vehicle(
-                vehicleEntity.getId(),
-                vehicleEntity.getModel(),
-                vehicleEntity.getBrand(),
-                vehicleEntity.getLicensePlate(),
-                vehicleEntity.getCustomerId(),
-                vehicleEntity.getColor(),
-                vehicleEntity.getYear(),
-                vehicleEntity.getObservations()
-        );
+        return convertToVehicle(vehicleEntity);
     }
 
     @Override
@@ -45,32 +34,14 @@ public class VehicleRepositoryImpl implements VehicleRepository {
     public List<Vehicle> findByCustomerId(UUID customerId) {
         return jpaVehicleRepository.findByCustomerId(customerId)
                 .stream()
-                .map(entity -> new Vehicle(
-                        entity.getId(),
-                        entity.getModel(),
-                        entity.getBrand(),
-                        entity.getLicensePlate(),
-                        entity.getCustomerId(),
-                        entity.getColor(),
-                        entity.getYear(),
-                        entity.getObservations()
-                ))
-                .collect(Collectors.toList());
+                .map(this::convertToVehicle)
+                .toList();
     }
     
     @Override
     public Optional<Vehicle> findById(UUID id) {
         return jpaVehicleRepository.findById(id)
-                .map(entity -> new Vehicle(
-                        entity.getId(),
-                        entity.getModel(),
-                        entity.getBrand(),
-                        entity.getLicensePlate(),
-                        entity.getCustomerId(),
-                        entity.getColor(),
-                        entity.getYear(),
-                        entity.getObservations()
-                ));
+                .map(this::convertToVehicle);
     }
     
     @Override
@@ -85,21 +56,24 @@ public class VehicleRepositoryImpl implements VehicleRepository {
         entity.setObservations(vehicle.getObservations());
         
         entity = jpaVehicleRepository.save(entity);
-        
-        return new Vehicle(
-                entity.getId(),
-                entity.getModel(),
-                entity.getBrand(),
-                entity.getLicensePlate(),
-                entity.getCustomerId(),
-                entity.getColor(),
-                entity.getYear(),
-                entity.getObservations()
-        );
+        return convertToVehicle(entity);
     }
     
     @Override
     public void deleteById(UUID id) {
         jpaVehicleRepository.deleteById(id);
+    }
+
+    private Vehicle convertToVehicle(VehicleEntity entity) {
+        return Vehicle.builder()
+                .id(entity.getId())
+                .model(entity.getModel())
+                .brand(entity.getBrand())
+                .licensePlate(entity.getLicensePlate())
+                .customerId(entity.getCustomerId())
+                .color(entity.getColor())
+                .year(entity.getYear())
+                .observations(entity.getObservations())
+                .build();
     }
 }

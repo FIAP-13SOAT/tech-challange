@@ -30,16 +30,15 @@ public class CreateVehicleService implements CreateVehicleUseCase {
             throw new SoatValidationException("Necessário informar um cliente válido.");
         }
 
-        Vehicle vehicle = new Vehicle(
-            null,
-            command.model(),
-            command.brand(),
-            command.licensePlate(),
-            command.customerId(),
-            command.color(),
-            command.year(),
-            command.observations()
-        );
+        Vehicle vehicle = Vehicle.builder()
+            .model(command.model())
+            .brand(command.brand())
+            .licensePlate(command.licensePlate())
+            .customerId(command.customerId())
+            .color(command.color())
+            .year(command.year())
+            .observations(command.observations())
+            .build();
 
         return vehicleRepository.save(vehicle);
     }

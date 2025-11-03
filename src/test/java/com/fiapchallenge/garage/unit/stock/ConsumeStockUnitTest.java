@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.unit.stock;
 
-import com.fiapchallenge.garage.application.notification.create.CreateNotificationUseCase;
+import com.fiapchallenge.garage.application.stock.StockLevelChecker;
 import com.fiapchallenge.garage.application.stock.consume.ConsumeStockService;
 import com.fiapchallenge.garage.application.stockmovement.create.CreateStockMovementUseCase;
 import com.fiapchallenge.garage.domain.stock.Stock;
@@ -31,7 +31,7 @@ class ConsumeStockUnitTest {
     private StockRepository stockRepository;
 
     @Mock
-    private CreateNotificationUseCase createNotificationUseCase;
+    private StockLevelChecker stockLevelChecker;
 
     @Mock
     private CreateStockMovementUseCase createStockMovementUseCase;
@@ -103,6 +103,6 @@ class ConsumeStockUnitTest {
 
         consumeStockService.handle(lowCommand);
 
-        verify(createNotificationUseCase).createLowStockNotification(any(Stock.class));
+        verify(stockLevelChecker).checkStockLevelAsync(any(Stock.class));
     }
 }

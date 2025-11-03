@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ServiceOrderStatusTransitionIntegrationTest extends BaseIntegrationTest {
+class ServiceOrderStatusTransitionIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -85,14 +85,11 @@ public class ServiceOrderStatusTransitionIntegrationTest extends BaseIntegration
                 }
         """.formatted(vehicleId.toString(), serviceTypeId.toString());
 
-        String response = mockMvc.perform(post("/service-orders")
+        mockMvc.perform(post("/service-orders")
                         .header("Authorization", getAuthToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceOrderJson))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .andExpect(status().isOk());
 
         ServiceOrderEntity serviceOrder = serviceOrderRepository.findAll().getLast();
         return serviceOrder.getId();

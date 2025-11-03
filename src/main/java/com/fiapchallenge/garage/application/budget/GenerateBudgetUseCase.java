@@ -4,6 +4,7 @@ import com.fiapchallenge.garage.domain.budget.Budget;
 import com.fiapchallenge.garage.domain.budget.BudgetItem;
 import com.fiapchallenge.garage.domain.budget.BudgetItemType;
 import com.fiapchallenge.garage.domain.budget.BudgetRepository;
+import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
@@ -34,7 +35,7 @@ public class GenerateBudgetUseCase {
 
         serviceOrder.getStockItems().forEach(item -> {
             var stock = stockRepository.findById(item.getStockId())
-                .orElseThrow(() -> new RuntimeException("Stock not found: " + item.getStockId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Stock not found: " + item.getStockId()));
             items.add(new BudgetItem(stock.getProductName(), stock.getUnitPrice(), item.getQuantity(), BudgetItemType.STOCK_ITEM));
         });
 

@@ -3,7 +3,7 @@ package com.fiapchallenge.garage.application.vehicle;
 import com.fiapchallenge.garage.domain.vehicle.VehicleRepository;
 import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
+
 
 import java.util.UUID;
 

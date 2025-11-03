@@ -17,16 +17,48 @@ public class Stock {
     private Integer minThreshold;
 
 
-    public Stock(UUID id, String productName, String description, Integer quantity, BigDecimal unitPrice, String category, LocalDateTime createdAt, LocalDateTime updatedAt, Integer minThreshold) {
-        this.id = id;
-        this.productName = productName;
-        this.description = description;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.category = category;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.minThreshold = minThreshold;
+    public Stock() {
+        // Default constructor for builder pattern
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private UUID id;
+        private String productName;
+        private String description;
+        private Integer quantity;
+        private BigDecimal unitPrice;
+        private String category;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        private Integer minThreshold;
+
+        public Builder id(UUID id) { this.id = id; return this; }
+        public Builder productName(String productName) { this.productName = productName; return this; }
+        public Builder description(String description) { this.description = description; return this; }
+        public Builder quantity(Integer quantity) { this.quantity = quantity; return this; }
+        public Builder unitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; return this; }
+        public Builder category(String category) { this.category = category; return this; }
+        public Builder createdAt(LocalDateTime createdAt) { this.createdAt = createdAt; return this; }
+        public Builder updatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; return this; }
+        public Builder minThreshold(Integer minThreshold) { this.minThreshold = minThreshold; return this; }
+
+        public Stock build() {
+            Stock stock = new Stock();
+            stock.id = this.id;
+            stock.productName = this.productName;
+            stock.description = this.description;
+            stock.quantity = this.quantity;
+            stock.unitPrice = this.unitPrice;
+            stock.category = this.category;
+            stock.createdAt = this.createdAt;
+            stock.updatedAt = this.updatedAt;
+            stock.minThreshold = this.minThreshold;
+            return stock;
+        }
     }
 
     public UUID getId() {
@@ -112,5 +144,19 @@ public class Stock {
 
     public boolean isLowStock() {
         return minThreshold != null && quantity <= minThreshold;
+    }
+
+    public Stock copy() {
+        return Stock.builder()
+                .id(this.id)
+                .productName(this.productName)
+                .description(this.description)
+                .quantity(this.quantity)
+                .unitPrice(this.unitPrice)
+                .category(this.category)
+                .createdAt(this.createdAt)
+                .updatedAt(this.updatedAt)
+                .minThreshold(this.minThreshold)
+                .build();
     }
 }

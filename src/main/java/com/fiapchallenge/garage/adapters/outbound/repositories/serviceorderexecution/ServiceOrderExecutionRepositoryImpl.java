@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Component
 public class ServiceOrderExecutionRepositoryImpl implements ServiceOrderExecutionRepository {
@@ -35,7 +34,7 @@ public class ServiceOrderExecutionRepositoryImpl implements ServiceOrderExecutio
             LocalDateTime startRange,
             LocalDateTime endRange
     ){
-        return jpaServiceOrderExecutionRepository.findByStartDateBetweenOrderByStartDateAsc(startRange, endRange).stream().map(this::convertFromEntity).collect(Collectors.toList());
+        return jpaServiceOrderExecutionRepository.findByStartDateBetweenOrderByStartDateAsc(startRange, endRange).stream().map(this::convertFromEntity).toList();
     }
 
     private ServiceOrderExecution convertFromEntity(ServiceOrderExecutionEntity serviceOrderExecutionEntity) {

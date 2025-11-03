@@ -57,14 +57,14 @@ public class UserSecurityFilter extends OncePerRequestFilter {
             jwt = authorizationHeader.substring(BEARER.length());
             try {
                 username = jwtHelper.extractUsername(jwt);
-                System.out.println("Token processado para usuário: " + username);
+                log.info("Token processado para usuário: {}", username);
             } catch (ExpiredJwtException e) {
                 log.error("Token JWT expirado!");
             } catch (Exception e) {
                 log.error("Não é possível analisar o token JWT");
             }
         } else {
-            System.out.println("Header Authorization não encontrado ou inválido para: " + request.getRequestURI());
+            log.debug("Header Authorization não encontrado ou inválido para: {}", request.getRequestURI());
         }
 
         if (Objects.nonNull(username) && Objects.isNull(SecurityContextHolder.getContext().getAuthentication())) {

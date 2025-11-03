@@ -2,7 +2,7 @@ package com.fiapchallenge.garage.integration.stock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
-import org.junit.jupiter.api.Disabled;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -34,6 +34,7 @@ class StockNotificationIntegrationTest extends BaseIntegrationTest {
             """;
 
         String createResponse = mockMvc.perform(post("/stock")
+                        .header("Authorization", getAuthToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createStockJson))
                 .andExpect(status().isOk())
@@ -47,22 +48,26 @@ class StockNotificationIntegrationTest extends BaseIntegrationTest {
         String stockId = objectMapper.readTree(createResponse).get("id").asText();
 
         mockMvc.perform(post("/stock/{id}/add", stockId)
+                        .header("Authorization", getAuthToken())
                         .param("quantity", "15"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(15));
         
         mockMvc.perform(post("/stock/{id}/consume", stockId)
+                        .header("Authorization", getAuthToken())
                         .param("quantity", "8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(7));
 
-        mockMvc.perform(get("/notifications/unread"))
+        mockMvc.perform(get("/notifications/unread")
+                        .header("Authorization", getAuthToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content[?(@.type == 'LOW_STOCK' && @.stockId == '" + stockId + "')]").exists())
                 .andExpect(jsonPath("$.content[?(@.message =~ /.*Estoque baixo.*Filtro de Ar Test.*/)]").exists());
 
-        String unreadResponse = mockMvc.perform(get("/notifications/unread"))
+        String unreadResponse = mockMvc.perform(get("/notifications/unread")
+                        .header("Authorization", getAuthToken()))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -74,14 +79,17 @@ class StockNotificationIntegrationTest extends BaseIntegrationTest {
                 .get("id")
                 .asText();
 
-        mockMvc.perform(put("/notifications/{id}/read", notificationId))
+        mockMvc.perform(put("/notifications/{id}/read", notificationId)
+                        .header("Authorization", getAuthToken()))
                 .andExpect(status().isNoContent());
 
-        mockMvc.perform(get("/notifications/unread"))
+        mockMvc.perform(get("/notifications/unread")
+                        .header("Authorization", getAuthToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[?(@.id == '" + notificationId + "')]").doesNotExist());
 
-        mockMvc.perform(get("/notifications"))
+        mockMvc.perform(get("/notifications")
+                        .header("Authorization", getAuthToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[?(@.id == '" + notificationId + "' && @.read == true)]").exists());
     }
@@ -99,6 +107,7 @@ class StockNotificationIntegrationTest extends BaseIntegrationTest {
             """;
 
         String createResponse = mockMvc.perform(post("/stock")
+                        .header("Authorization", getAuthToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createStockJson))
                 .andExpect(status().isOk())
@@ -109,16 +118,19 @@ class StockNotificationIntegrationTest extends BaseIntegrationTest {
         String stockId = objectMapper.readTree(createResponse).get("id").asText();
 
         mockMvc.perform(post("/stock/{id}/add", stockId)
+                        .header("Authorization", getAuthToken())
                         .param("quantity", "50"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(50));
 
         mockMvc.perform(post("/stock/{id}/consume", stockId)
+                        .header("Authorization", getAuthToken())
                         .param("quantity", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(40)); // 40 > 5 (threshold)
 
-        mockMvc.perform(get("/notifications/unread"))
+        mockMvc.perform(get("/notifications/unread")
+                        .header("Authorization", getAuthToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[?(@.stockId == '" + stockId + "')]").doesNotExist());
     }

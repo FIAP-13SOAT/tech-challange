@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.application.stock.consume;
 
-import com.fiapchallenge.garage.application.notification.create.CreateNotificationUseCase;
+import com.fiapchallenge.garage.application.stock.StockLevelChecker;
 import com.fiapchallenge.garage.application.stockmovement.create.CreateStockMovementUseCase;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
@@ -8,7 +8,6 @@ import com.fiapchallenge.garage.domain.stock.command.ConsumeStockCommand;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
 import com.fiapchallenge.garage.shared.exception.InsufficientStockException;
 import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,12 +16,12 @@ import java.time.LocalDateTime;
 public class ConsumeStockService implements ConsumeStockUseCase {
 
     private final StockRepository stockRepository;
-    private final CreateNotificationUseCase createNotificationUseCase;
+    private final StockLevelChecker stockLevelChecker;
     private final CreateStockMovementUseCase createStockMovementUseCase;
 
-    public ConsumeStockService(StockRepository stockRepository, CreateNotificationUseCase createNotificationUseCase, CreateStockMovementUseCase createStockMovementUseCase) {
+    public ConsumeStockService(StockRepository stockRepository, StockLevelChecker stockLevelChecker, CreateStockMovementUseCase createStockMovementUseCase) {
         this.stockRepository = stockRepository;
-        this.createNotificationUseCase = createNotificationUseCase;
+        this.stockLevelChecker = stockLevelChecker;
         this.createStockMovementUseCase = createStockMovementUseCase;
     }
 
@@ -57,15 +56,8 @@ public class ConsumeStockService implements ConsumeStockUseCase {
             "Saída de estoque"
         );
         
-        checkStockLevelAsync(updatedStock);
+        stockLevelChecker.checkStockLevelAsync(updatedStock);
 
         return updatedStock;
-    }
-
-    @Async
-    public void checkStockLevelAsync(Stock stock) {
-        if (stock.isLowStock()) {
-            createNotificationUseCase.createLowStockNotification(stock);
-        }
     }
 }

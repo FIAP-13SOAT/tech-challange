@@ -6,7 +6,6 @@ import com.fiapchallenge.garage.domain.stock.Stock;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Service
 public class CreateNotificationService implements CreateNotificationUseCase {

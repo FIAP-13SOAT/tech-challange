@@ -18,17 +18,16 @@ public class CreateStockService implements CreateStockUseCase {
 
     @Override
     public Stock handle(CreateStockCommand command) {
-        Stock stock = new Stock(
-                null,
-                command.productName(),
-                command.description(),
-                0,
-                command.unitPrice(),
-                command.category(),
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                command.minThreshold()
-        );
+        Stock stock = Stock.builder()
+                .productName(command.productName())
+                .description(command.description())
+                .quantity(0)
+                .unitPrice(command.unitPrice())
+                .category(command.category())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .minThreshold(command.minThreshold())
+                .build();
 
         return stockRepository.save(stock);
     }

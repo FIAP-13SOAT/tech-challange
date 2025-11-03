@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Component
 public class ServiceOrderRepositoryImpl implements ServiceOrderRepository {
@@ -35,9 +34,9 @@ public class ServiceOrderRepositoryImpl implements ServiceOrderRepository {
         ServiceOrderEntity savedEntity = jpaServiceOrderRepository.save(serviceOrderEntity);
 
         if (serviceOrder.getStockItems() != null && !serviceOrder.getStockItems().isEmpty()) {
-            List<ServiceOrderItemEntity> stockItemEntities = serviceOrder.getStockItems().stream()
+            List<ServiceOrderItemEntity> stockItemEntities = new java.util.ArrayList<>(serviceOrder.getStockItems().stream()
                     .map(item -> new ServiceOrderItemEntity(savedEntity.getId(), item.getStockId(), item.getQuantity()))
-                    .collect(Collectors.toList());
+                    .toList());
             savedEntity.setStockItems(stockItemEntities);
         }
 
@@ -57,14 +56,14 @@ public class ServiceOrderRepositoryImpl implements ServiceOrderRepository {
     }
 
     private ServiceOrder convertFromEntity(ServiceOrderEntity serviceOrderEntity) {
-        List<ServiceType> serviceTypeList = serviceOrderEntity.getServiceTypeList().stream().map(it ->
+        List<ServiceType> serviceTypeList = new java.util.ArrayList<>(serviceOrderEntity.getServiceTypeList().stream().map(it ->
                 new ServiceType(it.getId(), it.getValue(), it.getDescription())
-        ).collect(Collectors.toList());
+        ).toList());
 
         List<ServiceOrderItem> stockItems = serviceOrderEntity.getStockItems() != null ?
-                serviceOrderEntity.getStockItems().stream()
+                new java.util.ArrayList<>(serviceOrderEntity.getStockItems().stream()
                         .map(item -> new ServiceOrderItem(item.getId(), item.getStockId(), item.getQuantity()))
-                        .collect(Collectors.toList()) : new java.util.ArrayList<>();
+                        .toList()) : new java.util.ArrayList<>();
 
         return new ServiceOrder(
                 serviceOrderEntity.getId(),

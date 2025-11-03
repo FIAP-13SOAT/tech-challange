@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.domain.serviceorderexecution;
 
-import com.fiapchallenge.garage.adapters.outbound.entities.ServiceOrderExecutionEntity;
+
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -12,31 +12,31 @@ import java.util.UUID;
 public class StockTestFactory {
 
     public static Stock createStock() {
-        return new Stock(
-                UUID.randomUUID(),
-                "Óleo Motor 5W30",
-                "Óleo sintético para motor",
-                50,
-                new BigDecimal("45.90"),
-                "Lubrificantes",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                10
-        );
+        return Stock.builder()
+                .id(UUID.randomUUID())
+                .productName("Óleo Motor 5W30")
+                .description("Óleo sintético para motor")
+                .quantity(50)
+                .unitPrice(new BigDecimal("45.90"))
+                .category("Lubrificantes")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .minThreshold(10)
+                .build();
     }
 
     public static Stock createLowStock() {
-        return new Stock(
-                UUID.randomUUID(),
-                "Filtro de Ar",
-                "Filtro de ar para veículos",
-                5,
-                new BigDecimal("28.50"),
-                "Filtros",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                10
-        );
+        return Stock.builder()
+                .id(UUID.randomUUID())
+                .productName("Filtro de Ar")
+                .description("Filtro de ar para veículos")
+                .quantity(5)
+                .unitPrice(new BigDecimal("28.50"))
+                .category("Filtros")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .minThreshold(10)
+                .build();
     }
 
     public static CreateStockCommand createStockCommand() {

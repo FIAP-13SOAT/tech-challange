@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-public class DeleteVehicleIntegrationTest extends BaseIntegrationTest {
+class DeleteVehicleIntegrationTest extends BaseIntegrationTest {
 
     private final MockMvc mockMvc;
     private final CreateCustomerService createCustomerService;

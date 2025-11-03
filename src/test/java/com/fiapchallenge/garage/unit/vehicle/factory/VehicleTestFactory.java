@@ -17,7 +17,16 @@ public class VehicleTestFactory {
     public static final UUID CUSTOMER_ID = UUID.randomUUID();
 
     public static Vehicle build() {
-        return new Vehicle(ID, MODEL, BRAND, LICENSE_PLATE, CUSTOMER_ID, COLOR, YEAR, OBSERVATIONS);
+        return Vehicle.builder()
+                .id(ID)
+                .model(MODEL)
+                .brand(BRAND)
+                .licensePlate(LICENSE_PLATE)
+                .customerId(CUSTOMER_ID)
+                .color(COLOR)
+                .year(YEAR)
+                .observations(OBSERVATIONS)
+                .build();
     }
 
     public static CreateVehicleCommand buildCommand() {

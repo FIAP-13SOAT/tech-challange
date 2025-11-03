@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ServiceOrderManagementIntegrationTest extends BaseIntegrationTest {
+class ServiceOrderManagementIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

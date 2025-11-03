@@ -7,6 +7,7 @@ import com.fiapchallenge.garage.adapters.outbound.repositories.customer.JpaCusto
 import com.fiapchallenge.garage.adapters.outbound.repositories.serviceorder.JpaServiceOrderRepository;
 import com.fiapchallenge.garage.domain.quote.Quote;
 import com.fiapchallenge.garage.domain.quote.QuoteRepository;
+import com.fiapchallenge.garage.shared.mapper.QuoteMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -18,11 +19,13 @@ public class QuoteRepositoryImpl implements QuoteRepository {
     private final JpaQuoteRepository jpaQuoteRepository;
     private final JpaServiceOrderRepository jpaServiceOrderRepository;
     private final JpaCustomerRepository jpaCustomerRepository;
+    private final QuoteMapper quoteMapper;
 
-    public QuoteRepositoryImpl(JpaQuoteRepository jpaQuoteRepository, JpaServiceOrderRepository jpaServiceOrderRepository, JpaCustomerRepository jpaCustomerRepository) {
+    public QuoteRepositoryImpl(JpaQuoteRepository jpaQuoteRepository, JpaServiceOrderRepository jpaServiceOrderRepository, JpaCustomerRepository jpaCustomerRepository, QuoteMapper quoteMapper) {
         this.jpaQuoteRepository = jpaQuoteRepository;
         this.jpaServiceOrderRepository = jpaServiceOrderRepository;
         this.jpaCustomerRepository = jpaCustomerRepository;
+        this.quoteMapper = quoteMapper;
     }
 
     @Override
@@ -33,16 +36,12 @@ public class QuoteRepositoryImpl implements QuoteRepository {
         QuoteEntity quoteEntity = new QuoteEntity(quote.getValue(), customer, serviceOrderEntity);
         quoteEntity = jpaQuoteRepository.save(quoteEntity);
 
-        return convertFromEntity(quoteEntity);
+        return quoteMapper.toDomain(quoteEntity);
     }
 
     @Override
     public Optional<Quote> findById(UUID id) {
-        Optional<QuoteEntity> quoteEntity = jpaQuoteRepository.findById(id);
-        return quoteEntity.map(this::convertFromEntity);
+        return jpaQuoteRepository.findById(id).map(quoteMapper::toDomain);
     }
 
-    private Quote convertFromEntity(QuoteEntity entity) {
-        return new Quote(entity.getId(), entity.getCustomer().getId(), entity.getServiceOrder().getId(), entity.getValue());
-    }
 }

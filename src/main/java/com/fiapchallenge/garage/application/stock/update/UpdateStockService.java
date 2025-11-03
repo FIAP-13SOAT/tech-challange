@@ -21,17 +21,13 @@ public class UpdateStockService implements UpdateStockUseCase {
         Stock existingStock = stockRepository.findById(command.id())
                 .orElseThrow(() -> new RuntimeException("Stock not found"));
 
-        Stock updatedStock = new Stock(
-                command.id(),
-                command.productName(),
-                command.description(),
-                existingStock.getQuantity(),
-                command.unitPrice(),
-                command.category(),
-                existingStock.getCreatedAt(),
-                LocalDateTime.now(),
-                command.minThreshold()
-        );
+        Stock updatedStock = existingStock.copy()
+                .setProductName(command.productName())
+                .setDescription(command.description())
+                .setUnitPrice(command.unitPrice())
+                .setCategory(command.category())
+                .setUpdatedAt(LocalDateTime.now())
+                .setMinThreshold(command.minThreshold());
 
         return stockRepository.save(updatedStock);
     }

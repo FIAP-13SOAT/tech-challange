@@ -24,10 +24,10 @@ public class OpenApiConfig {
                 .description("Token JWT para autenticação. Ex: Bearer <token>");
 
         SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList("bearerAuth");
+                .addList(SECURITY_SCHEME_NAME);
         return new OpenAPI()
                 .components(new Components()
-                .addSecuritySchemes("bearerAuth", securityScheme))
+                .addSecuritySchemes(SECURITY_SCHEME_NAME, securityScheme))
                 .addSecurityItem(securityRequirement)
                 .info(new Info()
                         .title("Garage API")

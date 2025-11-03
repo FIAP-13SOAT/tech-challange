@@ -3,6 +3,7 @@ package com.fiapchallenge.garage.adapters.outbound.repositories.stock;
 import com.fiapchallenge.garage.adapters.outbound.entities.StockEntity;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
+import com.fiapchallenge.garage.shared.mapper.StockMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -14,31 +15,33 @@ import java.util.UUID;
 public class StockRepositoryImpl implements StockRepository {
 
     private final JpaStockRepository jpaStockRepository;
+    private final StockMapper stockMapper;
 
-    public StockRepositoryImpl(JpaStockRepository jpaStockRepository) {
+    public StockRepositoryImpl(JpaStockRepository jpaStockRepository, StockMapper stockMapper) {
         this.jpaStockRepository = jpaStockRepository;
+        this.stockMapper = stockMapper;
     }
 
     @Override
     public Stock save(Stock stock) {
-        StockEntity entity = toEntity(stock);
+        StockEntity entity = stockMapper.toEntity(stock);
 
         if (entity.getId() == null) {
             entity.setId(UUID.randomUUID());
         }
         
         StockEntity savedEntity = jpaStockRepository.save(entity);
-        return toDomain(savedEntity);
+        return stockMapper.toDomain(savedEntity);
     }
 
     @Override
     public Optional<Stock> findById(UUID id) {
-        return jpaStockRepository.findById(id).map(this::toDomain);
+        return jpaStockRepository.findById(id).map(stockMapper::toDomain);
     }
 
     @Override
     public Page<Stock> findAll(Pageable pageable) {
-        return jpaStockRepository.findAll(pageable).map(this::toDomain);
+        return jpaStockRepository.findAll(pageable).map(stockMapper::toDomain);
     }
 
     @Override
@@ -48,34 +51,7 @@ public class StockRepositoryImpl implements StockRepository {
 
     @Override
     public Optional<Stock> findByProductName(String productName) {
-        return jpaStockRepository.findByProductName(productName).map(this::toDomain);
+        return jpaStockRepository.findByProductName(productName).map(stockMapper::toDomain);
     }
 
-    private StockEntity toEntity(Stock stock) {
-        return new StockEntity(
-                stock.getId(),
-                stock.getProductName(),
-                stock.getDescription(),
-                stock.getQuantity(),
-                stock.getUnitPrice(),
-                stock.getCategory(),
-                stock.getCreatedAt(),
-                stock.getUpdatedAt(),
-                stock.getMinThreshold()
-        );
-    }
-
-    private Stock toDomain(StockEntity entity) {
-        return new Stock(
-                entity.getId(),
-                entity.getProductName(),
-                entity.getDescription(),
-                entity.getQuantity(),
-                entity.getUnitPrice(),
-                entity.getCategory(),
-                entity.getCreatedAt(),
-                entity.getUpdatedAt(),
-                entity.getMinThreshold()
-        );
-    }
 }

@@ -2,10 +2,11 @@ package com.fiapchallenge.garage.adapters.outbound.repository.budget;
 
 import com.fiapchallenge.garage.domain.budget.Budget;
 import com.fiapchallenge.garage.domain.budget.BudgetRepository;
-
+import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -60,9 +61,13 @@ public class BudgetRepositoryImpl implements BudgetRepository {
     public Budget findByServiceOrderIdOrThrow(UUID serviceOrderId) {
         String sql = "SELECT * FROM budget WHERE service_order_id = :serviceOrderId";
         
-        return jdbcTemplate.query(sql, Map.of("serviceOrderId", serviceOrderId), budgetRowMapper)
-                .stream()
+        List<Budget> result = jdbcTemplate.query(sql, Map.of("serviceOrderId", serviceOrderId), budgetRowMapper);
+        if (result == null) {
+            throw new ResourceNotFoundException("Budget not found for service order: " + serviceOrderId);
+        }
+        
+        return result.stream()
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Budget not found for service order: " + serviceOrderId));
+                .orElseThrow(() -> new ResourceNotFoundException("Budget not found for service order: " + serviceOrderId));
     }
 }

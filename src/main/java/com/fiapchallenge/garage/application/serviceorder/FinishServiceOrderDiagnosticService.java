@@ -5,31 +5,25 @@ import com.fiapchallenge.garage.application.quote.command.CreateQuoteCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.FinishServiceOrderDiagnosticCommand;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.shared.service.BaseServiceOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @Service
-public class FinishServiceOrderDiagnosticService implements FinishServiceOrderDiagnosticUseCase {
+public class FinishServiceOrderDiagnosticService extends BaseServiceOrderService implements FinishServiceOrderDiagnosticUseCase {
 
-    private final ServiceOrderRepository serviceOrderRepository;
     private final CreateQuoteUseCase createQuoteUseCase;
 
     public FinishServiceOrderDiagnosticService(ServiceOrderRepository serviceOrderRepository, CreateQuoteUseCase createQuoteUseCase) {
-        this.serviceOrderRepository = serviceOrderRepository;
+        super(serviceOrderRepository);
         this.createQuoteUseCase = createQuoteUseCase;
     }
 
     @Override
     public ServiceOrder handle(FinishServiceOrderDiagnosticCommand command) {
-        ServiceOrder serviceOrder = serviceOrderRepository.findById(command.id())
-                .orElseThrow(() -> new IllegalArgumentException("Ordem de Serviço não encontrada"));
-
-        serviceOrder.sendToApproval();
-        serviceOrderRepository.save(serviceOrder);
-
+        ServiceOrder serviceOrder = executeServiceOrderOperation(command.id(), ServiceOrder::sendToApproval);
         createQuoteUseCase.handle(new CreateQuoteCommand(serviceOrder));
-
         return serviceOrder;
     }
 }

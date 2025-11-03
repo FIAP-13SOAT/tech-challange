@@ -33,6 +33,7 @@ class StockMovementIntegrationTest extends BaseIntegrationTest {
             """;
 
         String createResponse = mockMvc.perform(post("/stock")
+                        .header("Authorization", getAuthToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createStockJson))
                 .andExpect(status().isOk())
@@ -43,16 +44,19 @@ class StockMovementIntegrationTest extends BaseIntegrationTest {
         String stockId = objectMapper.readTree(createResponse).get("id").asText();
 
         mockMvc.perform(post("/stock/{id}/add", stockId)
+                        .header("Authorization", getAuthToken())
                         .param("quantity", "50"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(50));
 
         mockMvc.perform(post("/stock/{id}/consume", stockId)
+                        .header("Authorization", getAuthToken())
                         .param("quantity", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(40));
 
         mockMvc.perform(get("/stock-movements")
+                        .header("Authorization", getAuthToken())
                         .param("stockId", stockId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
@@ -72,6 +76,7 @@ class StockMovementIntegrationTest extends BaseIntegrationTest {
             """;
 
         String createResponse = mockMvc.perform(post("/stock")
+                        .header("Authorization", getAuthToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createStockJson))
                 .andExpect(status().isOk())
@@ -82,6 +87,7 @@ class StockMovementIntegrationTest extends BaseIntegrationTest {
         String stockId = objectMapper.readTree(createResponse).get("id").asText();
 
         mockMvc.perform(post("/stock/{id}/consume", stockId)
+                        .header("Authorization", getAuthToken())
                         .param("quantity", "100"))
                 .andExpect(status().isBadRequest());
     }
