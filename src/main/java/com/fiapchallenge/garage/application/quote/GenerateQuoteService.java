@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class GenerateQuoteService {
+public class GenerateQuoteService implements GenerateQuoteUseCase {
 
     private final ServiceOrderRepository serviceOrderRepository;
     private final StockRepository stockRepository;

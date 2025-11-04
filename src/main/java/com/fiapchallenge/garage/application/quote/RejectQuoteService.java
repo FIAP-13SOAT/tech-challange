@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class RejectQuoteService {
+public class RejectQuoteService implements RejectQuoteUseCase {
 
     private final QuoteRepository quoteRepository;
     private final ServiceOrderRepository serviceOrderRepository;
