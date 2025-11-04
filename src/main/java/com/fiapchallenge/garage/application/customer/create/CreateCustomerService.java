@@ -20,6 +20,10 @@ public class CreateCustomerService implements CreateCustomerUseCase {
     public Customer handle(CreateCustomerCommand cmd) {
         CpfCnpj cpfCnpj = new CpfCnpj(cmd.cpfCnpj());
 
+        if (customerRepository.existsByCpfCnpj(cpfCnpj)) {
+            throw new IllegalArgumentException("CPF/CNPJ já cadastrado");
+        }
+
         Customer customer = new Customer(null, cmd.name(), cmd.email(), cmd.phone(), cpfCnpj);
         customer = customerRepository.save(customer);
 

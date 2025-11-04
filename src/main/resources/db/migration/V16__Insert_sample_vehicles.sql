@@ -1,10 +1,8 @@
--- Inserir clientes
 INSERT INTO customer (id, name, email, phone, cpf_cnpj) VALUES
-('f47ac10b-58cc-4372-a567-0e02b2c3d001', 'João Silva', 'joao.silva@email.com', '(11) 99999-1111', '123.456.789-01'),
-('f47ac10b-58cc-4372-a567-0e02b2c3d002', 'Maria Santos', 'maria.santos@email.com', '(11) 99999-2222', '987.654.321-02'),
-('f47ac10b-58cc-4372-a567-0e02b2c3d003', 'Pedro Oliveira', 'pedro.oliveira@email.com', '(11) 99999-3333', '456.789.123-03');
+('f47ac10b-58cc-4372-a567-0e02b2c3d001', 'João Silva', 'joao.silva@email.com', '(11) 99999-1111', '331.837.010-06'),
+('f47ac10b-58cc-4372-a567-0e02b2c3d002', 'Maria Santos', 'maria.santos@email.com', '(11) 99999-2222', '639.427.890-43'),
+('f47ac10b-58cc-4372-a567-0e02b2c3d003', 'Pedro Oliveira', 'pedro.oliveira@email.com', '(11) 99999-3333', '033.326.420-73');
 
--- Inserir veículos
 INSERT INTO vehicle (id, model, brand, license_plate, customer_id, color, year, observations) VALUES
 ('f47ac10b-58cc-4372-a567-0e02b2c3d101', 'Civic', 'Honda', 'ABC-1234', 'f47ac10b-58cc-4372-a567-0e02b2c3d001', 'Prata', 2020, 'Veículo em bom estado'),
 ('f47ac10b-58cc-4372-a567-0e02b2c3d102', 'Corolla', 'Toyota', 'DEF-5678', 'f47ac10b-58cc-4372-a567-0e02b2c3d002', 'Branco', 2019, 'Revisão em dia'),

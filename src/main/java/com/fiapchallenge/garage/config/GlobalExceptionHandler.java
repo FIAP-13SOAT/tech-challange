@@ -37,14 +37,24 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
+
     @ExceptionHandler(ReportErrorException.class)
     public ResponseEntity<String> handleReportErrorException(ReportErrorException ex) {
         return ResponseEntity.internalServerError().body(ex.getMessage());
     }
+
     @ExceptionHandler(SoatNotFoundException.class)
     public ResponseEntity<String> handleSoatNotFoundException(SoatNotFoundException ex) {
         return ResponseEntity.notFound().build();
-
     }
 
+    @ExceptionHandler
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleException(Exception ex) {
+        return ResponseEntity.internalServerError().body("Ocorreu um erro inesperado");
+    }
 }

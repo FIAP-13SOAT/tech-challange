@@ -12,6 +12,8 @@ public interface CustomerRepository {
 
     boolean exists(UUID id);
 
+    boolean existsByCpfCnpj(CpfCnpj cpfCnpj);
+
     Optional<Customer> findById(UUID id);
 
     Page<Customer> findAll(Pageable pageable);

@@ -11,5 +11,4 @@ public interface StockRepository {
     Optional<Stock> findById(UUID id);
     Page<Stock> findAll(Pageable pageable);
     void deleteById(UUID id);
-    Optional<Stock> findByProductName(String productName);
 }

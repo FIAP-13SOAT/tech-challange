@@ -29,7 +29,7 @@ public class StockRepositoryImpl implements StockRepository {
         if (entity.getId() == null) {
             entity.setId(UUID.randomUUID());
         }
-        
+
         StockEntity savedEntity = jpaStockRepository.save(entity);
         return stockMapper.toDomain(savedEntity);
     }
@@ -47,11 +47,6 @@ public class StockRepositoryImpl implements StockRepository {
     @Override
     public void deleteById(UUID id) {
         jpaStockRepository.deleteById(id);
-    }
-
-    @Override
-    public Optional<Stock> findByProductName(String productName) {
-        return jpaStockRepository.findByProductName(productName).map(stockMapper::toDomain);
     }
 
 }

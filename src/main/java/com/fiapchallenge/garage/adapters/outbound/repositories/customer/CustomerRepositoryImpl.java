@@ -35,6 +35,11 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
+    public boolean existsByCpfCnpj(CpfCnpj cpfCnpj) {
+        return jpaCustomerRepository.existsByCpfCnpj(cpfCnpj.getValue());
+    }
+
+    @Override
     public Optional<Customer> findById(UUID id) {
         return jpaCustomerRepository.findById(id)
             .map(this::convertFromEntity);

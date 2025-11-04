@@ -18,7 +18,6 @@ public class FinishServiceOrderDiagnosticService extends BaseServiceOrderService
 
     @Override
     public ServiceOrder handle(FinishServiceOrderDiagnosticCommand command) {
-        ServiceOrder serviceOrder = executeServiceOrderOperation(command.id(), ServiceOrder::sendToApproval);
-        return serviceOrder;
+        return executeServiceOrderOperation(command.id(), ServiceOrder::sendToApproval);
     }
 }

@@ -12,7 +12,9 @@ import com.fiapchallenge.garage.domain.stock.command.UpdateStockCommand;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -36,8 +38,8 @@ public class StockController implements StockControllerOpenApiSpec {
     private final ConsumeStockUseCase consumeStockUseCase;
     private final AddStockUseCase addStockUseCase;
 
-    public StockController(CreateStockUseCase createStockUseCase, ListStockUseCase listStockUseCase, 
-                          UpdateStockUseCase updateStockUseCase, DeleteStockUseCase deleteStockUseCase, 
+    public StockController(CreateStockUseCase createStockUseCase, ListStockUseCase listStockUseCase,
+                          UpdateStockUseCase updateStockUseCase, DeleteStockUseCase deleteStockUseCase,
                           ConsumeStockUseCase consumeStockUseCase, AddStockUseCase addStockUseCase) {
         this.createStockUseCase = createStockUseCase;
         this.listStockUseCase = listStockUseCase;
@@ -65,9 +67,9 @@ public class StockController implements StockControllerOpenApiSpec {
     public ResponseEntity<Page<Stock>> list(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = org.springframework.data.domain.PageRequest.of(
-            page, size, 
-            org.springframework.data.domain.Sort.by("createdAt").descending()
+        Pageable pageable = PageRequest.of(
+            page, size,
+            Sort.by("createdAt").descending()
         );
         return ResponseEntity.ok(listStockUseCase.handle(pageable));
     }
@@ -95,7 +97,7 @@ public class StockController implements StockControllerOpenApiSpec {
 
     @PostMapping("/{id}/consume")
     @Override
-    public ResponseEntity<Stock> consumeStock(@PathVariable UUID id, 
+    public ResponseEntity<Stock> consumeStock(@PathVariable UUID id,
                                             @RequestParam @Positive(message = "Quantidade deve ser positiva") Integer quantity) {
         ConsumeStockCommand command = new ConsumeStockCommand(id, quantity);
         return ResponseEntity.ok(consumeStockUseCase.handle(command));
@@ -103,7 +105,7 @@ public class StockController implements StockControllerOpenApiSpec {
 
     @PostMapping("/{id}/add")
     @Override
-    public ResponseEntity<Stock> addStock(@PathVariable UUID id, 
+    public ResponseEntity<Stock> addStock(@PathVariable UUID id,
                                          @RequestParam @Positive(message = "Quantidade deve ser positiva") Integer quantity) {
         AddStockCommand command = new AddStockCommand(id, quantity);
         return ResponseEntity.ok(addStockUseCase.handle(command));

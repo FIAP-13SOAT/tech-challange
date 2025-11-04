@@ -18,4 +18,7 @@ public interface JpaCustomerRepository extends JpaRepository<CustomerEntity, UUI
                (:cpfCnpj IS NULL OR c.cpfCnpj = :cpfCnpj)
            """)
     Page<CustomerEntity> findByFilters(@Param("name") String name, @Param("email") String email, @Param("cpfCnpj") String cpfCnpj, Pageable pageable);
+
+    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM CustomerEntity c WHERE c.cpfCnpj = :cpfCnpj")
+    boolean existsByCpfCnpj(@Param("cpfCnpj") String cpfCnpj);
 }
