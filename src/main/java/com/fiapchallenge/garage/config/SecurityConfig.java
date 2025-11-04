@@ -52,9 +52,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers("/users/login").permitAll()
                         .requestMatchers(ENDPOINT_SWAGGER).permitAll()
+                        .requestMatchers("/", "/robots.txt", "/sitemap.xml").permitAll()
                         .anyRequest().authenticated()
                 ).sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .headers(headers -> headers.frameOptions().deny());
         return http.build();
     }
 }
