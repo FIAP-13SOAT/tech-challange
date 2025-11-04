@@ -80,3 +80,18 @@ Para executar a análise de cobertura de testes localmente com o SonarQube:
 6.  **Verificar resultado:**
     * Abra `http://localhost:9000` no seu navegador.
     * Verifique a última análise executada.
+
+### Testes de Segurança com OWASP ZAP:
+Para executar testes de segurança automatizados:
+
+#### Execução completa com Docker Compose
+```bash
+# Sobe aplicação e executa testes de segurança
+docker compose -f docker-compose-zap.yml up --build
+docker compose -f docker-compose-zap.yml --profile security-test up zap
+```
+
+**Relatórios gerados:**
+- `./zap-reports/baseline-report.html` - Relatório baseline
+- `./zap-reports/full-report.html` - Relatório completo
+- Arquivos XML também são gerados para integração CI/CD
