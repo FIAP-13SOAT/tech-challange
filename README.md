@@ -1,4 +1,4 @@
-# tech-challange
+# SOAT Tech-challenge
 
 ## Tecnologias
 - Java 21
@@ -46,27 +46,37 @@ docker-compose down
 - Documentação da API disponibilizada em: http://localhost:8080/swagger-ui/index.html
 
 ## Testes:
-
 ### Verificar cobertura de testes:
+Para executar a análise de cobertura de testes localmente com o SonarQube:
 
-1. Subir container docker do SonarQube:
-```bash
+#### Para o primeiro acesso:
+1.  **Subir o container docker do SonarQube:**
+    ```bash
     docker compose -f docker-compose-sonar.yml up -d
-```
+    ```
 
-2. Acessar o SonarQube em http://localhost:9000 (usuário e senha padrão: admin/admin)
-3. Configurar novo usuário e senha
-4. Configurar projecto com as seguintes informações:
-   - Project Key: garage-tech-challenge
-   - Project Name: garage-tech-challenge
+2.  **Acessar a interface do SonarQube:**
+    * Abra `http://localhost:9000` no seu navegador.
+    * Faça login com as credenciais padrão: `admin` / `admin`f
 
-5. Configurar token de autenticação (gerar token e copiar)
-6. Alterar `pom.xml` adicionando o token gerado na seção `<sonar.login>`:
-```xml
-    <sonar.login>sqp_57baccf38dce58b0f202e1fe45cb0a81f1f29256</sonar.login>
-```
+3.  **Configurar nova senha:**
+    * O SonarQube solicitará que você altere a senha padrão. Faça isso para continuar.
 
-7.Executar maven clean:
-```bash
+4.  **Desabilitar autenticação forçada:**
+    * Este passo simplifica a análise local, permitindo que o Maven crie o projeto automaticamente na primeira vez, **sem a necessidade de gerar tokens** ou configurar o projeto manualmente na UI.
+    * Navegue até: `Administration` (Administração) > `Configuration` (Configuração) > `General Settings` (Configurações Gerais).
+    * No menu da esquerda, clique em `Security` (Segurança).
+    * Encontre a opção **`Force user authentication`** (Forçar autenticação do usuário) e **DESATIVE-A** (mude o seletor para `false`).
+    * Navegue até: `Administration` (Administração) > `Security` (Segurança) > `Global permissions` (Permissões Gerais).
+    * Marque as opções de Execute Analysis e Create projects para a role Anyone
+
+5.  **Executar a análise:**
+    * Com o SonarQube rodando e a autenticação desabilitada, basta executar o comando Maven no diretório do projeto:
+    ```bash
     mvn clean verify sonar:sonar
-```
+    ```
+    * Na primeira execução, o scanner do Sonar irá criar automaticamente o projeto `garage-tech-challenge` na sua instância local e enviar o relatório de análise. Você poderá ver os resultados em `http://localhost:9000`.
+
+6.  **Verificar resultado:**
+    * Abra `http://localhost:9000` no seu navegador.
+    * Verifique a última análise executada.
