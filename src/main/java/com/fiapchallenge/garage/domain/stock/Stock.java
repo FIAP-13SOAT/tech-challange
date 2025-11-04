@@ -16,11 +16,6 @@ public class Stock {
     private LocalDateTime updatedAt;
     private Integer minThreshold;
 
-
-    public Stock() {
-        // Default constructor for builder pattern
-    }
-
     public static Builder builder() {
         return new Builder();
     }
@@ -144,19 +139,5 @@ public class Stock {
 
     public boolean isLowStock() {
         return minThreshold != null && quantity <= minThreshold;
-    }
-
-    public Stock copy() {
-        return Stock.builder()
-                .id(this.id)
-                .productName(this.productName)
-                .description(this.description)
-                .quantity(this.quantity)
-                .unitPrice(this.unitPrice)
-                .category(this.category)
-                .createdAt(this.createdAt)
-                .updatedAt(this.updatedAt)
-                .minThreshold(this.minThreshold)
-                .build();
     }
 }

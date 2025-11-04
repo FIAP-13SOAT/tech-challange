@@ -37,10 +37,6 @@ public class StockEntity {
     @Column(name = "min_threshold")
     private Integer minThreshold;
 
-    public StockEntity() {
-        // Default constructor required by JPA
-    }
-
     public static Builder builder() {
         return new Builder();
     }

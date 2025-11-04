@@ -3,6 +3,7 @@ package com.fiapchallenge.garage.application.stock.update;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
 import com.fiapchallenge.garage.domain.stock.command.UpdateStockCommand;
+import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,9 +20,9 @@ public class UpdateStockService implements UpdateStockUseCase {
     @Override
     public Stock handle(UpdateStockCommand command) {
         Stock existingStock = stockRepository.findById(command.id())
-                .orElseThrow(() -> new RuntimeException("Stock not found"));
+                .orElseThrow(() -> new SoatNotFoundException("Stock not found"));
 
-        Stock updatedStock = existingStock.copy()
+        Stock updatedStock = existingStock
                 .setProductName(command.productName())
                 .setDescription(command.description())
                 .setUnitPrice(command.unitPrice())
