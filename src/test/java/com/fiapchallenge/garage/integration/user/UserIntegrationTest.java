@@ -1,10 +1,11 @@
-package com.fiapchallenge.garage.integration;
+package com.fiapchallenge.garage.integration.user;
 
 import com.fiapchallenge.garage.adapters.outbound.entities.UserEntity;
 import com.fiapchallenge.garage.adapters.outbound.repositories.user.JpaUserRepository;
 import com.fiapchallenge.garage.application.user.CreateUserService;
 import com.fiapchallenge.garage.application.user.LoginUserService;
 import com.fiapchallenge.garage.domain.user.User;
+import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,35 +1,37 @@
 package com.fiapchallenge.garage.domain.quote;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public class Quote {
-
-    private final UUID id;
     private final UUID serviceOrderId;
-    private final BigDecimal value;
-    private final UUID customerId;
+    private final List<QuoteItem> items;
+    private final BigDecimal totalAmount;
+    private final LocalDateTime createdAt;
+    private QuoteStatus status;
 
-    public Quote(UUID id, UUID customerId, UUID serviceOrderId, BigDecimal value) {
-        this.id = id;
-        this.customerId = customerId;
+    public Quote(UUID serviceOrderId, List<QuoteItem> items) {
         this.serviceOrderId = serviceOrderId;
-        this.value = value;
+        this.items = items;
+        this.totalAmount = calculateTotal();
+        this.createdAt = LocalDateTime.now();
+        this.status = QuoteStatus.PENDING;
     }
 
-    public UUID getId() {
-        return id;
+    private BigDecimal calculateTotal() {
+        return items.stream()
+                .map(QuoteItem::getSubtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public UUID getServiceOrderId() {
-        return serviceOrderId;
-    }
+    public void approve() { this.status = QuoteStatus.APPROVED; }
+    public void reject() { this.status = QuoteStatus.REJECTED; }
 
-    public BigDecimal getValue() {
-        return value;
-    }
-
-    public UUID getCustomerId() {
-        return customerId;
-    }
+    public UUID getServiceOrderId() { return serviceOrderId; }
+    public List<QuoteItem> getItems() { return items; }
+    public BigDecimal getTotalAmount() { return totalAmount; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public QuoteStatus getStatus() { return status; }
 }

@@ -1,7 +1,5 @@
 package com.fiapchallenge.garage.unit.serviceorder;
 
-import com.fiapchallenge.garage.application.quote.CreateQuoteUseCase;
-import com.fiapchallenge.garage.application.quote.command.CreateQuoteCommand;
 import com.fiapchallenge.garage.application.serviceorder.*;
 import com.fiapchallenge.garage.application.serviceorder.command.FinishServiceOrderDiagnosticCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.FinishServiceOrderExecutionCommand;
@@ -43,9 +41,6 @@ class ServiceOrderUnitTest {
 
     @Mock
     ServiceOrderExecutionRepository serviceOrderExecutionRepository;
-
-    @Mock
-    private CreateQuoteUseCase createQuoteUseCase;
 
     @InjectMocks
     private CreateServiceOrderService createServiceOrderService;
@@ -105,7 +100,6 @@ class ServiceOrderUnitTest {
 
         assertEquals(ServiceOrderStatus.AWAITING_APPROVAL, serviceOrder.getStatus());
         verify(serviceOrderRepository).save(serviceOrder);
-        verify(createQuoteUseCase).handle(any(CreateQuoteCommand.class));
     }
 
     @Test

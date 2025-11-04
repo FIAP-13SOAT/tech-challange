@@ -4,7 +4,7 @@ import com.fiapchallenge.garage.domain.quote.Quote;
 
 import java.util.UUID;
 
-public interface ApproveQuoteUseCase {
+public interface RejectQuoteUseCase {
 
     Quote handle(UUID serviceOrderId);
 }

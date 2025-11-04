@@ -1,10 +1,10 @@
-package com.fiapchallenge.garage.unit.budget;
+package com.fiapchallenge.garage.unit.quote;
 
-import com.fiapchallenge.garage.application.budget.ApproveBudgetUseCase;
-import com.fiapchallenge.garage.application.budget.RejectBudgetUseCase;
-import com.fiapchallenge.garage.domain.budget.Budget;
-import com.fiapchallenge.garage.domain.budget.BudgetRepository;
-import com.fiapchallenge.garage.domain.budget.BudgetStatus;
+import com.fiapchallenge.garage.application.quote.ApproveQuoteService;
+import com.fiapchallenge.garage.application.quote.RejectQuoteService;
+import com.fiapchallenge.garage.domain.quote.Quote;
+import com.fiapchallenge.garage.domain.quote.QuoteRepository;
+import com.fiapchallenge.garage.domain.quote.QuoteStatus;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
@@ -22,57 +22,57 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class BudgetApprovalUnitTest {
+class QuoteApprovalUnitTest {
 
     @Mock
-    private BudgetRepository budgetRepository;
+    private QuoteRepository quoteRepository;
 
     @Mock
     private ServiceOrderRepository serviceOrderRepository;
 
     @InjectMocks
-    private ApproveBudgetUseCase approveBudgetUseCase;
+    private ApproveQuoteService approveQuoteService;
 
     @InjectMocks
-    private RejectBudgetUseCase rejectBudgetUseCase;
+    private RejectQuoteService rejectQuoteService;
 
     @Test
-    void shouldChangeServiceOrderToInProgressWhenBudgetIsApproved() {
+    void shouldChangeServiceOrderToInProgressWhenQuoteIsApproved() {
         UUID serviceOrderId = UUID.randomUUID();
-        Budget budget = new Budget(serviceOrderId, List.of());
+        Quote quote = new Quote(serviceOrderId, List.of());
         ServiceOrder serviceOrder = new ServiceOrder(
-            serviceOrderId, "Test", UUID.randomUUID(), 
+            serviceOrderId, "Test", UUID.randomUUID(),
             ServiceOrderStatus.AWAITING_APPROVAL, List.of(), List.of()
         );
 
-        when(budgetRepository.findByServiceOrderIdOrThrow(serviceOrderId)).thenReturn(budget);
+        when(quoteRepository.findByServiceOrderIdOrThrow(serviceOrderId)).thenReturn(quote);
         when(serviceOrderRepository.findByIdOrThrow(serviceOrderId)).thenReturn(serviceOrder);
-        when(budgetRepository.save(any(Budget.class))).thenReturn(budget);
+        when(quoteRepository.save(any(Quote.class))).thenReturn(quote);
         when(serviceOrderRepository.save(any(ServiceOrder.class))).thenReturn(serviceOrder);
 
-        Budget result = approveBudgetUseCase.handle(serviceOrderId);
+        Quote result = approveQuoteService.handle(serviceOrderId);
 
-        assertEquals(BudgetStatus.APPROVED, result.getStatus());
+        assertEquals(QuoteStatus.APPROVED, result.getStatus());
         verify(serviceOrderRepository).save(argThat(so -> so.getStatus() == ServiceOrderStatus.IN_PROGRESS));
     }
 
     @Test
-    void shouldCancelServiceOrderWhenBudgetIsRejected() {
+    void shouldCancelServiceOrderWhenQuoteIsRejected() {
         UUID serviceOrderId = UUID.randomUUID();
-        Budget budget = new Budget(serviceOrderId, List.of());
+        Quote quote = new Quote(serviceOrderId, List.of());
         ServiceOrder serviceOrder = new ServiceOrder(
-            serviceOrderId, "Test", UUID.randomUUID(), 
+            serviceOrderId, "Test", UUID.randomUUID(),
             ServiceOrderStatus.AWAITING_APPROVAL, List.of(), List.of()
         );
 
-        when(budgetRepository.findByServiceOrderIdOrThrow(serviceOrderId)).thenReturn(budget);
+        when(quoteRepository.findByServiceOrderIdOrThrow(serviceOrderId)).thenReturn(quote);
         when(serviceOrderRepository.findByIdOrThrow(serviceOrderId)).thenReturn(serviceOrder);
-        when(budgetRepository.save(any(Budget.class))).thenReturn(budget);
+        when(quoteRepository.save(any(Quote.class))).thenReturn(quote);
         when(serviceOrderRepository.save(any(ServiceOrder.class))).thenReturn(serviceOrder);
 
-        Budget result = rejectBudgetUseCase.handle(serviceOrderId);
+        Quote result = rejectQuoteService.handle(serviceOrderId);
 
-        assertEquals(BudgetStatus.REJECTED, result.getStatus());
+        assertEquals(QuoteStatus.REJECTED, result.getStatus());
         verify(serviceOrderRepository).save(argThat(so -> so.getStatus() == ServiceOrderStatus.CANCELLED));
     }
 }

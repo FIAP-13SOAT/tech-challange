@@ -1,14 +1,14 @@
-package com.fiapchallenge.garage.domain.budget;
+package com.fiapchallenge.garage.domain.quote;
 
 import java.math.BigDecimal;
 
-public class BudgetItem {
+public class QuoteItem {
     private final String description;
     private final BigDecimal unitPrice;
     private final Integer quantity;
-    private final BudgetItemType type;
+    private final QuoteItemType type;
 
-    public BudgetItem(String description, BigDecimal unitPrice, Integer quantity, BudgetItemType type) {
+    public QuoteItem(String description, BigDecimal unitPrice, Integer quantity, QuoteItemType type) {
         this.description = description;
         this.unitPrice = unitPrice;
         this.quantity = quantity;
@@ -22,5 +22,5 @@ public class BudgetItem {
     public String getDescription() { return description; }
     public BigDecimal getUnitPrice() { return unitPrice; }
     public Integer getQuantity() { return quantity; }
-    public BudgetItemType getType() { return type; }
+    public QuoteItemType getType() { return type; }
 }
