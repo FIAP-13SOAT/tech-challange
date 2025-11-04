@@ -21,7 +21,7 @@ public class CreateServiceOrderService implements CreateServiceOrderUseCase {
     private final ServiceOrderRepository serviceOrderRepository;
     private final ConsumeStockUseCase consumeStockUseCase;
 
-    public CreateServiceOrderService(ServiceTypeRepository serviceTypeRepository, 
+    public CreateServiceOrderService(ServiceTypeRepository serviceTypeRepository,
                                    ServiceOrderRepository serviceOrderRepository,
                                    ConsumeStockUseCase consumeStockUseCase) {
         this.serviceTypeRepository = serviceTypeRepository;
@@ -36,7 +36,6 @@ public class CreateServiceOrderService implements CreateServiceOrderUseCase {
                 .map(serviceTypeRepository::findByIdOrThrow)
                 .toList();
 
-        // Consume stock items
         if (command.stockItems() != null && !command.stockItems().isEmpty()) {
             command.stockItems().forEach(item -> {
                 ConsumeStockCommand consumeCommand = new ConsumeStockCommand(item.stockId(), item.quantity());
@@ -52,8 +51,7 @@ public class CreateServiceOrderService implements CreateServiceOrderUseCase {
         ServiceOrder serviceOrder = new ServiceOrder(command);
         serviceOrder.setServiceTypeList(serviceTypesList);
         serviceOrder.setStockItems(stockItems);
-        serviceOrderRepository.save(serviceOrder);
 
-        return serviceOrder;
+        return serviceOrderRepository.save(serviceOrder);
     }
 }

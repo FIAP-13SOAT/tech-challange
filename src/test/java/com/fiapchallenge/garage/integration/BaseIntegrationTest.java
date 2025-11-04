@@ -5,7 +5,7 @@ import com.fiapchallenge.garage.application.user.LoginUserService;
 import com.fiapchallenge.garage.domain.user.User;
 import com.fiapchallenge.garage.integration.fixtures.UserFixture;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -58,7 +58,9 @@ public abstract class BaseIntegrationTest {
                 if (count != null && count > 0) {
                     jdbcTemplate.execute("TRUNCATE TABLE " + table + " RESTART IDENTITY CASCADE");
                 }
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                LoggerFactory.getLogger("BaseIntegrationTest").error("Error cleaning database", e);
+            }
         }
     }
 

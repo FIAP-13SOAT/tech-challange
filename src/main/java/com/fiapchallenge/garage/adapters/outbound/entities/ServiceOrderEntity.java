@@ -41,7 +41,6 @@ public class ServiceOrderEntity {
     }
 
     public ServiceOrderEntity(ServiceOrder serviceOrder) {
-        this.id = serviceOrder.getId();
         this.observations = serviceOrder.getObservations();
         this.status = serviceOrder.getStatus();
         this.vehicleId = serviceOrder.getVehicleId();

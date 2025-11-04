@@ -14,7 +14,8 @@ spring:
         default_schema: tests
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   flyway:
-    enabled: false
+    enabled: true
+    schemas: tests
   sql:
     init:
       mode: always

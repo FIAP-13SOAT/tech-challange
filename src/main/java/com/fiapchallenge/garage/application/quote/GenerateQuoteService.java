@@ -8,6 +8,7 @@ import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
+import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class GenerateQuoteService implements GenerateQuoteUseCase {
     }
 
     public Quote handle(UUID serviceOrderId) {
-        ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(serviceOrderId);
+        ServiceOrder serviceOrder = serviceOrderRepository.findById(serviceOrderId).orElseThrow(() -> new SoatNotFoundException("Ordem de serviço não encontrado com o Id informado"));
         List<QuoteItem> items = new ArrayList<>();
 
         serviceOrder.getServiceTypeList().forEach(serviceType ->
