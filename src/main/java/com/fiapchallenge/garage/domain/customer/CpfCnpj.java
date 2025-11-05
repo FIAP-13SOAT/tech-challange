@@ -10,7 +10,7 @@ public class CpfCnpj {
 
     public CpfCnpj(String value) {
         if (!isValid(value)) {
-            throw new SoatValidationException("Invalid CPF/CNPJ: " + value);
+            throw new SoatValidationException("CPF ou CNPJ inválido: " + value);
         }
         this.value = value;
     }

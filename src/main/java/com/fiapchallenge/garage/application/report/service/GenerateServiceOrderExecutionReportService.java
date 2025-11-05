@@ -63,17 +63,19 @@ public class GenerateServiceOrderExecutionReportService implements GenerateServi
         table.addHeaderCell("OS");
         table.addHeaderCell("Início");
         table.addHeaderCell("Fim");
-        table.addHeaderCell("Tempo (Horas)");
+        table.addHeaderCell("Tempo (Horas:Minutos)");
 
         for (ServiceOrderExecution soe : serviceOrdesExecutions) {
             table.addCell(soe.getServiceOrderId().toString());
             table.addCell(soe.getStartDate().toString());
             if (soe.getEndDate() == null) {
                 table.addCell("-");
-                table.addCell(String.valueOf(Duration.between(soe.getStartDate(), LocalDateTime.now()).toHours()));
+                Duration duration = Duration.between(soe.getStartDate(), LocalDateTime.now());
+                table.addCell(String.format("%d:%02d", duration.toHours(), duration.toMinutesPart()));
             } else {
                 table.addCell(soe.getEndDate().toString());
-                table.addCell(String.valueOf(Duration.between(soe.getStartDate(), soe.getEndDate()).toHours()));
+                Duration duration = Duration.between(soe.getStartDate(), soe.getEndDate());
+                table.addCell(String.format("%d:%02d", duration.toHours(), duration.toMinutesPart()));
             }
         }
         return table;

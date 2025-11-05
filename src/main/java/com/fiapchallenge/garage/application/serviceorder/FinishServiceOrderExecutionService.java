@@ -22,13 +22,14 @@ public class FinishServiceOrderExecutionService extends BaseServiceOrderService 
 
     @Override
     public ServiceOrder handle(FinishServiceOrderExecutionCommand command) {
-        ServiceOrder serviceOrder = executeServiceOrderOperation(command.id(), ServiceOrder::complete);
-        
+        ServiceOrder serviceOrder = serviceOrderRepository.findById(command.id())
+                .orElseThrow(() -> new IllegalArgumentException("Ordem de serviço não encontrada"));
+
         ServiceOrderExecution serviceOrderExecution = serviceOrderExecutionRepository.findById(command.id())
                 .orElseThrow(() -> new IllegalArgumentException("Execução da ordem de serviço não encontrada"));
         serviceOrderExecution.finish();
         serviceOrderExecutionRepository.save(serviceOrderExecution);
-        
+
         return serviceOrder;
     }
 }

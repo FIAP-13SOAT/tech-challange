@@ -2,12 +2,17 @@ package com.fiapchallenge.garage.adapters.inbound.controller.serviceorder;
 
 import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.CreateServiceOrderDTO;
 import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.StockItemDTO;
+import com.fiapchallenge.garage.application.serviceorder.FinishServiceOrderDiagnosticUseCase;
+import com.fiapchallenge.garage.application.serviceorder.FinishServiceOrderExecutionUseCase;
+import com.fiapchallenge.garage.application.serviceorder.StartServiceOrderExecutionUseCase;
 import com.fiapchallenge.garage.application.serviceorder.command.CancelServiceOrderCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.CompleteServiceOrderCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.CreateServiceOrderCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.DeliverServiceOrderCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.FinishServiceOrderDiagnosticCommand;
+import com.fiapchallenge.garage.application.serviceorder.command.FinishServiceOrderExecutionCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrderDiagnosticCommand;
+import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrderExecutionCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.StockItemCommand;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderItem;
@@ -19,6 +24,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -30,23 +36,26 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     private final ServiceOrderUseCases useCases;
     private final ServiceOrderRepository serviceOrderRepository;
     private final ServiceTypeRepository serviceTypeRepository;
+    private final FinishServiceOrderExecutionUseCase finishServiceOrderExecutionUseCase;
 
     public ServiceOrderController(ServiceOrderUseCases useCases,
-                                 ServiceOrderRepository serviceOrderRepository,
-                                 ServiceTypeRepository serviceTypeRepository) {
+                                  ServiceOrderRepository serviceOrderRepository,
+                                  ServiceTypeRepository serviceTypeRepository,
+                                  FinishServiceOrderExecutionUseCase finishServiceOrderExecutionUseCase) {
         this.useCases = useCases;
         this.serviceOrderRepository = serviceOrderRepository;
         this.serviceTypeRepository = serviceTypeRepository;
+        this.finishServiceOrderExecutionUseCase = finishServiceOrderExecutionUseCase;
     }
 
     @PostMapping
     @Override
     public ResponseEntity<ServiceOrder> create(@Valid @RequestBody CreateServiceOrderDTO createServiceOrderDTO) {
-        List<StockItemCommand> stockItems = createServiceOrderDTO.stockItems() != null ? 
+        List<StockItemCommand> stockItems = createServiceOrderDTO.stockItems() != null ?
                 createServiceOrderDTO.stockItems().stream()
                         .map(item -> new StockItemCommand(item.stockId(), item.quantity()))
                         .toList() : List.<StockItemCommand>of();
-                        
+
         CreateServiceOrderCommand command = new CreateServiceOrderCommand(
                 createServiceOrderDTO.observations(),
                 createServiceOrderDTO.vehicleId(),
@@ -75,6 +84,9 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     public ResponseEntity<ServiceOrder> setCompleted(@PathVariable UUID id) {
         CompleteServiceOrderCommand command = new CompleteServiceOrderCommand(id);
         ServiceOrder serviceOrder = useCases.getCompleteServiceOrderUseCase().handle(command);
+
+        finishServiceOrderExecutionUseCase.handle(new FinishServiceOrderExecutionCommand(id));
+
         return ResponseEntity.ok(serviceOrder);
     }
 
@@ -106,7 +118,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     @PostMapping("/{id}/stock-items")
     public ResponseEntity<ServiceOrder> addStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
         ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(id);
-        List<ServiceOrderItem> items = new java.util.ArrayList<>(stockItems.stream()
+        List<ServiceOrderItem> items = new ArrayList<>(stockItems.stream()
                 .map(item -> new ServiceOrderItem(null, item.stockId(), item.quantity()))
                 .toList());
         serviceOrder.addStockItems(items);
