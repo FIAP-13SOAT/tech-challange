@@ -1,5 +1,7 @@
 package com.fiapchallenge.garage.application.quote;
 
+import com.fiapchallenge.garage.application.serviceorder.StartServiceOrderExecutionUseCase;
+import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrderExecutionCommand;
 import com.fiapchallenge.garage.domain.quote.Quote;
 import com.fiapchallenge.garage.domain.quote.QuoteRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
@@ -12,10 +14,12 @@ public class ApproveQuoteService implements ApproveQuoteUseCase {
 
     private final QuoteRepository quoteRepository;
     private final ServiceOrderRepository serviceOrderRepository;
+    private final StartServiceOrderExecutionUseCase startServiceOrderExecutionUseCase;
 
-    public ApproveQuoteService(QuoteRepository quoteRepository, ServiceOrderRepository serviceOrderRepository) {
+    public ApproveQuoteService(QuoteRepository quoteRepository, ServiceOrderRepository serviceOrderRepository, StartServiceOrderExecutionUseCase startServiceOrderExecutionUseCase) {
         this.quoteRepository = quoteRepository;
         this.serviceOrderRepository = serviceOrderRepository;
+        this.startServiceOrderExecutionUseCase = startServiceOrderExecutionUseCase;
     }
 
     public Quote handle(UUID serviceOrderId) {
@@ -26,6 +30,10 @@ public class ApproveQuoteService implements ApproveQuoteUseCase {
         serviceOrder.startProgress();
         serviceOrderRepository.save(serviceOrder);
 
-        return quoteRepository.save(quote);
+        quote = quoteRepository.save(quote);
+
+        startServiceOrderExecutionUseCase.handle(new StartServiceOrderExecutionCommand(serviceOrderId));
+
+        return quote;
     }
 }
