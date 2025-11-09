@@ -2,17 +2,30 @@ package com.fiapchallenge.garage.adapters.inbound.controller.serviceorder;
 
 import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.CreateServiceOrderDTO;
 import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.StockItemDTO;
+import com.fiapchallenge.garage.application.serviceorder.AddServiceTypesUseCase;
+import com.fiapchallenge.garage.application.serviceorder.AddStockItemsUseCase;
+import com.fiapchallenge.garage.application.serviceorder.CancelServiceOrderUseCase;
+import com.fiapchallenge.garage.application.serviceorder.CompleteServiceOrderUseCase;
+import com.fiapchallenge.garage.application.serviceorder.CreateServiceOrderUseCase;
+import com.fiapchallenge.garage.application.serviceorder.DeliverServiceOrderUseCase;
 import com.fiapchallenge.garage.application.serviceorder.FinishServiceOrderDiagnosticUseCase;
 import com.fiapchallenge.garage.application.serviceorder.FinishServiceOrderExecutionUseCase;
-import com.fiapchallenge.garage.application.serviceorder.StartServiceOrderExecutionUseCase;
+import com.fiapchallenge.garage.application.serviceorder.GetServiceOrderDetailsUseCase;
+import com.fiapchallenge.garage.application.serviceorder.RemoveServiceTypesUseCase;
+import com.fiapchallenge.garage.application.serviceorder.RemoveStockItemsUseCase;
+import com.fiapchallenge.garage.application.serviceorder.StartServiceOrderDiagnosticUseCase;
+import com.fiapchallenge.garage.application.serviceorder.command.AddServiceTypesCommand;
+import com.fiapchallenge.garage.application.serviceorder.command.AddStockItemsCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.CancelServiceOrderCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.CompleteServiceOrderCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.CreateServiceOrderCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.DeliverServiceOrderCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.FinishServiceOrderDiagnosticCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.FinishServiceOrderExecutionCommand;
+import com.fiapchallenge.garage.application.serviceorder.command.GetServiceOrderDetailsCommand;
+import com.fiapchallenge.garage.application.serviceorder.command.RemoveServiceTypesCommand;
+import com.fiapchallenge.garage.application.serviceorder.command.RemoveStockItemsCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrderDiagnosticCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrderExecutionCommand;
 import com.fiapchallenge.garage.application.serviceorder.command.StockItemCommand;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderItem;
@@ -33,125 +46,122 @@ import java.util.UUID;
 @RequestMapping("/service-orders")
 public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec {
 
-    private final ServiceOrderUseCases useCases;
-    private final ServiceOrderRepository serviceOrderRepository;
-    private final ServiceTypeRepository serviceTypeRepository;
-    private final FinishServiceOrderExecutionUseCase finishServiceOrderExecutionUseCase;
+    private final CreateServiceOrderUseCase createServiceOrderUseCase;
+    private final StartServiceOrderDiagnosticUseCase startServiceOrderDiagnosticUseCase;
+    private final FinishServiceOrderDiagnosticUseCase finishServiceOrderDiagnosticUseCase;
+    private final CompleteServiceOrderUseCase completeServiceOrderUseCase;
+    private final DeliverServiceOrderUseCase deliverServiceOrderUseCase;
+    private final CancelServiceOrderUseCase cancelServiceOrderUseCase;
+    private final GetServiceOrderDetailsUseCase getServiceOrderDetailsUseCase;
+    private final AddStockItemsUseCase addStockItemsUseCase;
+    private final RemoveStockItemsUseCase removeStockItemsUseCase;
+    private final AddServiceTypesUseCase addServiceTypesUseCase;
+    private final RemoveServiceTypesUseCase removeServiceTypesUseCase;
 
-    public ServiceOrderController(ServiceOrderUseCases useCases,
-                                  ServiceOrderRepository serviceOrderRepository,
-                                  ServiceTypeRepository serviceTypeRepository,
-                                  FinishServiceOrderExecutionUseCase finishServiceOrderExecutionUseCase) {
-        this.useCases = useCases;
-        this.serviceOrderRepository = serviceOrderRepository;
-        this.serviceTypeRepository = serviceTypeRepository;
-        this.finishServiceOrderExecutionUseCase = finishServiceOrderExecutionUseCase;
+    public ServiceOrderController(CreateServiceOrderUseCase createServiceOrderUseCase,
+                                  StartServiceOrderDiagnosticUseCase startServiceOrderDiagnosticUseCase,
+                                  FinishServiceOrderDiagnosticUseCase finishServiceOrderDiagnosticUseCase,
+                                  CompleteServiceOrderUseCase completeServiceOrderUseCase,
+                                  DeliverServiceOrderUseCase deliverServiceOrderUseCase,
+                                  CancelServiceOrderUseCase cancelServiceOrderUseCase,
+                                  GetServiceOrderDetailsUseCase getServiceOrderDetailsUseCase,
+                                  AddStockItemsUseCase addStockItemsUseCase,
+                                  RemoveStockItemsUseCase removeStockItemsUseCase,
+                                  AddServiceTypesUseCase addServiceTypesUseCase,
+                                  RemoveServiceTypesUseCase removeServiceTypesUseCase) {
+
+        this.createServiceOrderUseCase = createServiceOrderUseCase;
+        this.startServiceOrderDiagnosticUseCase = startServiceOrderDiagnosticUseCase;
+        this.finishServiceOrderDiagnosticUseCase = finishServiceOrderDiagnosticUseCase;
+        this.completeServiceOrderUseCase = completeServiceOrderUseCase;
+        this.deliverServiceOrderUseCase = deliverServiceOrderUseCase;
+        this.cancelServiceOrderUseCase = cancelServiceOrderUseCase;
+        this.getServiceOrderDetailsUseCase = getServiceOrderDetailsUseCase;
+        this.addStockItemsUseCase = addStockItemsUseCase;
+        this.removeStockItemsUseCase = removeStockItemsUseCase;
+        this.addServiceTypesUseCase = addServiceTypesUseCase;
+        this.removeServiceTypesUseCase = removeServiceTypesUseCase;
     }
 
-    @PostMapping
     @Override
+    @PostMapping
     public ResponseEntity<ServiceOrder> create(@Valid @RequestBody CreateServiceOrderDTO createServiceOrderDTO) {
-        List<StockItemCommand> stockItems = createServiceOrderDTO.stockItems() != null ?
-                createServiceOrderDTO.stockItems().stream()
-                        .map(item -> new StockItemCommand(item.stockId(), item.quantity()))
-                        .toList() : List.<StockItemCommand>of();
-
-        CreateServiceOrderCommand command = new CreateServiceOrderCommand(
-                createServiceOrderDTO.observations(),
-                createServiceOrderDTO.vehicleId(),
-                createServiceOrderDTO.serviceTypeIdList(),
-                stockItems
-        );
-        ServiceOrder serviceOrder = useCases.getCreateServiceOrderUseCase().handle(command);
+        CreateServiceOrderCommand command = new CreateServiceOrderCommand(createServiceOrderDTO);
+        ServiceOrder serviceOrder = createServiceOrderUseCase.handle(command);
         return ResponseEntity.ok(serviceOrder);
     }
 
-    @PostMapping("/{id}/in-diagnosis")
-    public ResponseEntity<ServiceOrder> setInDiagnosis(@PathVariable UUID id) {
-        StartServiceOrderDiagnosticCommand command = new StartServiceOrderDiagnosticCommand(id);
-        ServiceOrder serviceOrder = useCases.getStartServiceOrderDiagnosticUseCase().handle(command);
-        return ResponseEntity.ok(serviceOrder);
-    }
-
-    @PostMapping("/{id}/awaiting-approval")
-    public ResponseEntity<ServiceOrder> setAwaitingApproval(@PathVariable UUID id) {
-        FinishServiceOrderDiagnosticCommand command = new FinishServiceOrderDiagnosticCommand(id);
-        ServiceOrder serviceOrder = useCases.getFinishServiceOrderDiagnosticUseCase().handle(command);
-        return ResponseEntity.ok(serviceOrder);
-    }
-
-    @PostMapping("/{id}/completed")
-    public ResponseEntity<ServiceOrder> setCompleted(@PathVariable UUID id) {
-        CompleteServiceOrderCommand command = new CompleteServiceOrderCommand(id);
-        ServiceOrder serviceOrder = useCases.getCompleteServiceOrderUseCase().handle(command);
-
-        finishServiceOrderExecutionUseCase.handle(new FinishServiceOrderExecutionCommand(id));
+    @Override
+    @PostMapping("/{id}/start-diagnosis")
+    public ResponseEntity<ServiceOrder> startDiagnosis(@PathVariable UUID id) {
+        ServiceOrder serviceOrder = startServiceOrderDiagnosticUseCase.handle(new StartServiceOrderDiagnosticCommand(id));
 
         return ResponseEntity.ok(serviceOrder);
     }
 
-    @PostMapping("/{id}/delivered")
-    public ResponseEntity<ServiceOrder> setDelivered(@PathVariable UUID id) {
-        DeliverServiceOrderCommand command = new DeliverServiceOrderCommand(id);
-        ServiceOrder serviceOrder = useCases.getDeliverServiceOrderUseCase().handle(command);
+    @Override
+    @PostMapping("/{id}/finish-diagnosis")
+    public ResponseEntity<ServiceOrder> finishDiagnosis(@PathVariable UUID id) {
+        ServiceOrder serviceOrder = finishServiceOrderDiagnosticUseCase.handle(new FinishServiceOrderDiagnosticCommand(id));
+
         return ResponseEntity.ok(serviceOrder);
     }
 
-    @PostMapping("/{id}/cancelled")
+    @Override
+    @PostMapping("/{id}/finish")
+    public ResponseEntity<ServiceOrder> finish(@PathVariable UUID id) {
+        ServiceOrder serviceOrder = completeServiceOrderUseCase.handle(new CompleteServiceOrderCommand(id));
+
+        return ResponseEntity.ok(serviceOrder);
+    }
+
+    @Override
+    @PostMapping("/{id}/deliver")
+    public ResponseEntity<ServiceOrder> deliver(@PathVariable UUID id) {
+        ServiceOrder serviceOrder = deliverServiceOrderUseCase.handle(new DeliverServiceOrderCommand(id));
+
+        return ResponseEntity.ok(serviceOrder);
+    }
+
+    @PostMapping("/{id}/cancel")
     public ResponseEntity<ServiceOrder> setCancelled(@PathVariable UUID id) {
-        CancelServiceOrderCommand command = new CancelServiceOrderCommand(id);
-        ServiceOrder serviceOrder = useCases.getCancelServiceOrderUseCase().handle(command);
-        return ResponseEntity.ok(serviceOrder);
-    }
+        ServiceOrder serviceOrder = cancelServiceOrderUseCase.handle(new CancelServiceOrderCommand(id));
 
-    @GetMapping("/status")
-    public ResponseEntity<List<ServiceOrderStatus>> getAllStatus() {
-        return ResponseEntity.ok(Arrays.asList(ServiceOrderStatus.values()));
+        return ResponseEntity.ok(serviceOrder);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ServiceOrder> getServiceOrderDetails(@PathVariable UUID id) {
-        ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(id);
+        ServiceOrder serviceOrder = getServiceOrderDetailsUseCase.handle(new GetServiceOrderDetailsCommand(id));
+
         return ResponseEntity.ok(serviceOrder);
     }
 
     @PostMapping("/{id}/stock-items")
     public ResponseEntity<ServiceOrder> addStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
-        ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(id);
-        List<ServiceOrderItem> items = new ArrayList<>(stockItems.stream()
-                .map(item -> new ServiceOrderItem(null, item.stockId(), item.quantity()))
-                .toList());
-        serviceOrder.addStockItems(items);
-        return ResponseEntity.ok(serviceOrderRepository.save(serviceOrder));
+        ServiceOrder serviceOrder = addStockItemsUseCase.handle(new AddStockItemsCommand(id, stockItems));
+
+        return ResponseEntity.ok(serviceOrder);
     }
 
     @DeleteMapping("/{id}/stock-items")
     public ResponseEntity<ServiceOrder> removeStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
-        ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(id);
-        List<ServiceOrderItem> items = new java.util.ArrayList<>(stockItems.stream()
-                .map(item -> new ServiceOrderItem(null, item.stockId(), item.quantity()))
-                .toList());
-        serviceOrder.removeStockItems(items);
-        return ResponseEntity.ok(serviceOrderRepository.save(serviceOrder));
+        ServiceOrder serviceOrder = removeStockItemsUseCase.handle(new RemoveStockItemsCommand(id, stockItems));
+
+        return ResponseEntity.ok(serviceOrder);
     }
 
     @PostMapping("/{id}/service-types")
     public ResponseEntity<ServiceOrder> addServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds) {
-        ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(id);
-        List<ServiceType> serviceTypes = new java.util.ArrayList<>(serviceTypeIds.stream()
-                .map(serviceTypeRepository::findByIdOrThrow)
-                .toList());
-        serviceOrder.addServiceTypes(serviceTypes);
-        return ResponseEntity.ok(serviceOrderRepository.save(serviceOrder));
+        ServiceOrder serviceOrder = addServiceTypesUseCase.handle(new AddServiceTypesCommand(id, serviceTypeIds));
+
+        return ResponseEntity.ok(serviceOrder);
     }
 
     @DeleteMapping("/{id}/service-types")
     public ResponseEntity<ServiceOrder> removeServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds) {
-        ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(id);
-        List<ServiceType> serviceTypes = new java.util.ArrayList<>(serviceTypeIds.stream()
-                .map(serviceTypeRepository::findByIdOrThrow)
-                .toList());
-        serviceOrder.removeServiceTypes(serviceTypes);
-        return ResponseEntity.ok(serviceOrderRepository.save(serviceOrder));
+        ServiceOrder serviceOrder = removeServiceTypesUseCase.handle(new RemoveServiceTypesCommand(id, serviceTypeIds));
+
+        return ResponseEntity.ok(serviceOrder);
     }
 }

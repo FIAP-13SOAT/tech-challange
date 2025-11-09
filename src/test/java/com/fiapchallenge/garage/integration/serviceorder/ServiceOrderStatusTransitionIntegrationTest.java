@@ -48,15 +48,7 @@ class ServiceOrderStatusTransitionIntegrationTest extends BaseIntegrationTest {
     void shouldTransitionServiceOrderThroughAllStatus() throws Exception {
         UUID serviceOrderId = createServiceOrder();
 
-        mockMvc.perform(post("/service-orders/" + serviceOrderId + "/in-diagnosis")
-                        .header("Authorization", getAuthToken()))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("Deve obter todos os status de ordem de serviço")
-    void shouldGetAllServiceOrderStatus() throws Exception {
-        mockMvc.perform(get("/service-orders/status")
+        mockMvc.perform(post("/service-orders/" + serviceOrderId + "/start-diagnosis")
                         .header("Authorization", getAuthToken()))
                 .andExpect(status().isOk());
     }
@@ -66,7 +58,7 @@ class ServiceOrderStatusTransitionIntegrationTest extends BaseIntegrationTest {
     void shouldCancelServiceOrderAndReturnStock() throws Exception {
         UUID serviceOrderId = createServiceOrder();
 
-        mockMvc.perform(post("/service-orders/" + serviceOrderId + "/cancelled")
+        mockMvc.perform(post("/service-orders/" + serviceOrderId + "/cancel")
                         .header("Authorization", getAuthToken()))
                 .andExpect(status().isOk());
     }

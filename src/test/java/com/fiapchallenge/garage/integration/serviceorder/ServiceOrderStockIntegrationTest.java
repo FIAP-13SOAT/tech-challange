@@ -162,7 +162,7 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
         Stock stockAfterOrder = stockRepository.findById(stockId).orElseThrow();
         assertThat(stockAfterOrder.getQuantity()).isEqualTo(initialStock.getQuantity() - 3);
 
-        mockMvc.perform(post("/service-orders/" + createdOrder.getId() + "/cancelled")
+        mockMvc.perform(post("/service-orders/" + createdOrder.getId() + "/cancel")
                         .header("Authorization", getAuthToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

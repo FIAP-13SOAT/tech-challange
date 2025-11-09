@@ -101,35 +101,4 @@ class ServiceOrderUnitTest {
         assertEquals(ServiceOrderStatus.AWAITING_APPROVAL, serviceOrder.getStatus());
         verify(serviceOrderRepository).save(serviceOrder);
     }
-
-    @Test
-    @DisplayName("Iniciar Ordem de Serviço")
-    void shouldStartServiceOrder() {
-        UUID vehicleId = UUID.randomUUID();
-        Optional<ServiceOrder> mockedServiceOrder = Optional.of(ServiceOrderTestFactory.createServiceOrder(vehicleId, ServiceOrderStatus.AWAITING_APPROVAL));
-        when(serviceOrderRepository.findById(any(UUID.class))).thenReturn(mockedServiceOrder);
-        ServiceOrder serviceOrder = startServiceOrderService.handle(new StartServiceOrderExecutionCommand(ServiceOrderTestFactory.ID));
-
-        assertEquals(ServiceOrderStatus.IN_PROGRESS, serviceOrder.getStatus());
-        verify(serviceOrderRepository).save(serviceOrder);
-        verify(serviceOrderExecutionRepository).save(any());
-    }
-
-    @Test
-    @DisplayName("Finalizar Execucao de Ordem de Serviço")
-    void shouldFinishServiceOrderExecution() {
-        UUID vehicleId = UUID.randomUUID();
-        Optional<ServiceOrder> mockedServiceOrder = Optional.of(ServiceOrderTestFactory.createServiceOrder(vehicleId, ServiceOrderStatus.IN_PROGRESS));
-        ServiceOrderExecution serviceOrderExecution = new ServiceOrderExecution(ServiceOrderTestFactory.ID);
-        serviceOrderExecution.start();
-
-        when(serviceOrderRepository.findById(any(UUID.class))).thenReturn(mockedServiceOrder);
-        when(serviceOrderExecutionRepository.findById(any(UUID.class))).thenReturn(Optional.of(serviceOrderExecution));
-        ServiceOrder serviceOrder = finishServiceOrderExecutionService.handle(new FinishServiceOrderExecutionCommand(ServiceOrderTestFactory.ID));
-        assertEquals(ServiceOrderStatus.COMPLETED, serviceOrder.getStatus());
-        assertNotNull(serviceOrderExecution.getEndDate());
-        verify(serviceOrderRepository).save(serviceOrder);
-        verify(serviceOrderExecutionRepository).save(serviceOrderExecution);
-    }
-
 }

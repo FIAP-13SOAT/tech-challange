@@ -6,7 +6,10 @@ import com.fiapchallenge.garage.shared.exception.ReportErrorException;
 import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
 import com.fiapchallenge.garage.shared.exception.SoatValidationException;
 import jakarta.validation.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -14,6 +17,8 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(SoatValidationException.class)
     public ResponseEntity<Map<String, String>> handleSoatValidationException(SoatValidationException ex) {
@@ -57,6 +62,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<Map<String, String>> handleException(Exception ex) {
+        logger.error("Erro não tratado na API:", ex);
+
         return ResponseEntity.internalServerError().body(Map.of("error", "Ocorreu um erro inesperado"));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
     }
 }
