@@ -2,7 +2,20 @@ package com.fiapchallenge.garage.adapters.outbound.entities;
 
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,12 +32,14 @@ public class ServiceOrderEntity {
     @Column(name = "vehicle_id")
     private UUID vehicleId;
 
+    @Column(name = "customer_id")
+    private UUID customerId;
+
     @ManyToMany
     @JoinTable(
             name = "service_order_service_type",
             joinColumns = @JoinColumn(name = "service_order_id"),
-            inverseJoinColumns = @JoinColumn(name = "service_type_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "service_type_id"))
     private List<ServiceTypeEntity> serviceTypeList;
 
     @Enumerated(EnumType.STRING)
@@ -34,78 +49,83 @@ public class ServiceOrderEntity {
     @JoinColumn(name = "vehicle_id", insertable = false, updatable = false)
     private VehicleEntity vehicle;
 
+    @ManyToOne(fetch =  FetchType.LAZY)
+    @JoinColumn(name = "customer_id", insertable = false, updatable = false)
+    private CustomerEntity customer;
+
     @OneToMany(mappedBy = "serviceOrderId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ServiceOrderItemEntity> stockItems;
 
-    public ServiceOrderEntity() {
-    }
+    public ServiceOrderEntity() {}
 
     public ServiceOrderEntity(ServiceOrder serviceOrder) {
         this.observations = serviceOrder.getObservations();
         this.status = serviceOrder.getStatus();
         this.vehicleId = serviceOrder.getVehicleId();
+        this.customerId = serviceOrder.getCustomerId();
     }
 
     public UUID getId() {
         return id;
     }
 
-    public ServiceOrderEntity setId(UUID id) {
+    public void setId(UUID id) {
         this.id = id;
-        return this;
     }
 
     public String getObservations() {
         return observations;
     }
 
-    public ServiceOrderEntity setObservations(String observations) {
+    public void setObservations(String observations) {
         this.observations = observations;
-        return this;
     }
 
     public UUID getVehicleId() {
         return vehicleId;
     }
 
-    public ServiceOrderEntity setVehicleId(UUID vehicleId) {
+    public void setVehicleId(UUID vehicleId) {
         this.vehicleId = vehicleId;
-        return this;
+    }
+
+    public UUID getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(UUID customerId) {
+        this.customerId = customerId;
     }
 
     public List<ServiceTypeEntity> getServiceTypeList() {
         return serviceTypeList;
     }
 
-    public ServiceOrderEntity setServiceTypeList(List<ServiceTypeEntity> serviceTypeList) {
+    public void setServiceTypeList(List<ServiceTypeEntity> serviceTypeList) {
         this.serviceTypeList = serviceTypeList;
-        return this;
     }
 
     public ServiceOrderStatus getStatus() {
         return status;
     }
 
-    public ServiceOrderEntity setStatus(ServiceOrderStatus status) {
+    public void setStatus(ServiceOrderStatus status) {
         this.status = status;
-        return this;
     }
 
     public VehicleEntity getVehicle() {
         return vehicle;
     }
 
-    public ServiceOrderEntity setVehicle(VehicleEntity vehicle) {
+    public void setVehicle(VehicleEntity vehicle) {
         this.vehicle = vehicle;
-        return this;
     }
 
     public List<ServiceOrderItemEntity> getStockItems() {
         return stockItems;
     }
 
-    public ServiceOrderEntity setStockItems(List<ServiceOrderItemEntity> stockItems) {
+    public void setStockItems(List<ServiceOrderItemEntity> stockItems) {
         this.stockItems = stockItems;
-        return this;
     }
 }

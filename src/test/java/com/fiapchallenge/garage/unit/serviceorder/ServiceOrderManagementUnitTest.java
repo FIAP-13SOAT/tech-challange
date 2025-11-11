@@ -19,14 +19,18 @@ class ServiceOrderManagementUnitTest {
 
     private ServiceOrder serviceOrder;
     private UUID vehicleId;
+    private UUID customerId;
 
     @BeforeEach
     void setUp() {
         vehicleId = UUID.randomUUID();
+        customerId = UUID.randomUUID();
+
         serviceOrder = new ServiceOrder(
                 UUID.randomUUID(),
                 "Teste",
                 vehicleId,
+                customerId,
                 ServiceOrderStatus.CREATED,
                 new ArrayList<>(),
                 new ArrayList<>()
@@ -52,7 +56,7 @@ class ServiceOrderManagementUnitTest {
     void shouldRemoveStockItemsFromOrder() {
         ServiceOrderItem item1 = new ServiceOrderItem(UUID.randomUUID(), UUID.randomUUID(), 2);
         ServiceOrderItem item2 = new ServiceOrderItem(UUID.randomUUID(), UUID.randomUUID(), 3);
-        
+
         serviceOrder.addStockItems(List.of(item1, item2));
         serviceOrder.removeStockItems(List.of(item1));
 
@@ -80,7 +84,7 @@ class ServiceOrderManagementUnitTest {
     void shouldRemoveServiceTypesFromOrder() {
         ServiceType service1 = new ServiceType(UUID.randomUUID(), BigDecimal.valueOf(50.0), "Serviço 1");
         ServiceType service2 = new ServiceType(UUID.randomUUID(), BigDecimal.valueOf(75.0), "Serviço 2");
-        
+
         serviceOrder.addServiceTypes(List.of(service1, service2));
         serviceOrder.removeServiceTypes(List.of(service1));
 
@@ -96,6 +100,7 @@ class ServiceOrderManagementUnitTest {
                 UUID.randomUUID(),
                 "Teste",
                 vehicleId,
+                customerId,
                 ServiceOrderStatus.CREATED,
                 null,
                 null
@@ -118,6 +123,7 @@ class ServiceOrderManagementUnitTest {
                 UUID.randomUUID(),
                 "Teste",
                 vehicleId,
+                customerId,
                 ServiceOrderStatus.CREATED,
                 null,
                 null

@@ -24,6 +24,7 @@ public class CreateServiceOrderService implements CreateServiceOrderUseCase {
     public CreateServiceOrderService(ServiceTypeRepository serviceTypeRepository,
                                    ServiceOrderRepository serviceOrderRepository,
                                    ConsumeStockUseCase consumeStockUseCase) {
+
         this.serviceTypeRepository = serviceTypeRepository;
         this.serviceOrderRepository = serviceOrderRepository;
         this.consumeStockUseCase = consumeStockUseCase;
@@ -36,17 +37,14 @@ public class CreateServiceOrderService implements CreateServiceOrderUseCase {
                 .map(serviceTypeRepository::findByIdOrThrow)
                 .toList();
 
-        if (command.stockItems() != null && !command.stockItems().isEmpty()) {
-            command.stockItems().forEach(item -> {
-                ConsumeStockCommand consumeCommand = new ConsumeStockCommand(item.stockId(), item.quantity());
-                consumeStockUseCase.handle(consumeCommand);
-            });
-        }
+        command.stockItems().forEach(item -> {
+            ConsumeStockCommand consumeCommand = new ConsumeStockCommand(item.stockId(), item.quantity());
+            consumeStockUseCase.handle(consumeCommand);
+        });
 
-        List<ServiceOrderItem> stockItems = command.stockItems() != null ?
-                command.stockItems().stream()
+        List<ServiceOrderItem> stockItems = command.stockItems().stream()
                         .map(item -> new ServiceOrderItem(item.stockId(), item.quantity()))
-                        .toList() : List.of();
+                        .toList();
 
         ServiceOrder serviceOrder = new ServiceOrder(command);
         serviceOrder.setServiceTypeList(serviceTypesList);

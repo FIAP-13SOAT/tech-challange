@@ -86,8 +86,8 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     @Override
     @PostMapping
     public ResponseEntity<ServiceOrder> create(@Valid @RequestBody CreateServiceOrderDTO createServiceOrderDTO) {
-        CreateServiceOrderCommand command = new CreateServiceOrderCommand(createServiceOrderDTO);
-        ServiceOrder serviceOrder = createServiceOrderUseCase.handle(command);
+        ServiceOrder serviceOrder = createServiceOrderUseCase.handle(new CreateServiceOrderCommand(createServiceOrderDTO));
+
         return ResponseEntity.ok(serviceOrder);
     }
 

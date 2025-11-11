@@ -38,7 +38,7 @@ class CompleteServiceOrderServiceTest {
     @DisplayName("Deve completar ordem de serviço com sucesso")
     void shouldCompleteServiceOrderSuccessfully() {
         UUID serviceOrderId = UUID.randomUUID();
-        ServiceOrder serviceOrder = new ServiceOrder(serviceOrderId, "Test", UUID.randomUUID(),
+        ServiceOrder serviceOrder = new ServiceOrder(serviceOrderId, "Test", UUID.randomUUID(), UUID.randomUUID(),
                 ServiceOrderStatus.IN_PROGRESS, List.of(), List.of());
 
         when(serviceOrderRepository.findById(serviceOrderId)).thenReturn(Optional.of(serviceOrder));
@@ -57,7 +57,7 @@ class CompleteServiceOrderServiceTest {
     @DisplayName("Deve lançar exceção quando ordem de serviço não está em status IN_PROGRESS")
     void shouldThrowExceptionWhenNotInProgressStatus() {
         UUID serviceOrderId = UUID.randomUUID();
-        ServiceOrder serviceOrder = new ServiceOrder(serviceOrderId, "Test", UUID.randomUUID(),
+        ServiceOrder serviceOrder = new ServiceOrder(serviceOrderId, "Test", UUID.randomUUID(), UUID.randomUUID(),
                 ServiceOrderStatus.AWAITING_APPROVAL, List.of(), List.of());
 
         when(serviceOrderRepository.findById(serviceOrderId)).thenReturn(Optional.of(serviceOrder));

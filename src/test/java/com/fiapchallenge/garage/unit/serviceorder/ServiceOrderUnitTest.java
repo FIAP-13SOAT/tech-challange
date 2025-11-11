@@ -60,17 +60,15 @@ class ServiceOrderUnitTest {
     @Test
     @DisplayName("Criação de Ordem de Serviço")
     void shouldCreateServiceOrder() {
-        // Arrange
         ServiceType serviceType = ServiceTypeTestFactory.build();
         UUID vehicleId = UUID.randomUUID();
 
         when(serviceTypeRepository.findByIdOrThrow(any(UUID.class))).thenReturn(serviceType);
-        when(serviceOrderRepository.save(any(ServiceOrder.class))).thenReturn(ServiceOrderTestFactory.createServiceOrder(vehicleId));
+        UUID customerId = UUID.randomUUID();
+        when(serviceOrderRepository.save(any(ServiceOrder.class))).thenReturn(ServiceOrderTestFactory.createServiceOrder(vehicleId, customerId));
 
-        // Act
-        ServiceOrder serviceOrder = createServiceOrderService.handle(ServiceOrderTestFactory.createServiceOrderCommand(vehicleId));
+        ServiceOrder serviceOrder = createServiceOrderService.handle(ServiceOrderTestFactory.createServiceOrderCommand(vehicleId, customerId));
 
-        // Assert
         assertEquals(ServiceOrderTestFactory.OBSERVATIONS, serviceOrder.getObservations());
         assertEquals(ServiceOrderStatus.CREATED, serviceOrder.getStatus());
         assertEquals(vehicleId, serviceOrder.getVehicleId());
@@ -82,7 +80,8 @@ class ServiceOrderUnitTest {
     @DisplayName("Iniciar diagnóstico")
     void shouldStartDiagnostic() {
         UUID vehicleId = UUID.randomUUID();
-        Optional<ServiceOrder> mockedServiceOrder = Optional.of(ServiceOrderTestFactory.createServiceOrder(vehicleId));
+        UUID customerId = UUID.randomUUID();
+        Optional<ServiceOrder> mockedServiceOrder = Optional.of(ServiceOrderTestFactory.createServiceOrder(vehicleId, customerId));
         when(serviceOrderRepository.findById(any(UUID.class))).thenReturn(mockedServiceOrder);
 
         ServiceOrder serviceOrder = startServiceOrderDiagnosticService.handle(new StartServiceOrderDiagnosticCommand(ServiceOrderTestFactory.ID));
@@ -94,7 +93,8 @@ class ServiceOrderUnitTest {
     @DisplayName("Finalizar diagnóstico")
     void shouldFinishDiagnostic() {
         UUID vehicleId = UUID.randomUUID();
-        Optional<ServiceOrder> mockedServiceOrder = Optional.of(ServiceOrderTestFactory.createServiceOrder(vehicleId, ServiceOrderStatus.IN_DIAGNOSIS));
+        UUID customerId = UUID.randomUUID();
+        Optional<ServiceOrder> mockedServiceOrder = Optional.of(ServiceOrderTestFactory.createServiceOrder(vehicleId, customerId, ServiceOrderStatus.IN_DIAGNOSIS));
         when(serviceOrderRepository.findById(any(UUID.class))).thenReturn(mockedServiceOrder);
         ServiceOrder serviceOrder = finishServiceOrderDiagnosticService.handle(new FinishServiceOrderDiagnosticCommand(ServiceOrderTestFactory.ID));
 

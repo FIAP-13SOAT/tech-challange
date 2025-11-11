@@ -12,6 +12,7 @@ import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,6 +27,7 @@ public class ServiceOrderRepositoryImpl implements ServiceOrderRepository {
     public ServiceOrderRepositoryImpl(JpaServiceOrderRepository jpaServiceOrderRepository,
                                      JpaServiceTypeRepository jpaServiceTypeRepository,
                                      JpaServiceOrderItemRepository jpaServiceOrderItemRepository) {
+
         this.jpaServiceOrderRepository = jpaServiceOrderRepository;
         this.jpaServiceTypeRepository = jpaServiceTypeRepository;
         this.jpaServiceOrderItemRepository = jpaServiceOrderItemRepository;
@@ -70,12 +72,12 @@ public class ServiceOrderRepositoryImpl implements ServiceOrderRepository {
     }
 
     private ServiceOrder convertFromEntity(ServiceOrderEntity serviceOrderEntity) {
-        List<ServiceType> serviceTypeList = new java.util.ArrayList<>(serviceOrderEntity.getServiceTypeList().stream().map(it ->
+        List<ServiceType> serviceTypeList = new ArrayList<>(serviceOrderEntity.getServiceTypeList().stream().map(it ->
                 new ServiceType(it.getId(), it.getValue(), it.getDescription())
         ).toList());
 
         List<ServiceOrderItemEntity> stockItemEntities = jpaServiceOrderItemRepository.findByServiceOrderId(serviceOrderEntity.getId());
-        List<ServiceOrderItem> stockItems = new java.util.ArrayList<>(stockItemEntities.stream()
+        List<ServiceOrderItem> stockItems = new ArrayList<>(stockItemEntities.stream()
                 .map(item -> new ServiceOrderItem(item.getId(), item.getStockId(), item.getQuantity()))
                 .toList());
 
@@ -83,6 +85,7 @@ public class ServiceOrderRepositoryImpl implements ServiceOrderRepository {
                 serviceOrderEntity.getId(),
                 serviceOrderEntity.getObservations(),
                 serviceOrderEntity.getVehicleId(),
+                serviceOrderEntity.getCustomerId(),
                 serviceOrderEntity.getStatus(),
                 serviceTypeList,
                 stockItems

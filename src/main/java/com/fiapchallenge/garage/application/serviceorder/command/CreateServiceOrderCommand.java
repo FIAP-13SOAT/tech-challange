@@ -8,6 +8,7 @@ import java.util.UUID;
 public record CreateServiceOrderCommand(
         String observations,
         UUID vehicleId,
+        UUID customerId,
         List<UUID> serviceTypeIdList,
         List<StockItemCommand> stockItems
 ) {
@@ -15,11 +16,9 @@ public record CreateServiceOrderCommand(
         this(
                 dto.observations(),
                 dto.vehicleId(),
-                dto.serviceTypeIdList(),
-                dto.stockItems() != null ?
-                        dto.stockItems().stream()
-                                .map(item -> new StockItemCommand(item.stockId(), item.quantity()))
-                                .toList() : List.of()
+                dto.customerId(),
+                dto.serviceTypeIdList() != null ? dto.serviceTypeIdList() : List.of(),
+                dto.stockItems() != null ? dto.stockItems().stream().map(item -> new StockItemCommand(item.stockId(), item.quantity())).toList() : List.of()
         );
     }
 }

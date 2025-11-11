@@ -47,7 +47,7 @@ class QuoteApprovalUnitTest {
         UUID customerId = UUID.randomUUID();
         Quote quote = new Quote(serviceOrderId, customerId, List.of());
         ServiceOrder serviceOrder = new ServiceOrder(
-            serviceOrderId, "Test", UUID.randomUUID(),
+            serviceOrderId, "Test", UUID.randomUUID(), UUID.randomUUID(),
             ServiceOrderStatus.AWAITING_APPROVAL, List.of(), List.of()
         );
 
@@ -69,7 +69,7 @@ class QuoteApprovalUnitTest {
         UUID customerId = UUID.randomUUID();
         Quote quote = new Quote(serviceOrderId, customerId, List.of());
         ServiceOrder serviceOrder = new ServiceOrder(
-            serviceOrderId, "Test", UUID.randomUUID(),
+            serviceOrderId, "Test", UUID.randomUUID(), UUID.randomUUID(),
             ServiceOrderStatus.AWAITING_APPROVAL, List.of(), List.of()
         );
 

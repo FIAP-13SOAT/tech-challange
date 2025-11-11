@@ -11,6 +11,7 @@ public class ServiceOrder {
     private UUID id;
     private String observations;
     private UUID vehicleId;
+    private UUID customerId;
     private ServiceOrderStatus status;
     private List<ServiceType> serviceTypeList;
     private List<ServiceOrderItem> stockItems;
@@ -18,13 +19,15 @@ public class ServiceOrder {
     public ServiceOrder(CreateServiceOrderCommand command) {
         this.observations = command.observations();
         this.vehicleId = command.vehicleId();
+        this.customerId = command.customerId();
         this.status = ServiceOrderStatus.CREATED;
     }
 
-    public ServiceOrder(UUID id, String observations, UUID vehicleId, ServiceOrderStatus status, List<ServiceType> serviceTypeList, List<ServiceOrderItem> stockItems) {
+    public ServiceOrder(UUID id, String observations, UUID vehicleId, UUID customerId, ServiceOrderStatus status, List<ServiceType> serviceTypeList, List<ServiceOrderItem> stockItems) {
         this.id = id;
         this.observations = observations;
         this.vehicleId = vehicleId;
+        this.customerId = customerId;
         this.status = status;
         this.serviceTypeList = serviceTypeList;
         this.stockItems = stockItems;
@@ -40,6 +43,10 @@ public class ServiceOrder {
 
     public UUID getVehicleId() {
         return vehicleId;
+    }
+
+    public UUID getCustomerId() {
+        return customerId;
     }
 
     public ServiceOrderStatus getStatus() {

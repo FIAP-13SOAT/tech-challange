@@ -16,31 +16,34 @@ public class ServiceOrderTestFactory {
     public static final List<ServiceType> SERVICE_TYPE_LIST = List.of(ServiceTypeTestFactory.build());
     public static final String OBSERVATIONS = "Troca de óleo e filtro";
 
-    public static CreateServiceOrderCommand createServiceOrderCommand(UUID vehicleId) {
+    public static CreateServiceOrderCommand createServiceOrderCommand(UUID vehicleId, UUID customerId) {
         return new CreateServiceOrderCommand(
                 OBSERVATIONS,
                 vehicleId,
+                customerId,
                 getServiceTypeListIds(),
                 List.of()
         );
     }
 
-    public static ServiceOrder createServiceOrder(UUID vehicleId) {
+    public static ServiceOrder createServiceOrder(UUID vehicleId, UUID customerId) {
         return new ServiceOrder(
                 ID,
                 OBSERVATIONS,
                 vehicleId,
+                customerId,
                 STATUS,
                 SERVICE_TYPE_LIST,
                 List.of()
         );
     }
 
-    public static ServiceOrder createServiceOrder(UUID vehicleId, ServiceOrderStatus status) {
+    public static ServiceOrder createServiceOrder(UUID vehicleId, UUID customerId, ServiceOrderStatus status) {
         return new ServiceOrder(
                 ID,
                 OBSERVATIONS,
                 vehicleId,
+                customerId,
                 status,
                 SERVICE_TYPE_LIST,
                 List.of()

@@ -12,12 +12,13 @@ import java.util.UUID;
 
 public class ServiceOrderFixture {
 
-    public static ServiceOrder createServiceOrder(UUID vehicleId, CreateServiceOrderService createServiceOrderService, CreateServiceTypeService createServiceTypeService, ServiceOrderRepository serviceOrderRepository) {
+    public static ServiceOrder createServiceOrder(UUID vehicleId, UUID customerId, CreateServiceOrderService createServiceOrderService, CreateServiceTypeService createServiceTypeService, ServiceOrderRepository serviceOrderRepository) {
         ServiceType serviceType = ServiceTypeFixture.createServiceType(createServiceTypeService);
-        
+
         CreateServiceOrderCommand command = new CreateServiceOrderCommand(
             "Test service order",
             vehicleId,
+            customerId,
             List.of(serviceType.getId()),
             List.of()
         );

@@ -60,7 +60,7 @@ class ApproveQuoteIntegrationTest extends BaseIntegrationTest {
     void shouldApproveQuoteForValidServiceOrder() throws Exception {
         Customer customer = CustomerFixture.createCustomer(createCustomerService);
         Vehicle vehicle = VehicleFixture.createVehicle(customer.getId(), createVehicleService);
-        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), createServiceOrderService, createServiceTypeService, serviceOrderRepository);
+        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), customer.getId(), createServiceOrderService, createServiceTypeService, serviceOrderRepository);
         generateQuoteService.handle(serviceOrder.getId());
 
         mockMvc.perform(post("/quotes/service-order/" + serviceOrder.getId() + "/approve")

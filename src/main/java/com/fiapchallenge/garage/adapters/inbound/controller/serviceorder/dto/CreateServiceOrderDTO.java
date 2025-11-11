@@ -8,9 +8,7 @@ import java.util.UUID;
 public record CreateServiceOrderDTO(
         String observations,
         UUID vehicleId,
+        UUID customerId,
         List<UUID> serviceTypeIdList,
-        
-        @Valid
-        List<StockItemDTO> stockItems
-) {
-}
+        @Valid List<StockItemDTO> stockItems
+) {}

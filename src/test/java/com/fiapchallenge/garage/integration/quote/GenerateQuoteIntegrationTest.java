@@ -58,7 +58,7 @@ class GenerateQuoteIntegrationTest extends BaseIntegrationTest {
     void shouldGenerateQuoteForValidServiceOrder() throws Exception {
         Customer customer = CustomerFixture.createCustomer(createCustomerService);
         Vehicle vehicle = VehicleFixture.createVehicle(customer.getId(), createVehicleService);
-        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), createServiceOrderService, createServiceTypeService, serviceOrderRepository);
+        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), customer.getId(), createServiceOrderService, createServiceTypeService, serviceOrderRepository);
 
         mockMvc.perform(get("/quotes/service-order/" + serviceOrder.getId())
                 .header("Authorization", getAuthToken()))
