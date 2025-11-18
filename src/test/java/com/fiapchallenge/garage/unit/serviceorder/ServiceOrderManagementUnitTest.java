@@ -31,7 +31,7 @@ class ServiceOrderManagementUnitTest {
                 "Teste",
                 vehicleId,
                 customerId,
-                ServiceOrderStatus.CREATED,
+                ServiceOrderStatus.RECEIVED,
                 new ArrayList<>(),
                 new ArrayList<>()
         );
@@ -101,7 +101,7 @@ class ServiceOrderManagementUnitTest {
                 "Teste",
                 vehicleId,
                 customerId,
-                ServiceOrderStatus.CREATED,
+                ServiceOrderStatus.RECEIVED,
                 null,
                 null
         );
@@ -124,7 +124,7 @@ class ServiceOrderManagementUnitTest {
                 "Teste",
                 vehicleId,
                 customerId,
-                ServiceOrderStatus.CREATED,
+                ServiceOrderStatus.RECEIVED,
                 null,
                 null
         );

@@ -27,7 +27,7 @@ class ServiceOrderStatusTransitionTest {
     @DisplayName("Deve lançar exceção ao iniciar progresso de status incorreto")
     void shouldThrowExceptionWhenStartingProgressFromWrongStatus() {
         ServiceOrder serviceOrder = new ServiceOrder(UUID.randomUUID(), "Test", UUID.randomUUID(), UUID.randomUUID(),
-                ServiceOrderStatus.CREATED, List.of(), List.of());
+                ServiceOrderStatus.RECEIVED, List.of(), List.of());
 
         assertThrows(IllegalStateException.class, serviceOrder::startProgress);
     }

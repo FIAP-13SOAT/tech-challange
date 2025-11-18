@@ -3,6 +3,7 @@ package com.fiapchallenge.garage.domain.serviceorder;
 import com.fiapchallenge.garage.application.serviceorder.command.CreateServiceOrderCommand;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,7 +21,7 @@ public class ServiceOrder {
         this.observations = command.observations();
         this.vehicleId = command.vehicleId();
         this.customerId = command.customerId();
-        this.status = ServiceOrderStatus.CREATED;
+        this.status = ServiceOrderStatus.RECEIVED;
     }
 
     public ServiceOrder(UUID id, String observations, UUID vehicleId, UUID customerId, ServiceOrderStatus status, List<ServiceType> serviceTypeList, List<ServiceOrderItem> stockItems) {
@@ -74,50 +75,50 @@ public class ServiceOrder {
     }
 
     public void startDiagnostic() {
-        if (this.status != ServiceOrderStatus.CREATED) {
-            throw new IllegalStateException("Service order must be in CREATED status to start diagnostic.");
+        if (this.status != ServiceOrderStatus.RECEIVED) {
+            throw new IllegalStateException("Ordem de serviço deve estar no status recebida para iniciar diagnóstico.");
         }
         this.status = ServiceOrderStatus.IN_DIAGNOSIS;
     }
 
     public void sendToApproval() {
         if (this.status != ServiceOrderStatus.IN_DIAGNOSIS) {
-            throw new IllegalStateException("Service order must be in IN_DIAGNOSIS status to finish diagnostic.");
+            throw new IllegalStateException("Ordem de serviço deve estar no status em diagnóstico para finalizar diagnóstico.");
         }
         this.status = ServiceOrderStatus.AWAITING_APPROVAL;
     }
 
     public void cancel() {
         if (this.status == ServiceOrderStatus.COMPLETED || this.status == ServiceOrderStatus.DELIVERED || this.status == ServiceOrderStatus.CANCELLED) {
-            throw new IllegalStateException("Cannot cancel service order in status: " + this.status);
+            throw new IllegalStateException("Não é possível cancelar uma ordem de serviço que já esteja completada, entregue ou cancelada.");
         }
         this.status = ServiceOrderStatus.CANCELLED;
     }
 
     public void startProgress() {
         if (this.status != ServiceOrderStatus.AWAITING_APPROVAL) {
-            throw new IllegalStateException("Service order must be in AWAITING_APPROVAL status to start progress.");
+            throw new IllegalStateException("Ordem de serviço deve estar no status aguardando aprovação para iniciar execução.");
         }
         this.status = ServiceOrderStatus.IN_PROGRESS;
     }
 
     public void complete() {
         if (this.status != ServiceOrderStatus.IN_PROGRESS) {
-            throw new IllegalStateException("Service order must be in IN_PROGRESS status to complete.");
+            throw new IllegalStateException("Ordem de serviço deve estar no status em execução para concluir.");
         }
         this.status = ServiceOrderStatus.COMPLETED;
     }
 
     public void deliver() {
         if (this.status != ServiceOrderStatus.COMPLETED) {
-            throw new IllegalStateException("Service order must be in COMPLETED status to deliver.");
+            throw new IllegalStateException("Ordem de serviço deve estar no status concluída para entregar.");
         }
         this.status = ServiceOrderStatus.DELIVERED;
     }
 
     public void addStockItems(List<ServiceOrderItem> items) {
         if (this.stockItems == null) {
-            this.stockItems = new java.util.ArrayList<>();
+            this.stockItems = new ArrayList<>();
         }
         this.stockItems.addAll(items);
     }
@@ -125,8 +126,8 @@ public class ServiceOrder {
     public void removeStockItems(List<ServiceOrderItem> items) {
         if (this.stockItems != null) {
             for (ServiceOrderItem item : items) {
-                this.stockItems.removeIf(existing -> 
-                    existing.getStockId().equals(item.getStockId()) && 
+                this.stockItems.removeIf(existing ->
+                    existing.getStockId().equals(item.getStockId()) &&
                     existing.getQuantity().equals(item.getQuantity()));
             }
         }
@@ -134,7 +135,7 @@ public class ServiceOrder {
 
     public void addServiceTypes(List<ServiceType> services) {
         if (this.serviceTypeList == null) {
-            this.serviceTypeList = new java.util.ArrayList<>();
+            this.serviceTypeList = new ArrayList<>();
         }
         this.serviceTypeList.addAll(services);
     }

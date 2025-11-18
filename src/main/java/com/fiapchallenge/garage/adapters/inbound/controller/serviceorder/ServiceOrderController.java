@@ -11,6 +11,7 @@ import com.fiapchallenge.garage.application.serviceorder.DeliverServiceOrderUseC
 import com.fiapchallenge.garage.application.serviceorder.FinishServiceOrderDiagnosticUseCase;
 import com.fiapchallenge.garage.application.serviceorder.FinishServiceOrderExecutionUseCase;
 import com.fiapchallenge.garage.application.serviceorder.GetServiceOrderDetailsUseCase;
+import com.fiapchallenge.garage.application.serviceorder.ListActiveServiceOrdersUseCase;
 import com.fiapchallenge.garage.application.serviceorder.RemoveServiceTypesUseCase;
 import com.fiapchallenge.garage.application.serviceorder.RemoveStockItemsUseCase;
 import com.fiapchallenge.garage.application.serviceorder.StartServiceOrderDiagnosticUseCase;
@@ -57,6 +58,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     private final RemoveStockItemsUseCase removeStockItemsUseCase;
     private final AddServiceTypesUseCase addServiceTypesUseCase;
     private final RemoveServiceTypesUseCase removeServiceTypesUseCase;
+    private final ListActiveServiceOrdersUseCase listActiveServiceOrdersUseCase;
 
     public ServiceOrderController(CreateServiceOrderUseCase createServiceOrderUseCase,
                                   StartServiceOrderDiagnosticUseCase startServiceOrderDiagnosticUseCase,
@@ -68,7 +70,8 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
                                   AddStockItemsUseCase addStockItemsUseCase,
                                   RemoveStockItemsUseCase removeStockItemsUseCase,
                                   AddServiceTypesUseCase addServiceTypesUseCase,
-                                  RemoveServiceTypesUseCase removeServiceTypesUseCase) {
+                                  RemoveServiceTypesUseCase removeServiceTypesUseCase,
+                                  ListActiveServiceOrdersUseCase listActiveServiceOrdersUseCase) {
 
         this.createServiceOrderUseCase = createServiceOrderUseCase;
         this.startServiceOrderDiagnosticUseCase = startServiceOrderDiagnosticUseCase;
@@ -81,6 +84,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         this.removeStockItemsUseCase = removeStockItemsUseCase;
         this.addServiceTypesUseCase = addServiceTypesUseCase;
         this.removeServiceTypesUseCase = removeServiceTypesUseCase;
+        this.listActiveServiceOrdersUseCase = listActiveServiceOrdersUseCase;
     }
 
     @Override
@@ -123,6 +127,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         return ResponseEntity.ok(serviceOrder);
     }
 
+    @Override
     @PostMapping("/{id}/cancel")
     public ResponseEntity<ServiceOrder> setCancelled(@PathVariable UUID id) {
         ServiceOrder serviceOrder = cancelServiceOrderUseCase.handle(new CancelServiceOrderCommand(id));
@@ -130,6 +135,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         return ResponseEntity.ok(serviceOrder);
     }
 
+    @Override
     @GetMapping("/{id}")
     public ResponseEntity<ServiceOrder> getServiceOrderDetails(@PathVariable UUID id) {
         ServiceOrder serviceOrder = getServiceOrderDetailsUseCase.handle(new GetServiceOrderDetailsCommand(id));
@@ -137,6 +143,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         return ResponseEntity.ok(serviceOrder);
     }
 
+    @Override
     @PostMapping("/{id}/stock-items")
     public ResponseEntity<ServiceOrder> addStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
         ServiceOrder serviceOrder = addStockItemsUseCase.handle(new AddStockItemsCommand(id, stockItems));
@@ -144,6 +151,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         return ResponseEntity.ok(serviceOrder);
     }
 
+    @Override
     @DeleteMapping("/{id}/stock-items")
     public ResponseEntity<ServiceOrder> removeStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
         ServiceOrder serviceOrder = removeStockItemsUseCase.handle(new RemoveStockItemsCommand(id, stockItems));
@@ -151,6 +159,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         return ResponseEntity.ok(serviceOrder);
     }
 
+    @Override
     @PostMapping("/{id}/service-types")
     public ResponseEntity<ServiceOrder> addServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds) {
         ServiceOrder serviceOrder = addServiceTypesUseCase.handle(new AddServiceTypesCommand(id, serviceTypeIds));
@@ -158,10 +167,18 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         return ResponseEntity.ok(serviceOrder);
     }
 
+    @Override
     @DeleteMapping("/{id}/service-types")
     public ResponseEntity<ServiceOrder> removeServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds) {
         ServiceOrder serviceOrder = removeServiceTypesUseCase.handle(new RemoveServiceTypesCommand(id, serviceTypeIds));
 
         return ResponseEntity.ok(serviceOrder);
+    }
+
+    @Override
+    @GetMapping
+    public ResponseEntity<List<ServiceOrder>> listActiveOrders() {
+        List<ServiceOrder> serviceOrders = listActiveServiceOrdersUseCase.handle();
+        return ResponseEntity.ok(serviceOrders);
     }
 }

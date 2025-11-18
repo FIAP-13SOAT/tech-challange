@@ -59,4 +59,11 @@ public interface ServiceOrderControllerOpenApiSpec {
 
     @Operation(summary = "Remover tipos de serviço", description = "Remove tipos de serviço da ordem de serviço")
     ResponseEntity<ServiceOrder> removeServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds);
+
+    @Operation(summary = "Listar ordens ativas", description = "Lista todas as ordens de serviço ativas ordenadas por prioridade e data")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de ordens ativas retornada com sucesso",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceOrder.class)))
+    })
+    ResponseEntity<List<ServiceOrder>> listActiveOrders();
 }

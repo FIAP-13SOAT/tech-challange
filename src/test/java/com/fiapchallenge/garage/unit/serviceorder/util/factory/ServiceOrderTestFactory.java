@@ -12,7 +12,7 @@ import java.util.UUID;
 public class ServiceOrderTestFactory {
 
     public static final UUID ID = UUID.randomUUID();
-    public static final ServiceOrderStatus STATUS = ServiceOrderStatus.CREATED;
+    public static final ServiceOrderStatus STATUS = ServiceOrderStatus.RECEIVED;
     public static final List<ServiceType> SERVICE_TYPE_LIST = List.of(ServiceTypeTestFactory.build());
     public static final String OBSERVATIONS = "Troca de óleo e filtro";
 

@@ -70,7 +70,7 @@ class ServiceOrderUnitTest {
         ServiceOrder serviceOrder = createServiceOrderService.handle(ServiceOrderTestFactory.createServiceOrderCommand(vehicleId, customerId));
 
         assertEquals(ServiceOrderTestFactory.OBSERVATIONS, serviceOrder.getObservations());
-        assertEquals(ServiceOrderStatus.CREATED, serviceOrder.getStatus());
+        assertEquals(ServiceOrderStatus.RECEIVED, serviceOrder.getStatus());
         assertEquals(vehicleId, serviceOrder.getVehicleId());
         assertEquals(ServiceOrderTestFactory.SERVICE_TYPE_LIST.size(), serviceOrder.getServiceTypeList().size());
         assertEquals(ServiceOrderTestFactory.getServiceTypeListIds(), serviceOrder.getServiceTypeListIds());

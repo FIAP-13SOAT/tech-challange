@@ -12,9 +12,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        default_schema: public
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   flyway:
     enabled: true
+    schemas: public
+    default-schema: public
     locations: classpath:db/migration
 
 api:

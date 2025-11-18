@@ -71,6 +71,12 @@ public class ServiceOrderRepositoryImpl implements ServiceOrderRepository {
         return convertFromEntity(entity);
     }
 
+    @Override
+    public List<ServiceOrder> findActiveOrdersByPriority() {
+        List<ServiceOrderEntity> entities = jpaServiceOrderRepository.findActiveOrdersByPriority();
+        return entities.stream().map(this::convertFromEntity).toList();
+    }
+
     private ServiceOrder convertFromEntity(ServiceOrderEntity serviceOrderEntity) {
         List<ServiceType> serviceTypeList = new ArrayList<>(serviceOrderEntity.getServiceTypeList().stream().map(it ->
                 new ServiceType(it.getId(), it.getValue(), it.getDescription())

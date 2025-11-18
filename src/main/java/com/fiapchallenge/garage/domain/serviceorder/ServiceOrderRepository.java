@@ -1,5 +1,6 @@
 package com.fiapchallenge.garage.domain.serviceorder;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -10,4 +11,6 @@ public interface ServiceOrderRepository {
     Optional<ServiceOrder> findById(UUID id);
 
     ServiceOrder findByIdOrThrow(UUID id);
+    
+    List<ServiceOrder> findActiveOrdersByPriority();
 }
