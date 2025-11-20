@@ -1,10 +1,9 @@
 package com.fiapchallenge.garage.unit.serviceorder;
 
-import com.fiapchallenge.garage.application.serviceorder.CompleteServiceOrderService;
-import com.fiapchallenge.garage.application.serviceorder.FinishServiceOrderExecutionService;
-import com.fiapchallenge.garage.application.serviceorder.FinishServiceOrderExecutionUseCase;
-import com.fiapchallenge.garage.application.serviceorder.command.CompleteServiceOrderCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.FinishServiceOrderExecutionCommand;
+import com.fiapchallenge.garage.application.serviceorder.complete.CompleteServiceOrderService;
+import com.fiapchallenge.garage.application.serviceorderexecution.FinishServiceOrderExecutionUseCase;
+import com.fiapchallenge.garage.application.serviceorder.complete.CompleteServiceOrderCommand;
+import com.fiapchallenge.garage.application.serviceorderexecution.FinishServiceOrderExecutionCommand;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;

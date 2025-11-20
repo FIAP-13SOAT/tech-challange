@@ -41,6 +41,7 @@ public class ServiceOrderRepositoryImpl implements ServiceOrderRepository {
         if (serviceOrder.getId() != null) {
             serviceOrderEntity.setId(serviceOrder.getId());
         }
+
         serviceOrderEntity.setServiceTypeList(serviceTypeEntities);
 
         ServiceOrderEntity savedEntity = jpaServiceOrderRepository.save(serviceOrderEntity);

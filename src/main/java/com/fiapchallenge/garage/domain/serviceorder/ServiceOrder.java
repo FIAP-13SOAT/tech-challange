@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.domain.serviceorder;
 
-import com.fiapchallenge.garage.application.serviceorder.command.CreateServiceOrderCommand;
+import com.fiapchallenge.garage.application.serviceorder.create.CreateServiceOrderCommand;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 
 import java.util.ArrayList;

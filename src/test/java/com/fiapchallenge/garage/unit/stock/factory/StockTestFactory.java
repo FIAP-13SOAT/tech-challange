@@ -1,9 +1,9 @@
 package com.fiapchallenge.garage.unit.stock.factory;
 
 import com.fiapchallenge.garage.domain.stock.Stock;
-import com.fiapchallenge.garage.domain.stock.command.AddStockCommand;
-import com.fiapchallenge.garage.domain.stock.command.ConsumeStockCommand;
-import com.fiapchallenge.garage.domain.stock.command.CreateStockCommand;
+import com.fiapchallenge.garage.application.stock.command.AddStockCommand;
+import com.fiapchallenge.garage.application.stock.command.ConsumeStockCommand;
+import com.fiapchallenge.garage.application.stock.command.CreateStockCommand;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
