@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.serviceorder;
 
 import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.ServiceOrderTrackingDTO;
-import com.fiapchallenge.garage.application.serviceorder.TrackServiceOrderUseCase;
+import com.fiapchallenge.garage.application.serviceorder.track.TrackServiceOrderUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;

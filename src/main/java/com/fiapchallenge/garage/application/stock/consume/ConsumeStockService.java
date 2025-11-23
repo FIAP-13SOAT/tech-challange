@@ -4,7 +4,7 @@ import com.fiapchallenge.garage.application.stock.StockLevelChecker;
 import com.fiapchallenge.garage.application.stockmovement.create.CreateStockMovementUseCase;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
-import com.fiapchallenge.garage.domain.stock.command.ConsumeStockCommand;
+import com.fiapchallenge.garage.application.stock.command.ConsumeStockCommand;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
 import com.fiapchallenge.garage.shared.exception.InsufficientStockException;
 import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
@@ -32,16 +32,16 @@ public class ConsumeStockService implements ConsumeStockUseCase {
 
         if (stock.getQuantity() == null || stock.getQuantity() < command.quantity()) {
             throw new InsufficientStockException(
-                String.format("Estoque insuficiente para %s. Disponível: %d, Solicitado: %d", 
-                    stock.getProductName(), 
-                    stock.getQuantity() != null ? stock.getQuantity() : 0, 
+                String.format("Estoque insuficiente para %s. Disponível: %d, Solicitado: %d",
+                    stock.getProductName(),
+                    stock.getQuantity() != null ? stock.getQuantity() : 0,
                     command.quantity())
             );
         }
 
         Integer previousQuantity = stock.getQuantity();
         Integer newQuantity = previousQuantity - command.quantity();
-        
+
         stock.setQuantity(newQuantity)
                 .setUpdatedAt(LocalDateTime.now());
 
@@ -55,7 +55,7 @@ public class ConsumeStockService implements ConsumeStockUseCase {
             newQuantity,
             "Saída de estoque"
         );
-        
+
         stockLevelChecker.checkStockLevelAsync(updatedStock);
 
         return updatedStock;

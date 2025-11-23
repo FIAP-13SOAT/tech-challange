@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.unit.serviceorder.util.factory;
 
-import com.fiapchallenge.garage.application.serviceorder.command.CreateServiceOrderCommand;
+import com.fiapchallenge.garage.application.serviceorder.create.CreateServiceOrderCommand;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;

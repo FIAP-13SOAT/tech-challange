@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.application.quote;
 
-import com.fiapchallenge.garage.application.serviceorder.StartServiceOrderExecutionUseCase;
-import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrderExecutionCommand;
+import com.fiapchallenge.garage.application.serviceorderexecution.StartServiceOrderExecutionUseCase;
+import com.fiapchallenge.garage.application.serviceorderexecution.StartServiceOrderExecutionCommand;
 import com.fiapchallenge.garage.domain.quote.Quote;
 import com.fiapchallenge.garage.domain.quote.QuoteRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
