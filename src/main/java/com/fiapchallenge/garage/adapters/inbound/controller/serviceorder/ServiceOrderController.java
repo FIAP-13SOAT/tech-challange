@@ -2,43 +2,34 @@ package com.fiapchallenge.garage.adapters.inbound.controller.serviceorder;
 
 import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.CreateServiceOrderDTO;
 import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.StockItemDTO;
-import com.fiapchallenge.garage.application.serviceorder.AddServiceTypesUseCase;
-import com.fiapchallenge.garage.application.serviceorder.AddStockItemsUseCase;
-import com.fiapchallenge.garage.application.serviceorder.CancelServiceOrderUseCase;
-import com.fiapchallenge.garage.application.serviceorder.CompleteServiceOrderUseCase;
-import com.fiapchallenge.garage.application.serviceorder.CreateServiceOrderUseCase;
-import com.fiapchallenge.garage.application.serviceorder.DeliverServiceOrderUseCase;
-import com.fiapchallenge.garage.application.serviceorder.FinishServiceOrderDiagnosticUseCase;
-import com.fiapchallenge.garage.application.serviceorder.FinishServiceOrderExecutionUseCase;
-import com.fiapchallenge.garage.application.serviceorder.GetServiceOrderDetailsUseCase;
-import com.fiapchallenge.garage.application.serviceorder.RemoveServiceTypesUseCase;
-import com.fiapchallenge.garage.application.serviceorder.RemoveStockItemsUseCase;
-import com.fiapchallenge.garage.application.serviceorder.StartServiceOrderDiagnosticUseCase;
-import com.fiapchallenge.garage.application.serviceorder.command.AddServiceTypesCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.AddStockItemsCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.CancelServiceOrderCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.CompleteServiceOrderCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.CreateServiceOrderCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.DeliverServiceOrderCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.FinishServiceOrderDiagnosticCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.FinishServiceOrderExecutionCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.GetServiceOrderDetailsCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.RemoveServiceTypesCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.RemoveStockItemsCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrderDiagnosticCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.StockItemCommand;
+import com.fiapchallenge.garage.application.serviceorder.addservicetypes.AddServiceTypesUseCase;
+import com.fiapchallenge.garage.application.serviceorder.addstockitems.AddStockItemsUseCase;
+import com.fiapchallenge.garage.application.serviceorder.cancel.CancelServiceOrderUseCase;
+import com.fiapchallenge.garage.application.serviceorder.complete.CompleteServiceOrderUseCase;
+import com.fiapchallenge.garage.application.serviceorder.create.CreateServiceOrderUseCase;
+import com.fiapchallenge.garage.application.serviceorder.deliver.DeliverServiceOrderUseCase;
+import com.fiapchallenge.garage.application.serviceorder.finishdiagnosis.FinishServiceOrderDiagnosticUseCase;
+import com.fiapchallenge.garage.application.serviceorder.get.GetServiceOrderDetailsUseCase;
+import com.fiapchallenge.garage.application.serviceorder.list.ListActiveServiceOrdersUseCase;
+import com.fiapchallenge.garage.application.serviceorder.removeservicetypes.RemoveServiceTypesUseCase;
+import com.fiapchallenge.garage.application.serviceorder.removestockitems.RemoveStockItemsUseCase;
+import com.fiapchallenge.garage.application.serviceorder.startsdiagnosis.StartServiceOrderDiagnosticUseCase;
+import com.fiapchallenge.garage.application.serviceorder.addservicetypes.AddServiceTypesCommand;
+import com.fiapchallenge.garage.application.serviceorder.addstockitems.AddStockItemsCommand;
+import com.fiapchallenge.garage.application.serviceorder.cancel.CancelServiceOrderCommand;
+import com.fiapchallenge.garage.application.serviceorder.complete.CompleteServiceOrderCommand;
+import com.fiapchallenge.garage.application.serviceorder.create.CreateServiceOrderCommand;
+import com.fiapchallenge.garage.application.serviceorder.deliver.DeliverServiceOrderCommand;
+import com.fiapchallenge.garage.application.serviceorder.finishdiagnosis.FinishServiceOrderDiagnosticCommand;
+import com.fiapchallenge.garage.application.serviceorder.get.GetServiceOrderDetailsCommand;
+import com.fiapchallenge.garage.application.serviceorder.removeservicetypes.RemoveServiceTypesCommand;
+import com.fiapchallenge.garage.application.serviceorder.removestockitems.RemoveStockItemsCommand;
+import com.fiapchallenge.garage.application.serviceorder.startsdiagnosis.StartServiceOrderDiagnosticCommand;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderItem;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
-import com.fiapchallenge.garage.domain.servicetype.ServiceType;
-import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,6 +48,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     private final RemoveStockItemsUseCase removeStockItemsUseCase;
     private final AddServiceTypesUseCase addServiceTypesUseCase;
     private final RemoveServiceTypesUseCase removeServiceTypesUseCase;
+    private final ListActiveServiceOrdersUseCase listActiveServiceOrdersUseCase;
 
     public ServiceOrderController(CreateServiceOrderUseCase createServiceOrderUseCase,
                                   StartServiceOrderDiagnosticUseCase startServiceOrderDiagnosticUseCase,
@@ -68,7 +60,8 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
                                   AddStockItemsUseCase addStockItemsUseCase,
                                   RemoveStockItemsUseCase removeStockItemsUseCase,
                                   AddServiceTypesUseCase addServiceTypesUseCase,
-                                  RemoveServiceTypesUseCase removeServiceTypesUseCase) {
+                                  RemoveServiceTypesUseCase removeServiceTypesUseCase,
+                                  ListActiveServiceOrdersUseCase listActiveServiceOrdersUseCase) {
 
         this.createServiceOrderUseCase = createServiceOrderUseCase;
         this.startServiceOrderDiagnosticUseCase = startServiceOrderDiagnosticUseCase;
@@ -81,6 +74,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         this.removeStockItemsUseCase = removeStockItemsUseCase;
         this.addServiceTypesUseCase = addServiceTypesUseCase;
         this.removeServiceTypesUseCase = removeServiceTypesUseCase;
+        this.listActiveServiceOrdersUseCase = listActiveServiceOrdersUseCase;
     }
 
     @Override
@@ -123,6 +117,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         return ResponseEntity.ok(serviceOrder);
     }
 
+    @Override
     @PostMapping("/{id}/cancel")
     public ResponseEntity<ServiceOrder> setCancelled(@PathVariable UUID id) {
         ServiceOrder serviceOrder = cancelServiceOrderUseCase.handle(new CancelServiceOrderCommand(id));
@@ -130,6 +125,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         return ResponseEntity.ok(serviceOrder);
     }
 
+    @Override
     @GetMapping("/{id}")
     public ResponseEntity<ServiceOrder> getServiceOrderDetails(@PathVariable UUID id) {
         ServiceOrder serviceOrder = getServiceOrderDetailsUseCase.handle(new GetServiceOrderDetailsCommand(id));
@@ -137,6 +133,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         return ResponseEntity.ok(serviceOrder);
     }
 
+    @Override
     @PostMapping("/{id}/stock-items")
     public ResponseEntity<ServiceOrder> addStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
         ServiceOrder serviceOrder = addStockItemsUseCase.handle(new AddStockItemsCommand(id, stockItems));
@@ -144,6 +141,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         return ResponseEntity.ok(serviceOrder);
     }
 
+    @Override
     @DeleteMapping("/{id}/stock-items")
     public ResponseEntity<ServiceOrder> removeStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
         ServiceOrder serviceOrder = removeStockItemsUseCase.handle(new RemoveStockItemsCommand(id, stockItems));
@@ -151,6 +149,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         return ResponseEntity.ok(serviceOrder);
     }
 
+    @Override
     @PostMapping("/{id}/service-types")
     public ResponseEntity<ServiceOrder> addServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds) {
         ServiceOrder serviceOrder = addServiceTypesUseCase.handle(new AddServiceTypesCommand(id, serviceTypeIds));
@@ -158,10 +157,18 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         return ResponseEntity.ok(serviceOrder);
     }
 
+    @Override
     @DeleteMapping("/{id}/service-types")
     public ResponseEntity<ServiceOrder> removeServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds) {
         ServiceOrder serviceOrder = removeServiceTypesUseCase.handle(new RemoveServiceTypesCommand(id, serviceTypeIds));
 
         return ResponseEntity.ok(serviceOrder);
+    }
+
+    @Override
+    @GetMapping
+    public ResponseEntity<List<ServiceOrder>> listActiveOrders() {
+        List<ServiceOrder> serviceOrders = listActiveServiceOrdersUseCase.handle();
+        return ResponseEntity.ok(serviceOrders);
     }
 }

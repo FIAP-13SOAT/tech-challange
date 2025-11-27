@@ -17,6 +17,7 @@ spring:
   flyway:
     enabled: true
     schemas: public
+    default-schema: public
     locations: classpath:db/migration
 
 api:

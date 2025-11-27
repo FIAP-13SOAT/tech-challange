@@ -41,6 +41,7 @@ public class ServiceOrderRepositoryImpl implements ServiceOrderRepository {
         if (serviceOrder.getId() != null) {
             serviceOrderEntity.setId(serviceOrder.getId());
         }
+
         serviceOrderEntity.setServiceTypeList(serviceTypeEntities);
 
         ServiceOrderEntity savedEntity = jpaServiceOrderRepository.save(serviceOrderEntity);
@@ -69,6 +70,12 @@ public class ServiceOrderRepositoryImpl implements ServiceOrderRepository {
     public ServiceOrder findByIdOrThrow(UUID id) {
         ServiceOrderEntity entity = jpaServiceOrderRepository.findById(id).orElseThrow(() -> new SoatNotFoundException("Ordem de serviço não encontrado"));
         return convertFromEntity(entity);
+    }
+
+    @Override
+    public List<ServiceOrder> findActiveOrdersByPriority() {
+        List<ServiceOrderEntity> entities = jpaServiceOrderRepository.findActiveOrdersByPriority();
+        return entities.stream().map(this::convertFromEntity).toList();
     }
 
     private ServiceOrder convertFromEntity(ServiceOrderEntity serviceOrderEntity) {

@@ -3,7 +3,7 @@ package com.fiapchallenge.garage.application.stock.add;
 import com.fiapchallenge.garage.application.stockmovement.create.CreateStockMovementUseCase;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
-import com.fiapchallenge.garage.domain.stock.command.AddStockCommand;
+import com.fiapchallenge.garage.application.stock.command.AddStockCommand;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
 import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class AddStockService implements AddStockUseCase {
 
         Integer previousQuantity = stock.getQuantity();
         Integer newQuantity = previousQuantity + command.quantity();
-        
+
         stock.setQuantity(newQuantity)
              .setUpdatedAt(LocalDateTime.now());
 
@@ -42,7 +42,7 @@ public class AddStockService implements AddStockUseCase {
             newQuantity,
             "Entrada de estoque"
         );
-        
+
         return updatedStock;
     }
 }

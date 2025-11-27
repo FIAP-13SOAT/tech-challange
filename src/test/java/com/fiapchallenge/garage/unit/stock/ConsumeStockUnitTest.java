@@ -5,7 +5,7 @@ import com.fiapchallenge.garage.application.stock.consume.ConsumeStockService;
 import com.fiapchallenge.garage.application.stockmovement.create.CreateStockMovementUseCase;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
-import com.fiapchallenge.garage.domain.stock.command.ConsumeStockCommand;
+import com.fiapchallenge.garage.application.stock.command.ConsumeStockCommand;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
 import com.fiapchallenge.garage.shared.exception.InsufficientStockException;
 import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
@@ -97,7 +97,7 @@ class ConsumeStockUnitTest {
     void shouldCreateNotificationWhenStockBecomesLow() {
         Stock lowStock = StockTestFactory.createLowStock();
         ConsumeStockCommand lowCommand = StockTestFactory.consumeStockCommand(lowStock.getId(), 1);
-        
+
         when(stockRepository.findById(lowStock.getId())).thenReturn(Optional.of(lowStock));
         when(stockRepository.save(any(Stock.class))).thenReturn(lowStock);
 

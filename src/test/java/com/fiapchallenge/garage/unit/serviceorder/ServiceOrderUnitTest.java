@@ -1,14 +1,15 @@
 package com.fiapchallenge.garage.unit.serviceorder;
 
-import com.fiapchallenge.garage.application.serviceorder.*;
-import com.fiapchallenge.garage.application.serviceorder.command.FinishServiceOrderDiagnosticCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.FinishServiceOrderExecutionCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrderExecutionCommand;
-import com.fiapchallenge.garage.application.serviceorder.command.StartServiceOrderDiagnosticCommand;
+import com.fiapchallenge.garage.application.serviceorder.finishdiagnosis.FinishServiceOrderDiagnosticCommand;
+import com.fiapchallenge.garage.application.serviceorder.startsdiagnosis.StartServiceOrderDiagnosticCommand;
+import com.fiapchallenge.garage.application.serviceorder.create.CreateServiceOrderService;
+import com.fiapchallenge.garage.application.serviceorder.finishdiagnosis.FinishServiceOrderDiagnosticService;
+import com.fiapchallenge.garage.application.serviceorder.startsdiagnosis.StartServiceOrderDiagnosticService;
+import com.fiapchallenge.garage.application.serviceorderexecution.FinishServiceOrderExecutionService;
+import com.fiapchallenge.garage.application.serviceorderexecution.StartServiceOrderExecutionService;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
-import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecution;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionRepository;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
@@ -70,7 +71,7 @@ class ServiceOrderUnitTest {
         ServiceOrder serviceOrder = createServiceOrderService.handle(ServiceOrderTestFactory.createServiceOrderCommand(vehicleId, customerId));
 
         assertEquals(ServiceOrderTestFactory.OBSERVATIONS, serviceOrder.getObservations());
-        assertEquals(ServiceOrderStatus.CREATED, serviceOrder.getStatus());
+        assertEquals(ServiceOrderStatus.RECEIVED, serviceOrder.getStatus());
         assertEquals(vehicleId, serviceOrder.getVehicleId());
         assertEquals(ServiceOrderTestFactory.SERVICE_TYPE_LIST.size(), serviceOrder.getServiceTypeList().size());
         assertEquals(ServiceOrderTestFactory.getServiceTypeListIds(), serviceOrder.getServiceTypeListIds());

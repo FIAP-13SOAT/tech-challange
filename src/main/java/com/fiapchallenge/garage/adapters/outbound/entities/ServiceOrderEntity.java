@@ -45,6 +45,9 @@ public class ServiceOrderEntity {
     @Enumerated(EnumType.STRING)
     ServiceOrderStatus status;
 
+    @Column(name = "priority")
+    private Integer priority;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicle_id", insertable = false, updatable = false)
     private VehicleEntity vehicle;
@@ -61,6 +64,7 @@ public class ServiceOrderEntity {
     public ServiceOrderEntity(ServiceOrder serviceOrder) {
         this.observations = serviceOrder.getObservations();
         this.status = serviceOrder.getStatus();
+        this.priority = serviceOrder.getStatus().priority;
         this.vehicleId = serviceOrder.getVehicleId();
         this.customerId = serviceOrder.getCustomerId();
     }
@@ -111,6 +115,7 @@ public class ServiceOrderEntity {
 
     public void setStatus(ServiceOrderStatus status) {
         this.status = status;
+        this.priority = status.priority;
     }
 
     public VehicleEntity getVehicle() {
