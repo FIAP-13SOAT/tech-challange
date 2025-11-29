@@ -53,7 +53,7 @@ class ServiceOrderManagementIntegrationTest extends BaseIntegrationTest {
         UUID orderId = createServiceOrder();
 
         mockMvc.perform(get("/service-orders/" + orderId)
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(orderId.toString()))
                 .andExpect(jsonPath("$.observations").exists())
@@ -76,14 +76,14 @@ class ServiceOrderManagementIntegrationTest extends BaseIntegrationTest {
         """.formatted(stockId);
 
         mockMvc.perform(post("/service-orders/" + orderId + "/stock-items")
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(stockItemsJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.stockItems").isArray());
 
         mockMvc.perform(get("/service-orders/" + orderId)
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.stockItems").isArray())
                 .andExpect(jsonPath("$.stockItems[0].stockId").value(stockId.toString()))
@@ -106,7 +106,7 @@ class ServiceOrderManagementIntegrationTest extends BaseIntegrationTest {
         """.formatted(stockId);
 
         mockMvc.perform(post("/service-orders/" + orderId + "/stock-items")
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(addItemsJson))
                 .andExpect(status().isOk());
@@ -121,13 +121,13 @@ class ServiceOrderManagementIntegrationTest extends BaseIntegrationTest {
         """.formatted(stockId);
 
         mockMvc.perform(delete("/service-orders/" + orderId + "/stock-items")
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(removeItemsJson))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/service-orders/" + orderId)
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.stockItems").isEmpty());
     }
@@ -143,14 +143,14 @@ class ServiceOrderManagementIntegrationTest extends BaseIntegrationTest {
         """.formatted(serviceTypeId);
 
         mockMvc.perform(post("/service-orders/" + orderId + "/service-types")
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceTypesJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.serviceTypeList").isArray());
 
         mockMvc.perform(get("/service-orders/" + orderId)
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.serviceTypeList").isArray())
                 .andExpect(jsonPath("$.serviceTypeList[?(@.id == '%s')]", serviceTypeId).exists());
@@ -167,19 +167,19 @@ class ServiceOrderManagementIntegrationTest extends BaseIntegrationTest {
         """.formatted(serviceTypeId);
 
         mockMvc.perform(post("/service-orders/" + orderId + "/service-types")
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceTypesJson))
                 .andExpect(status().isOk());
 
         mockMvc.perform(delete("/service-orders/" + orderId + "/service-types")
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceTypesJson))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/service-orders/" + orderId)
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.serviceTypeList[?(@.id == '%s')]", serviceTypeId).doesNotExist());
     }
@@ -198,7 +198,7 @@ class ServiceOrderManagementIntegrationTest extends BaseIntegrationTest {
         """.formatted(vehicleId, serviceTypeId);
 
         mockMvc.perform(post("/service-orders")
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceOrderJson))
                 .andExpect(status().isOk());
@@ -218,7 +218,7 @@ class ServiceOrderManagementIntegrationTest extends BaseIntegrationTest {
         """;
 
         String stockResponse = mockMvc.perform(post("/stock")
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(stockJson))
                 .andExpect(status().isOk())
@@ -242,7 +242,7 @@ class ServiceOrderManagementIntegrationTest extends BaseIntegrationTest {
         """.formatted(vehicleId, serviceTypeId);
 
         mockMvc.perform(post("/service-orders")
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceOrderJson))
                 .andExpect(status().isOk());

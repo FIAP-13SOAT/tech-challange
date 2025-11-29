@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,13 +26,10 @@ public class ReportController implements ReportControllerOpenApiSpec {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<byte[]> getServiceOrderExecutionReport(
-            @RequestParam(required = true)
-            @DateTimeFormat(pattern = "dd-MM-yyyy")
-            LocalDate startDate,
-            @RequestParam(required = true)
-            @DateTimeFormat(pattern = "dd-MM-yyyy")
-            LocalDate endDate){
+            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate){
 
         byte[] pdfBytes = reportUseCase.handle(new GenerateServiceOrderExecutionReportCommand(startDate, endDate));
         HttpHeaders headers = new HttpHeaders();

@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -19,14 +20,15 @@ public class NotificationController implements NotificationControllerOpenApiSpec
     private final ListNotificationUseCase listNotificationUseCase;
     private final MarkNotificationAsReadUseCase markNotificationAsReadUseCase;
 
-    public NotificationController(ListNotificationUseCase listNotificationUseCase, 
+    public NotificationController(ListNotificationUseCase listNotificationUseCase,
                                  MarkNotificationAsReadUseCase markNotificationAsReadUseCase) {
         this.listNotificationUseCase = listNotificationUseCase;
         this.markNotificationAsReadUseCase = markNotificationAsReadUseCase;
     }
 
-    @GetMapping
     @Override
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
     public ResponseEntity<Page<Notification>> list(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -34,8 +36,9 @@ public class NotificationController implements NotificationControllerOpenApiSpec
         return ResponseEntity.ok(listNotificationUseCase.handle(pageable));
     }
 
-    @GetMapping("/unread")
     @Override
+    @GetMapping("/unread")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
     public ResponseEntity<Page<Notification>> listUnread(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -43,8 +46,9 @@ public class NotificationController implements NotificationControllerOpenApiSpec
         return ResponseEntity.ok(listNotificationUseCase.handleUnread(pageable));
     }
 
-    @PutMapping("/{id}/read")
     @Override
+    @PutMapping("/{id}/read")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
     public ResponseEntity<Void> markAsRead(@PathVariable UUID id) {
         markNotificationAsReadUseCase.handle(id);
         return ResponseEntity.noContent().build();

@@ -63,7 +63,7 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
         """;
 
         String stockResponse = mockMvc.perform(post("/stock")
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(stockJson))
                 .andExpect(status().isOk())
@@ -72,7 +72,7 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
         UUID stockId = UUID.fromString(stockResponse.split("\"id\":\"")[1].split("\"")[0]);
 
         mockMvc.perform(post("/stock/" + stockId + "/add?quantity=100")
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk());
 
         Stock initialStock = stockRepository.findById(stockId).orElseThrow();
@@ -96,7 +96,7 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
         """.formatted(vehicleId, serviceTypeId, stockId);
 
         mockMvc.perform(post("/service-orders")
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceOrderJson))
                 .andExpect(status().isOk());
@@ -119,7 +119,7 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
         """;
 
         String stockResponse = mockMvc.perform(post("/stock")
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(stockJson))
                 .andExpect(status().isOk())
@@ -128,7 +128,7 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
         UUID stockId = UUID.fromString(stockResponse.split("\"id\":\"")[1].split("\"")[0]);
 
         mockMvc.perform(post("/stock/" + stockId + "/add?quantity=50")
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk());
 
         Stock initialStock = stockRepository.findById(stockId).orElseThrow();
@@ -152,7 +152,7 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
         """.formatted(vehicleId, serviceTypeId, stockId);
 
         mockMvc.perform(post("/service-orders")
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceOrderJson))
                 .andExpect(status().isOk());
@@ -164,7 +164,7 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
         assertThat(stockAfterOrder.getQuantity()).isEqualTo(initialStock.getQuantity() - 3);
 
         mockMvc.perform(post("/service-orders/" + createdOrder.getId() + "/cancel")
-                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 

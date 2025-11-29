@@ -1,6 +1,7 @@
 package com.fiapchallenge.garage.integration.stock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.StockFixture;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ class UpdateStockIntegrationTest extends BaseIntegrationTest {
     @Test
     void shouldUpdateStockSuccessfully() throws Exception {
         String createResponse = mockMvc.perform(post("/stock")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(StockFixture.createStockJson()))
                 .andExpect(status().isOk())
@@ -39,7 +40,7 @@ class UpdateStockIntegrationTest extends BaseIntegrationTest {
         String stockId = objectMapper.readTree(createResponse).get("id").asText();
 
         mockMvc.perform(put("/stock/{id}", stockId)
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(StockFixture.updateStockJson()))
                 .andExpect(status().isOk())
@@ -54,7 +55,7 @@ class UpdateStockIntegrationTest extends BaseIntegrationTest {
     @Test
     void shouldFailToUpdateNonExistentStock() throws Exception {
         mockMvc.perform(put("/stock/{id}", "550e8400-e29b-41d4-a716-446655440000")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(StockFixture.updateStockJson()))
                 .andExpect(status().isNotFound());
@@ -63,7 +64,7 @@ class UpdateStockIntegrationTest extends BaseIntegrationTest {
     @Test
     void shouldFailToUpdateWithInvalidData() throws Exception {
         String createResponse = mockMvc.perform(post("/stock")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(StockFixture.createStockJson()))
                 .andExpect(status().isOk())
@@ -75,7 +76,7 @@ class UpdateStockIntegrationTest extends BaseIntegrationTest {
 
         // Tentar atualizar com dados inválidos
         mockMvc.perform(put("/stock/{id}", stockId)
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                             {
@@ -91,7 +92,7 @@ class UpdateStockIntegrationTest extends BaseIntegrationTest {
     void shouldUpdateOnlyProvidedFields() throws Exception {
         // Criar estoque
         String createResponse = mockMvc.perform(post("/stock")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(StockFixture.createStockJson()))
                 .andExpect(status().isOk())
@@ -103,7 +104,7 @@ class UpdateStockIntegrationTest extends BaseIntegrationTest {
 
         // Atualizar apenas o preço
         mockMvc.perform(put("/stock/{id}", stockId)
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                             {
@@ -117,5 +118,32 @@ class UpdateStockIntegrationTest extends BaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.unitPrice").value(99.99))
                 .andExpect(jsonPath("$.productName").value("Óleo Motor 5W30"));
+    }
+
+    @Test
+    void shouldAllowUpdateWithAdminRole() throws Exception {
+        String createResponse = mockMvc.perform(post("/stock")
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(StockFixture.createStockJson()))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        String stockId = objectMapper.readTree(createResponse).get("id").asText();
+
+        mockMvc.perform(put("/stock/{id}", stockId)
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(StockFixture.updateStockJson()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldReturn403ForMechanicRole() throws Exception {
+        mockMvc.perform(put("/stock/550e8400-e29b-41d4-a716-446655440000")
+                        .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(StockFixture.updateStockJson()))
+                .andExpect(status().isForbidden());
     }
 }

@@ -1,6 +1,7 @@
 package com.fiapchallenge.garage.integration.stock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.StockFixture;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ class DeleteStockIntegrationTest extends BaseIntegrationTest {
     @Test
     void shouldDeleteStockSuccessfully() throws Exception {
         String createResponse = mockMvc.perform(post("/stock")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(StockFixture.createStockJson()))
                 .andExpect(status().isOk())
@@ -39,11 +40,11 @@ class DeleteStockIntegrationTest extends BaseIntegrationTest {
         String stockId = objectMapper.readTree(createResponse).get("id").asText();
 
         mockMvc.perform(delete("/stock/{id}", stockId)
-                        .header("Authorization", getAuthToken()))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isNoContent());
 
         mockMvc.perform(get("/stock")
-                        .header("Authorization", getAuthToken()))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(0));
     }
@@ -51,14 +52,14 @@ class DeleteStockIntegrationTest extends BaseIntegrationTest {
     @Test
     void shouldFailToDeleteNonExistentStock() throws Exception {
         mockMvc.perform(delete("/stock/{id}", "550e8400-e29b-41d4-a716-446655440000")
-                        .header("Authorization", getAuthToken()))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void shouldDeleteStockAndNotAffectOthers() throws Exception {
         String createResponse1 = mockMvc.perform(post("/stock")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(StockFixture.createStockJson()))
                 .andExpect(status().isOk())
@@ -67,7 +68,7 @@ class DeleteStockIntegrationTest extends BaseIntegrationTest {
                 .getContentAsString();
 
         String createResponse2 = mockMvc.perform(post("/stock")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                             {
@@ -87,11 +88,11 @@ class DeleteStockIntegrationTest extends BaseIntegrationTest {
         String stockId2 = objectMapper.readTree(createResponse2).get("id").asText();
 
         mockMvc.perform(delete("/stock/{id}", stockId1)
-                        .header("Authorization", getAuthToken()))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isNoContent());
 
         mockMvc.perform(get("/stock")
-                        .header("Authorization", getAuthToken()))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(1))
                 .andExpect(jsonPath("$.content[0].id").value(stockId2))
@@ -101,7 +102,7 @@ class DeleteStockIntegrationTest extends BaseIntegrationTest {
     @Test
     void shouldFailToDeleteStockWithoutAuthentication() throws Exception {
         String createResponse = mockMvc.perform(post("/stock")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(StockFixture.createStockJson()))
                 .andExpect(status().isOk())
@@ -112,6 +113,29 @@ class DeleteStockIntegrationTest extends BaseIntegrationTest {
         String stockId = objectMapper.readTree(createResponse).get("id").asText();
 
         mockMvc.perform(delete("/stock/{id}", stockId))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void shouldAllowDeleteWithAdminRole() throws Exception {
+        String createResponse = mockMvc.perform(post("/stock")
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(StockFixture.createStockJson()))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        String stockId = objectMapper.readTree(createResponse).get("id").asText();
+
+        mockMvc.perform(delete("/stock/{id}", stockId)
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldReturn403ForMechanicRole() throws Exception {
+        mockMvc.perform(delete("/stock/550e8400-e29b-41d4-a716-446655440000")
+                        .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC)))
                 .andExpect(status().isForbidden());
     }
 }

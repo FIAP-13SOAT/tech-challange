@@ -3,5 +3,6 @@ package com.fiapchallenge.garage.domain.user;
 public enum UserRole {
     ADMIN,
     MECHANIC,
-    CLERK
+    CLERK,
+    STOCK_KEEPER
 }

@@ -77,4 +77,24 @@ class GenerateQuoteIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    @DisplayName("Deve permitir acesso com role ADMIN")
+    void shouldAllowAccessWithAdminRole() throws Exception {
+        Customer customer = CustomerFixture.createCustomer(createCustomerService);
+        Vehicle vehicle = VehicleFixture.createVehicle(customer.getId(), createVehicleService);
+        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), customer.getId(), createServiceOrderService, createServiceTypeService, serviceOrderRepository);
+
+        mockMvc.perform(get("/quotes/service-order/" + serviceOrder.getId())
+                .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 403 para role MECHANIC")
+    void shouldReturn403ForMechanicRole() throws Exception {
+        mockMvc.perform(get("/quotes/service-order/" + UUID.randomUUID())
+                .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC)))
+                .andExpect(status().isForbidden());
+    }
 }
