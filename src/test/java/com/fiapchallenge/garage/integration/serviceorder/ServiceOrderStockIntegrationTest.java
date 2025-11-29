@@ -6,6 +6,7 @@ import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeService
 import com.fiapchallenge.garage.application.vehicle.CreateVehicleService;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
+import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
 import com.fiapchallenge.garage.integration.fixtures.ServiceTypeFixture;
@@ -62,7 +63,7 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
         """;
 
         String stockResponse = mockMvc.perform(post("/stock")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(stockJson))
                 .andExpect(status().isOk())
@@ -71,7 +72,7 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
         UUID stockId = UUID.fromString(stockResponse.split("\"id\":\"")[1].split("\"")[0]);
 
         mockMvc.perform(post("/stock/" + stockId + "/add?quantity=100")
-                        .header("Authorization", getAuthToken()))
+                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
                 .andExpect(status().isOk());
 
         Stock initialStock = stockRepository.findById(stockId).orElseThrow();
@@ -95,7 +96,7 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
         """.formatted(vehicleId, serviceTypeId, stockId);
 
         mockMvc.perform(post("/service-orders")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceOrderJson))
                 .andExpect(status().isOk());
@@ -118,7 +119,7 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
         """;
 
         String stockResponse = mockMvc.perform(post("/stock")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(stockJson))
                 .andExpect(status().isOk())
@@ -127,7 +128,7 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
         UUID stockId = UUID.fromString(stockResponse.split("\"id\":\"")[1].split("\"")[0]);
 
         mockMvc.perform(post("/stock/" + stockId + "/add?quantity=50")
-                        .header("Authorization", getAuthToken()))
+                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
                 .andExpect(status().isOk());
 
         Stock initialStock = stockRepository.findById(stockId).orElseThrow();
@@ -151,7 +152,7 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
         """.formatted(vehicleId, serviceTypeId, stockId);
 
         mockMvc.perform(post("/service-orders")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceOrderJson))
                 .andExpect(status().isOk());
@@ -163,7 +164,7 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
         assertThat(stockAfterOrder.getQuantity()).isEqualTo(initialStock.getQuantity() - 3);
 
         mockMvc.perform(post("/service-orders/" + createdOrder.getId() + "/cancel")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
