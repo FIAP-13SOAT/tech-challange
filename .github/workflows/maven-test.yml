@@ -23,5 +23,5 @@ jobs:
     
     - name: Run tests
       run: |
-        docker compose -f docker-compose-dev.yml up --build
+        docker compose -f docker-compose-dev.yml up -d
         ./mvnw clean test
