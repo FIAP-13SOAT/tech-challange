@@ -25,4 +25,3 @@ jobs:
       run: |
         docker-compose -f docker-compose-dev.yml up --build
         ./mvnw clean test
-      working-directory: ./tech-challange
