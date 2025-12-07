@@ -1,17 +1,22 @@
 package com.fiapchallenge.garage.integration.stock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@Transactional
+@SpringBootTest
 @AutoConfigureMockMvc
 class StockNotificationIntegrationTest extends BaseIntegrationTest {
 
@@ -34,7 +39,7 @@ class StockNotificationIntegrationTest extends BaseIntegrationTest {
             """;
 
         String createResponse = mockMvc.perform(post("/stock")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createStockJson))
                 .andExpect(status().isOk())
@@ -48,13 +53,13 @@ class StockNotificationIntegrationTest extends BaseIntegrationTest {
         String stockId = objectMapper.readTree(createResponse).get("id").asText();
 
         mockMvc.perform(post("/stock/{id}/add", stockId)
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .param("quantity", "15"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(15));
         
         mockMvc.perform(post("/stock/{id}/consume", stockId)
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .param("quantity", "8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(7));
@@ -107,7 +112,7 @@ class StockNotificationIntegrationTest extends BaseIntegrationTest {
             """;
 
         String createResponse = mockMvc.perform(post("/stock")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createStockJson))
                 .andExpect(status().isOk())
@@ -118,13 +123,13 @@ class StockNotificationIntegrationTest extends BaseIntegrationTest {
         String stockId = objectMapper.readTree(createResponse).get("id").asText();
 
         mockMvc.perform(post("/stock/{id}/add", stockId)
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .param("quantity", "50"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(50));
 
         mockMvc.perform(post("/stock/{id}/consume", stockId)
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .param("quantity", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(40)); // 40 > 5 (threshold)
@@ -133,5 +138,20 @@ class StockNotificationIntegrationTest extends BaseIntegrationTest {
                         .header("Authorization", getAuthToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[?(@.stockId == '" + stockId + "')]").doesNotExist());
+    }
+
+    @Test
+    void shouldAllowNotificationAccessWithAllRoles() throws Exception {
+        mockMvc.perform(get("/notifications")
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/notifications")
+                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/notifications")
+                        .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC)))
+                .andExpect(status().isOk());
     }
 }

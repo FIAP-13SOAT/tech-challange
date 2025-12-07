@@ -5,6 +5,7 @@ import com.fiapchallenge.garage.adapters.outbound.repositories.serviceorder.JpaS
 import com.fiapchallenge.garage.application.customer.create.CreateCustomerService;
 import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeService;
 import com.fiapchallenge.garage.application.vehicle.CreateVehicleService;
+import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
 import com.fiapchallenge.garage.integration.fixtures.ServiceTypeFixture;
@@ -49,7 +50,7 @@ class ServiceOrderStatusTransitionIntegrationTest extends BaseIntegrationTest {
         UUID serviceOrderId = createServiceOrder();
 
         mockMvc.perform(post("/service-orders/" + serviceOrderId + "/start-diagnosis")
-                        .header("Authorization", getAuthToken()))
+                        .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC)))
                 .andExpect(status().isOk());
     }
 
@@ -59,7 +60,7 @@ class ServiceOrderStatusTransitionIntegrationTest extends BaseIntegrationTest {
         UUID serviceOrderId = createServiceOrder();
 
         mockMvc.perform(post("/service-orders/" + serviceOrderId + "/cancel")
-                        .header("Authorization", getAuthToken()))
+                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
                 .andExpect(status().isOk());
     }
 
@@ -79,7 +80,7 @@ class ServiceOrderStatusTransitionIntegrationTest extends BaseIntegrationTest {
         """.formatted(vehicleId.toString(), serviceTypeId.toString());
 
         mockMvc.perform(post("/service-orders")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceOrderJson))
                 .andExpect(status().isOk());

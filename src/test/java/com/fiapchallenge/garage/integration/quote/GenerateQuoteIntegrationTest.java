@@ -8,6 +8,7 @@ import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
+import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
 import com.fiapchallenge.garage.integration.fixtures.ServiceOrderFixture;
@@ -61,7 +62,7 @@ class GenerateQuoteIntegrationTest extends BaseIntegrationTest {
         ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), customer.getId(), createServiceOrderService, createServiceTypeService, serviceOrderRepository);
 
         mockMvc.perform(get("/quotes/service-order/" + serviceOrder.getId())
-                .header("Authorization", getAuthToken()))
+                .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.serviceOrderId").value(serviceOrder.getId().toString()))
                 .andExpect(jsonPath("$.status").value("PENDING"))
@@ -73,7 +74,27 @@ class GenerateQuoteIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Deve retornar erro 404 para ordem de serviço inexistente")
     void shouldReturnNotFoundForNonExistentServiceOrder() throws Exception {
         mockMvc.perform(get("/quotes/service-order/" + UUID.randomUUID())
-                .header("Authorization", getAuthToken()))
+                .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Deve permitir acesso com role ADMIN")
+    void shouldAllowAccessWithAdminRole() throws Exception {
+        Customer customer = CustomerFixture.createCustomer(createCustomerService);
+        Vehicle vehicle = VehicleFixture.createVehicle(customer.getId(), createVehicleService);
+        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), customer.getId(), createServiceOrderService, createServiceTypeService, serviceOrderRepository);
+
+        mockMvc.perform(get("/quotes/service-order/" + serviceOrder.getId())
+                .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 403 para role MECHANIC")
+    void shouldReturn403ForMechanicRole() throws Exception {
+        mockMvc.perform(get("/quotes/service-order/" + UUID.randomUUID())
+                .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC)))
+                .andExpect(status().isForbidden());
     }
 }

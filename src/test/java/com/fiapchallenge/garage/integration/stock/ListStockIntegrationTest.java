@@ -1,5 +1,6 @@
 package com.fiapchallenge.garage.integration.stock;
 
+import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.StockFixture;
 import org.junit.jupiter.api.Test;
@@ -24,13 +25,13 @@ class ListStockIntegrationTest extends BaseIntegrationTest {
     @Test
     void shouldListStockWithPagination() throws Exception {
         mockMvc.perform(post("/stock")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(StockFixture.createStockJson()))
                 .andExpect(status().isOk());
 
         mockMvc.perform(post("/stock")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                             {
@@ -44,7 +45,7 @@ class ListStockIntegrationTest extends BaseIntegrationTest {
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/stock")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
@@ -59,7 +60,7 @@ class ListStockIntegrationTest extends BaseIntegrationTest {
     @Test
     void shouldListEmptyStockWhenNoItems() throws Exception {
         mockMvc.perform(get("/stock")
-                        .header("Authorization", getAuthToken()))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content.length()").value(0))
@@ -70,7 +71,7 @@ class ListStockIntegrationTest extends BaseIntegrationTest {
     void shouldListStockWithCustomPageSize() throws Exception {
         for (int i = 1; i <= 3; i++) {
             mockMvc.perform(post("/stock")
-                            .header("Authorization", getAuthToken())
+                            .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(String.format("""
                                 {
@@ -85,12 +86,33 @@ class ListStockIntegrationTest extends BaseIntegrationTest {
         }
 
         mockMvc.perform(get("/stock")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .param("page", "0")
                         .param("size", "2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(2))
                 .andExpect(jsonPath("$.totalElements").value(3))
                 .andExpect(jsonPath("$.totalPages").value(2));
+    }
+
+    @Test
+    void shouldAllowListWithAdminRole() throws Exception {
+        mockMvc.perform(get("/stock")
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldAllowListWithMechanicRole() throws Exception {
+        mockMvc.perform(get("/stock")
+                        .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldReturn403ForClerkRole() throws Exception {
+        mockMvc.perform(get("/stock")
+                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
+                .andExpect(status().isForbidden());
     }
 }

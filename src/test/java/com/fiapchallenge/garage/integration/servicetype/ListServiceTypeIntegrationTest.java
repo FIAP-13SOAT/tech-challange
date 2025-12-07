@@ -2,6 +2,7 @@ package com.fiapchallenge.garage.integration.servicetype;
 
 import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeService;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
+import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.ServiceTypeFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -30,7 +31,7 @@ class ListServiceTypeIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Deve listar todos os tipos de serviço incluindo dados de exemplo")
     void shouldListAllServiceTypesIncludingSampleData() throws Exception {
         mockMvc.perform(get("/service-types")
-                        .header("Authorization", getAuthToken()))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
@@ -41,7 +42,7 @@ class ListServiceTypeIntegrationTest extends BaseIntegrationTest {
         ServiceType createdServiceType = ServiceTypeFixture.createServiceType(createServiceTypeService);
 
         mockMvc.perform(get("/service-types")
-                        .header("Authorization", getAuthToken()))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[?(@.id == '" + createdServiceType.getId() + "')]").exists())
@@ -59,8 +60,24 @@ class ListServiceTypeIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Deve retornar lista vazia quando não há tipos de serviço além dos de exemplo")
     void shouldReturnEmptyListWhenNoServiceTypesExist() throws Exception {
         mockMvc.perform(get("/service-types")
-                        .header("Authorization", getAuthToken()))
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
+    }
+
+    @Test
+    @DisplayName("Deve permitir listagem com qualquer role autenticada")
+    void shouldAllowListingWithAnyAuthenticatedRole() throws Exception {
+        mockMvc.perform(get("/service-types")
+                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/service-types")
+                        .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC)))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/service-types")
+                        .header("Authorization", getAuthTokenForRole(UserRole.STOCK_KEEPER)))
+                .andExpect(status().isOk());
     }
 }

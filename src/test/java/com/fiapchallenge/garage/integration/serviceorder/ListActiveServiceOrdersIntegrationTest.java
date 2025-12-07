@@ -5,6 +5,7 @@ import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeService
 import com.fiapchallenge.garage.application.vehicle.CreateVehicleService;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
+import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
 import com.fiapchallenge.garage.integration.fixtures.ServiceOrderFixture;
@@ -53,7 +54,7 @@ class ListActiveServiceOrdersIntegrationTest extends BaseIntegrationTest {
         ServiceOrderFixture.createServiceOrder(customerId, vehicleId, ServiceOrderStatus.COMPLETED, createServiceTypeService, serviceOrderRepository);
 
         mockMvc.perform(get("/service-orders")
-                .header("Authorization", token))
+                .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(4))
                 .andExpect(jsonPath("$[0].status").value("IN_PROGRESS"))

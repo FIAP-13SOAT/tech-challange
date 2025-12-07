@@ -12,6 +12,7 @@ import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +36,7 @@ public class ServiceTypeController implements ServiceTypeOpenApiSpec {
 
     @Override
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STOCK_KEEPER')")
     public ResponseEntity<ServiceType> create(@Valid @RequestBody ServiceTypeRequestDTO serviceTypeRequestDTO) {
         CreateServiceTypeCommand command = new CreateServiceTypeCommand(
                 serviceTypeRequestDTO.description(),
@@ -53,6 +55,7 @@ public class ServiceTypeController implements ServiceTypeOpenApiSpec {
 
     @Override
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STOCK_KEEPER')")
     public ResponseEntity<ServiceType> update(@PathVariable UUID id, @Valid @RequestBody UpdateServiceTypeDTO updateServiceTypeDTO) {
         UpdateServiceTypeCmd cmd = new UpdateServiceTypeCmd(
                 id,
@@ -66,6 +69,7 @@ public class ServiceTypeController implements ServiceTypeOpenApiSpec {
 
     @Override
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STOCK_KEEPER')")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         DeleteServiceTypeCmd cmd = new DeleteServiceTypeCmd(id);
         deleteServiceTypeUseCase.handle(cmd);

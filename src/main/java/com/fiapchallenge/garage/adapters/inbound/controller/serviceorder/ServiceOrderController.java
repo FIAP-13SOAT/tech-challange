@@ -28,6 +28,7 @@ import com.fiapchallenge.garage.application.serviceorder.startsdiagnosis.StartSe
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -79,6 +80,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
 
     @Override
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
     public ResponseEntity<ServiceOrder> create(@Valid @RequestBody CreateServiceOrderDTO createServiceOrderDTO) {
         ServiceOrder serviceOrder = createServiceOrderUseCase.handle(new CreateServiceOrderCommand(createServiceOrderDTO));
 
@@ -87,6 +89,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
 
     @Override
     @PostMapping("/{id}/start-diagnosis")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MECHANIC')")
     public ResponseEntity<ServiceOrder> startDiagnosis(@PathVariable UUID id) {
         ServiceOrder serviceOrder = startServiceOrderDiagnosticUseCase.handle(new StartServiceOrderDiagnosticCommand(id));
 
@@ -95,6 +98,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
 
     @Override
     @PostMapping("/{id}/finish-diagnosis")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MECHANIC')")
     public ResponseEntity<ServiceOrder> finishDiagnosis(@PathVariable UUID id) {
         ServiceOrder serviceOrder = finishServiceOrderDiagnosticUseCase.handle(new FinishServiceOrderDiagnosticCommand(id));
 
@@ -103,6 +107,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
 
     @Override
     @PostMapping("/{id}/finish")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MECHANIC')")
     public ResponseEntity<ServiceOrder> finish(@PathVariable UUID id) {
         ServiceOrder serviceOrder = completeServiceOrderUseCase.handle(new CompleteServiceOrderCommand(id));
 
@@ -111,6 +116,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
 
     @Override
     @PostMapping("/{id}/deliver")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
     public ResponseEntity<ServiceOrder> deliver(@PathVariable UUID id) {
         ServiceOrder serviceOrder = deliverServiceOrderUseCase.handle(new DeliverServiceOrderCommand(id));
 
@@ -119,6 +125,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
 
     @Override
     @PostMapping("/{id}/cancel")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
     public ResponseEntity<ServiceOrder> setCancelled(@PathVariable UUID id) {
         ServiceOrder serviceOrder = cancelServiceOrderUseCase.handle(new CancelServiceOrderCommand(id));
 
@@ -127,6 +134,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
 
     @Override
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
     public ResponseEntity<ServiceOrder> getServiceOrderDetails(@PathVariable UUID id) {
         ServiceOrder serviceOrder = getServiceOrderDetailsUseCase.handle(new GetServiceOrderDetailsCommand(id));
 
@@ -135,6 +143,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
 
     @Override
     @PostMapping("/{id}/stock-items")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
     public ResponseEntity<ServiceOrder> addStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
         ServiceOrder serviceOrder = addStockItemsUseCase.handle(new AddStockItemsCommand(id, stockItems));
 
@@ -143,6 +152,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
 
     @Override
     @DeleteMapping("/{id}/stock-items")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
     public ResponseEntity<ServiceOrder> removeStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
         ServiceOrder serviceOrder = removeStockItemsUseCase.handle(new RemoveStockItemsCommand(id, stockItems));
 
@@ -151,6 +161,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
 
     @Override
     @PostMapping("/{id}/service-types")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
     public ResponseEntity<ServiceOrder> addServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds) {
         ServiceOrder serviceOrder = addServiceTypesUseCase.handle(new AddServiceTypesCommand(id, serviceTypeIds));
 
@@ -159,6 +170,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
 
     @Override
     @DeleteMapping("/{id}/service-types")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
     public ResponseEntity<ServiceOrder> removeServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds) {
         ServiceOrder serviceOrder = removeServiceTypesUseCase.handle(new RemoveServiceTypesCommand(id, serviceTypeIds));
 
@@ -167,6 +179,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
 
     @Override
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
     public ResponseEntity<List<ServiceOrder>> listActiveOrders() {
         List<ServiceOrder> serviceOrders = listActiveServiceOrdersUseCase.handle();
         return ResponseEntity.ok(serviceOrders);

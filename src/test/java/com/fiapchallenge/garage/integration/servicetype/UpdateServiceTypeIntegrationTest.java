@@ -4,6 +4,7 @@ import com.fiapchallenge.garage.adapters.outbound.entities.ServiceTypeEntity;
 import com.fiapchallenge.garage.adapters.outbound.repositories.servicetype.JpaServiceTypeRepository;
 import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeService;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
+import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.ServiceTypeFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -51,7 +52,7 @@ class UpdateServiceTypeIntegrationTest extends BaseIntegrationTest {
                 """;
 
         mockMvc.perform(put("/service-types/" + createdServiceType.getId())
-                .header("Authorization", getAuthToken())
+                .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updateServiceTypeJson))
                 .andExpect(status().isOk())
@@ -75,7 +76,7 @@ class UpdateServiceTypeIntegrationTest extends BaseIntegrationTest {
                 """;
 
         mockMvc.perform(put("/service-types/" + UUID.randomUUID())
-                .header("Authorization", getAuthToken())
+                .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updateServiceTypeJson))
                 .andExpect(status().isNotFound());
@@ -94,9 +95,47 @@ class UpdateServiceTypeIntegrationTest extends BaseIntegrationTest {
                 """;
 
         mockMvc.perform(put("/service-types/" + createdServiceType.getId())
-                .header("Authorization", getAuthToken())
+                .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidServiceTypeJson))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Deve permitir atualização com role STOCK_KEEPER")
+    void shouldAllowUpdateWithStockKeeperRole() throws Exception {
+        ServiceType createdServiceType = ServiceTypeFixture.createServiceType(createServiceTypeService);
+
+        String updateServiceTypeJson = """
+                {
+                  "description": "Atualizado por STOCK_KEEPER",
+                  "value": 250.00
+                }
+                """;
+
+        mockMvc.perform(put("/service-types/" + createdServiceType.getId())
+                .header("Authorization", getAuthTokenForRole(UserRole.STOCK_KEEPER))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updateServiceTypeJson))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 403 para role CLERK")
+    void shouldReturn403ForClerkRole() throws Exception {
+        ServiceType createdServiceType = ServiceTypeFixture.createServiceType(createServiceTypeService);
+
+        String updateServiceTypeJson = """
+                {
+                  "description": "Tentativa CLERK",
+                  "value": 100.00
+                }
+                """;
+
+        mockMvc.perform(put("/service-types/" + createdServiceType.getId())
+                .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updateServiceTypeJson))
+                .andExpect(status().isForbidden());
     }
 }

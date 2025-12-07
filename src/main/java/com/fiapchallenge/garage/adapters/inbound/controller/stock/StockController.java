@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,8 +50,9 @@ public class StockController implements StockControllerOpenApiSpec {
         this.addStockUseCase = addStockUseCase;
     }
 
-    @PostMapping
     @Override
+    @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STOCK_KEEPER')")
     public ResponseEntity<Stock> create(@Valid @RequestBody CreateStockRequestDTO createStockDTO) {
         CreateStockCommand command = new CreateStockCommand(
                 createStockDTO.productName(),
@@ -62,8 +64,9 @@ public class StockController implements StockControllerOpenApiSpec {
         return ResponseEntity.ok(createStockUseCase.handle(command));
     }
 
-    @GetMapping
     @Override
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'MECHANIC', 'STOCK_KEEPER')")
     public ResponseEntity<Page<Stock>> list(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -74,8 +77,9 @@ public class StockController implements StockControllerOpenApiSpec {
         return ResponseEntity.ok(listStockUseCase.handle(pageable));
     }
 
-    @PutMapping("/{id}")
     @Override
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STOCK_KEEPER')")
     public ResponseEntity<Stock> update(@PathVariable UUID id, @Valid @RequestBody UpdateStockRequestDTO updateStockDTO) {
         UpdateStockCommand command = new UpdateStockCommand(
                 id,
@@ -88,23 +92,26 @@ public class StockController implements StockControllerOpenApiSpec {
         return ResponseEntity.ok(updateStockUseCase.handle(command));
     }
 
-    @DeleteMapping("/{id}")
     @Override
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STOCK_KEEPER')")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         deleteStockUseCase.handle(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/consume")
     @Override
+    @PostMapping("/{id}/consume")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STOCK_KEEPER')")
     public ResponseEntity<Stock> consumeStock(@PathVariable UUID id,
                                             @RequestParam @Positive(message = "Quantidade deve ser positiva") Integer quantity) {
         ConsumeStockCommand command = new ConsumeStockCommand(id, quantity);
         return ResponseEntity.ok(consumeStockUseCase.handle(command));
     }
 
-    @PostMapping("/{id}/add")
     @Override
+    @PostMapping("/{id}/add")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STOCK_KEEPER')")
     public ResponseEntity<Stock> addStock(@PathVariable UUID id,
                                          @RequestParam @Positive(message = "Quantidade deve ser positiva") Integer quantity) {
         AddStockCommand command = new AddStockCommand(id, quantity);

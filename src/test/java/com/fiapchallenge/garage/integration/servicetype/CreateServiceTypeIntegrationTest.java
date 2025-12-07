@@ -2,6 +2,7 @@ package com.fiapchallenge.garage.integration.servicetype;
 
 import com.fiapchallenge.garage.adapters.outbound.entities.ServiceTypeEntity;
 import com.fiapchallenge.garage.adapters.outbound.repositories.servicetype.JpaServiceTypeRepository;
+import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ class CreateServiceTypeIntegrationTest extends BaseIntegrationTest {
         """;
 
         mockMvc.perform(post("/service-types")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceTypeJson))
                 .andExpect(status().isOk())
@@ -68,7 +69,7 @@ class CreateServiceTypeIntegrationTest extends BaseIntegrationTest {
         """;
 
         mockMvc.perform(post("/service-types")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceTypeJson))
                 .andExpect(status().isBadRequest());
@@ -85,7 +86,7 @@ class CreateServiceTypeIntegrationTest extends BaseIntegrationTest {
         """;
 
         mockMvc.perform(post("/service-types")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceTypeJson))
                 .andExpect(status().isBadRequest());
@@ -102,9 +103,60 @@ class CreateServiceTypeIntegrationTest extends BaseIntegrationTest {
         """;
 
         mockMvc.perform(post("/service-types")
-                        .header("Authorization", getAuthToken())
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceTypeJson))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Deve permitir criação com role STOCK_KEEPER")
+    void shouldAllowCreationWithStockKeeperRole() throws Exception {
+        String serviceTypeJson = """
+                {
+                    "description": "Serviço STOCK_KEEPER",
+                    "value": 100.00
+                }
+        """;
+
+        mockMvc.perform(post("/service-types")
+                        .header("Authorization", getAuthTokenForRole(UserRole.STOCK_KEEPER))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(serviceTypeJson))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 403 para role CLERK")
+    void shouldReturn403ForClerkRole() throws Exception {
+        String serviceTypeJson = """
+                {
+                    "description": "Serviço CLERK",
+                    "value": 100.00
+                }
+        """;
+
+        mockMvc.perform(post("/service-types")
+                        .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(serviceTypeJson))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 403 para role MECHANIC")
+    void shouldReturn403ForMechanicRole() throws Exception {
+        String serviceTypeJson = """
+                {
+                    "description": "Serviço MECHANIC",
+                    "value": 100.00
+                }
+        """;
+
+        mockMvc.perform(post("/service-types")
+                        .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(serviceTypeJson))
+                .andExpect(status().isForbidden());
     }
 }

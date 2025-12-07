@@ -4,6 +4,7 @@ import com.fiapchallenge.garage.application.quote.*;
 import com.fiapchallenge.garage.domain.quote.Quote;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -26,6 +27,7 @@ public class QuoteController implements QuoteControllerOpenApiSpec {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
     @GetMapping("/service-order/{serviceOrderId}")
     public ResponseEntity<Quote> generateQuote(@PathVariable UUID serviceOrderId) {
         Quote quote = generateQuoteUseCase.handle(serviceOrderId);
@@ -33,6 +35,7 @@ public class QuoteController implements QuoteControllerOpenApiSpec {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
     @PostMapping("/service-order/{serviceOrderId}/approve")
     public ResponseEntity<Quote> approveQuote(@PathVariable UUID serviceOrderId) {
         Quote quote = approveQuoteUseCase.handle(serviceOrderId);
@@ -40,6 +43,7 @@ public class QuoteController implements QuoteControllerOpenApiSpec {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
     @PostMapping("/service-order/{serviceOrderId}/reject")
     public ResponseEntity<Quote> rejectQuote(@PathVariable UUID serviceOrderId) {
         Quote quote = rejectQuoteUseCase.handle(serviceOrderId);

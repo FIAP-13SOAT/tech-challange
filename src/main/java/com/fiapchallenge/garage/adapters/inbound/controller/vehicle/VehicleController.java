@@ -12,6 +12,7 @@ import com.fiapchallenge.garage.application.vehicle.command.CreateVehicleCommand
 import com.fiapchallenge.garage.application.vehicle.command.UpdateVehicleCommand;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,8 +36,9 @@ public class VehicleController implements VehicleControllerOpenApiSpec {
         this.deleteVehicleUseCase = deleteVehicleUseCase;
     }
 
-    @PostMapping
     @Override
+    @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
     public ResponseEntity<Vehicle> create(@Valid @RequestBody VehicleRequestDTO vehicleRequestDTO) {
         CreateVehicleCommand command = new CreateVehicleCommand(
                 vehicleRequestDTO.model(),
@@ -52,22 +54,25 @@ public class VehicleController implements VehicleControllerOpenApiSpec {
         return ResponseEntity.ok(vehicle);
     }
 
-    @GetMapping
     @Override
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
     public ResponseEntity<List<Vehicle>> listByCustomer(@RequestParam UUID customerId) {
         List<Vehicle> vehicles = listVehicleUseCase.handle(customerId);
         return ResponseEntity.ok(vehicles);
     }
 
-    @GetMapping("/{id}")
     @Override
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
     public ResponseEntity<Vehicle> findById(@PathVariable UUID id) {
         Vehicle vehicle = findVehicleUseCase.handle(id);
         return ResponseEntity.ok(vehicle);
     }
 
-    @PutMapping("/{id}")
     @Override
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
     public ResponseEntity<Vehicle> update(@PathVariable UUID id, @Valid @RequestBody UpdateVehicleRequestDTO dto) {
         UpdateVehicleCommand command = new UpdateVehicleCommand(
                 id,
@@ -82,8 +87,9 @@ public class VehicleController implements VehicleControllerOpenApiSpec {
         return ResponseEntity.ok(vehicle);
     }
 
-    @DeleteMapping("/{id}")
     @Override
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         deleteVehicleUseCase.handle(id);
         return ResponseEntity.noContent().build();

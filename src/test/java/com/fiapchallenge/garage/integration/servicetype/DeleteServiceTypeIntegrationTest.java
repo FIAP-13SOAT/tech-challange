@@ -3,6 +3,7 @@ package com.fiapchallenge.garage.integration.servicetype;
 import com.fiapchallenge.garage.adapters.outbound.repositories.servicetype.JpaServiceTypeRepository;
 import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeService;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
+import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.ServiceTypeFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -41,7 +42,7 @@ class DeleteServiceTypeIntegrationTest extends BaseIntegrationTest {
         ServiceType createdServiceType = ServiceTypeFixture.createServiceType(createServiceTypeService);
 
         mockMvc.perform(delete("/service-types/" + createdServiceType.getId())
-                .header("Authorization", getAuthToken()))
+                .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isNoContent());
 
         assertThat(serviceTypeRepository.existsById(createdServiceType.getId())).isFalse();
@@ -51,7 +52,7 @@ class DeleteServiceTypeIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Deve retornar erro 404 para tipo de serviço inexistente")
     void shouldReturnBadRequestForNonExistentServiceType() throws Exception {
         mockMvc.perform(delete("/service-types/" + UUID.randomUUID())
-                .header("Authorization", getAuthToken()))
+                .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isNotFound());
     }
 
@@ -61,6 +62,36 @@ class DeleteServiceTypeIntegrationTest extends BaseIntegrationTest {
         ServiceType createdServiceType = ServiceTypeFixture.createServiceType(createServiceTypeService);
 
         mockMvc.perform(delete("/service-types/" + createdServiceType.getId()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Deve permitir exclusão com role STOCK_KEEPER")
+    void shouldAllowDeleteWithStockKeeperRole() throws Exception {
+        ServiceType createdServiceType = ServiceTypeFixture.createServiceType(createServiceTypeService);
+
+        mockMvc.perform(delete("/service-types/" + createdServiceType.getId())
+                .header("Authorization", getAuthTokenForRole(UserRole.STOCK_KEEPER)))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 403 para role CLERK")
+    void shouldReturn403ForClerkRole() throws Exception {
+        ServiceType createdServiceType = ServiceTypeFixture.createServiceType(createServiceTypeService);
+
+        mockMvc.perform(delete("/service-types/" + createdServiceType.getId())
+                .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 403 para role MECHANIC")
+    void shouldReturn403ForMechanicRole() throws Exception {
+        ServiceType createdServiceType = ServiceTypeFixture.createServiceType(createServiceTypeService);
+
+        mockMvc.perform(delete("/service-types/" + createdServiceType.getId())
+                .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC)))
                 .andExpect(status().isForbidden());
     }
 }
