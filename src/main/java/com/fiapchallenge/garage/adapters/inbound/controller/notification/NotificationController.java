@@ -1,8 +1,8 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.notification;
 
+import com.fiapchallenge.garage.adapters.inbound.controller.notification.dto.NotificationResponseDTO;
 import com.fiapchallenge.garage.application.notification.list.ListNotificationUseCase;
 import com.fiapchallenge.garage.application.notification.markread.MarkNotificationAsReadUseCase;
-import com.fiapchallenge.garage.domain.notification.Notification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,21 +29,21 @@ public class NotificationController implements NotificationControllerOpenApiSpec
     @Override
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
-    public ResponseEntity<Page<Notification>> list(
+    public ResponseEntity<Page<NotificationResponseDTO>> list(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return ResponseEntity.ok(listNotificationUseCase.handle(pageable));
+        return ResponseEntity.ok(listNotificationUseCase.handle(pageable).map(NotificationResponseDTO::fromDomain));
     }
 
     @Override
     @GetMapping("/unread")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
-    public ResponseEntity<Page<Notification>> listUnread(
+    public ResponseEntity<Page<NotificationResponseDTO>> listUnread(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return ResponseEntity.ok(listNotificationUseCase.handleUnread(pageable));
+        return ResponseEntity.ok(listNotificationUseCase.handleUnread(pageable).map(NotificationResponseDTO::fromDomain));
     }
 
     @Override
