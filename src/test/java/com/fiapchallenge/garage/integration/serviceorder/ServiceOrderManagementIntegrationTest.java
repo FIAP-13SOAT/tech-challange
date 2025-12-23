@@ -80,14 +80,14 @@ class ServiceOrderManagementIntegrationTest extends BaseIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(stockItemsJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.stockItems").isArray());
+                .andExpect(jsonPath("$.serviceItems").isArray());
 
         mockMvc.perform(get("/service-orders/" + orderId)
                         .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.stockItems").isArray())
-                .andExpect(jsonPath("$.stockItems[0].stockId").value(stockId.toString()))
-                .andExpect(jsonPath("$.stockItems[0].quantity").value(2));
+                .andExpect(jsonPath("$.serviceItems").isArray())
+                .andExpect(jsonPath("$.serviceItems[0].stockId").value(stockId.toString()))
+                .andExpect(jsonPath("$.serviceItems[0].quantity").value(2));
     }
 
     @Test
@@ -129,7 +129,7 @@ class ServiceOrderManagementIntegrationTest extends BaseIntegrationTest {
         mockMvc.perform(get("/service-orders/" + orderId)
                         .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.stockItems").isEmpty());
+                .andExpect(jsonPath("$.serviceItems").isEmpty());
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.quote;
 
-import com.fiapchallenge.garage.domain.quote.Quote;
+import com.fiapchallenge.garage.adapters.inbound.controller.quote.dto.QuoteResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -12,11 +12,11 @@ import java.util.UUID;
 public interface QuoteControllerOpenApiSpec {
 
     @Operation(summary = "Gerar orçamento", description = "Gera orçamento detalhado para uma ordem de serviço")
-    ResponseEntity<Quote> generateQuote(@PathVariable UUID serviceOrderId);
+    ResponseEntity<QuoteResponseDTO> generateQuote(@PathVariable UUID serviceOrderId);
 
     @Operation(summary = "Aprovar orçamento", description = "Aprova o orçamento de uma ordem de serviço")
-    ResponseEntity<Quote> approveQuote(@PathVariable UUID serviceOrderId);
+    ResponseEntity<QuoteResponseDTO> approveQuote(@PathVariable UUID serviceOrderId);
 
     @Operation(summary = "Rejeitar orçamento", description = "Rejeita o orçamento de uma ordem de serviço")
-    ResponseEntity<Quote> rejectQuote(@PathVariable UUID serviceOrderId);
+    ResponseEntity<QuoteResponseDTO> rejectQuote(@PathVariable UUID serviceOrderId);
 }

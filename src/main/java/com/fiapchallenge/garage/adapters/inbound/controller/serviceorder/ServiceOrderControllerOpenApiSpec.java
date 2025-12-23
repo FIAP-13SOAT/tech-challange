@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.serviceorder;
 
 import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.CreateServiceOrderDTO;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
+import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.ServiceOrderResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,47 +23,47 @@ public interface ServiceOrderControllerOpenApiSpec {
     @Operation(summary = "Criar uma nova Ordem de Serviço", description = "Cria uma nova Ordem de Serviço")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Ordem de serviço criada com sucesso",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceOrder.class))),
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceOrderResponseDTO.class))),
         @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content)
     })
-    ResponseEntity<ServiceOrder> create(
+    ResponseEntity<ServiceOrderResponseDTO> create(
         @Parameter(name = "CreateServiceOrder", description = "Dados da Ordem de Serviço", schema = @Schema(implementation = CreateServiceOrderDTO.class))
         @Valid @RequestBody CreateServiceOrderDTO createServiceOrderDTO);
 
     @Operation(summary = "Iniciar diagnóstico", description = "Inicia diagnóstico da Ordem de Serviço")
-    ResponseEntity<ServiceOrder> startDiagnosis(@PathVariable UUID id);
+    ResponseEntity<ServiceOrderResponseDTO> startDiagnosis(@PathVariable UUID id);
 
     @Operation(summary = "Finalizar diagnóstico", description = "Finaliza diagnóstico da Ordem de Serviço")
-    ResponseEntity<ServiceOrder> finishDiagnosis(@PathVariable UUID id);
+    ResponseEntity<ServiceOrderResponseDTO> finishDiagnosis(@PathVariable UUID id);
 
     @Operation(summary = "Finalizar ordem de serviço", description = "Finalizar execução da Ordem de Serviço")
-    ResponseEntity<ServiceOrder> finish(@PathVariable UUID id);
+    ResponseEntity<ServiceOrderResponseDTO> finish(@PathVariable UUID id);
 
     @Operation(summary = "Entregar serviço", description = "Entrega do veículo para o cliente")
-    ResponseEntity<ServiceOrder> deliver(@PathVariable UUID id);
+    ResponseEntity<ServiceOrderResponseDTO> deliver(@PathVariable UUID id);
 
     @Operation(summary = "Cancelar serviço", description = "Cancela a Ordem de Serviço")
-    ResponseEntity<ServiceOrder> setCancelled(@PathVariable UUID id);
+    ResponseEntity<ServiceOrderResponseDTO> setCancelled(@PathVariable UUID id);
 
     @Operation(summary = "Obter detalhes da ordem de serviço", description = "Retorna os detalhes de uma ordem de serviço")
-    ResponseEntity<ServiceOrder> getServiceOrderDetails(@PathVariable UUID id);
+    ResponseEntity<ServiceOrderResponseDTO> getServiceOrderDetails(@PathVariable UUID id);
 
     @Operation(summary = "Adicionar itens de estoque", description = "Adiciona itens de estoque à ordem de serviço")
-    ResponseEntity<ServiceOrder> addStockItems(@PathVariable UUID id, @RequestBody List<com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.StockItemDTO> stockItems);
+    ResponseEntity<ServiceOrderResponseDTO> addStockItems(@PathVariable UUID id, @RequestBody List<com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.StockItemDTO> stockItems);
 
     @Operation(summary = "Remover itens de estoque", description = "Remove itens de estoque da ordem de serviço")
-    ResponseEntity<ServiceOrder> removeStockItems(@PathVariable UUID id, @RequestBody List<com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.StockItemDTO> stockItems);
+    ResponseEntity<ServiceOrderResponseDTO> removeStockItems(@PathVariable UUID id, @RequestBody List<com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.StockItemDTO> stockItems);
 
     @Operation(summary = "Adicionar tipos de serviço", description = "Adiciona tipos de serviço à ordem de serviço")
-    ResponseEntity<ServiceOrder> addServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds);
+    ResponseEntity<ServiceOrderResponseDTO> addServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds);
 
     @Operation(summary = "Remover tipos de serviço", description = "Remove tipos de serviço da ordem de serviço")
-    ResponseEntity<ServiceOrder> removeServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds);
+    ResponseEntity<ServiceOrderResponseDTO> removeServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds);
 
     @Operation(summary = "Listar ordens ativas", description = "Lista todas as ordens de serviço ativas ordenadas por prioridade e data")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista de ordens ativas retornada com sucesso",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceOrder.class)))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceOrderResponseDTO.class)))
     })
-    ResponseEntity<List<ServiceOrder>> listActiveOrders();
+    ResponseEntity<List<ServiceOrderResponseDTO>> listActiveOrders();
 }

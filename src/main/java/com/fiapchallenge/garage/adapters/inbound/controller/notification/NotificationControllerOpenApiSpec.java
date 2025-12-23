@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.notification;
 
-import com.fiapchallenge.garage.domain.notification.Notification;
+import com.fiapchallenge.garage.adapters.inbound.controller.notification.dto.NotificationResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,7 +20,7 @@ public interface NotificationControllerOpenApiSpec {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista recuperada com sucesso")
     })
-    ResponseEntity<Page<Notification>> list(
+    ResponseEntity<Page<NotificationResponseDTO>> list(
             @Parameter(description = "Número da página") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Tamanho da página") @RequestParam(defaultValue = "10") int size);
 
@@ -28,7 +28,7 @@ public interface NotificationControllerOpenApiSpec {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista recuperada com sucesso")
     })
-    ResponseEntity<Page<Notification>> listUnread(
+    ResponseEntity<Page<NotificationResponseDTO>> listUnread(
             @Parameter(description = "Número da página") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Tamanho da página") @RequestParam(defaultValue = "10") int size);
 

@@ -1,7 +1,9 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.stock;
 
 import com.fiapchallenge.garage.adapters.inbound.controller.stock.dto.CreateStockRequestDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.stock.dto.StockDTO;
 import com.fiapchallenge.garage.adapters.inbound.controller.stock.dto.UpdateStockRequestDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.stock.mapper.StockMapper;
 import com.fiapchallenge.garage.application.stock.create.CreateStockUseCase;
 import com.fiapchallenge.garage.application.stock.delete.DeleteStockUseCase;
 import com.fiapchallenge.garage.application.stock.list.ListStockUseCase;
@@ -53,7 +55,7 @@ public class StockController implements StockControllerOpenApiSpec {
     @Override
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'STOCK_KEEPER')")
-    public ResponseEntity<Stock> create(@Valid @RequestBody CreateStockRequestDTO createStockDTO) {
+    public ResponseEntity<StockDTO> create(@Valid @RequestBody CreateStockRequestDTO createStockDTO) {
         CreateStockCommand command = new CreateStockCommand(
                 createStockDTO.productName(),
                 createStockDTO.description(),
@@ -61,26 +63,28 @@ public class StockController implements StockControllerOpenApiSpec {
                 createStockDTO.category(),
                 createStockDTO.minThreshold()
         );
-        return ResponseEntity.ok(createStockUseCase.handle(command));
+        Stock stock = createStockUseCase.handle(command);
+        return ResponseEntity.ok(StockMapper.toResponseDTO(stock));
     }
 
     @Override
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'MECHANIC', 'STOCK_KEEPER')")
-    public ResponseEntity<Page<Stock>> list(
+    public ResponseEntity<Page<StockDTO>> list(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(
             page, size,
             Sort.by("createdAt").descending()
         );
-        return ResponseEntity.ok(listStockUseCase.handle(pageable));
+        Page<Stock> stockPage = listStockUseCase.handle(pageable);
+        return ResponseEntity.ok(StockMapper.toResponseDTOPage(stockPage));
     }
 
     @Override
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'STOCK_KEEPER')")
-    public ResponseEntity<Stock> update(@PathVariable UUID id, @Valid @RequestBody UpdateStockRequestDTO updateStockDTO) {
+    public ResponseEntity<StockDTO> update(@PathVariable UUID id, @Valid @RequestBody UpdateStockRequestDTO updateStockDTO) {
         UpdateStockCommand command = new UpdateStockCommand(
                 id,
                 updateStockDTO.productName(),
@@ -89,7 +93,8 @@ public class StockController implements StockControllerOpenApiSpec {
                 updateStockDTO.category(),
                 updateStockDTO.minThreshold()
         );
-        return ResponseEntity.ok(updateStockUseCase.handle(command));
+        Stock stock = updateStockUseCase.handle(command);
+        return ResponseEntity.ok(StockMapper.toResponseDTO(stock));
     }
 
     @Override
@@ -103,19 +108,21 @@ public class StockController implements StockControllerOpenApiSpec {
     @Override
     @PostMapping("/{id}/consume")
     @PreAuthorize("hasAnyRole('ADMIN', 'STOCK_KEEPER')")
-    public ResponseEntity<Stock> consumeStock(@PathVariable UUID id,
+    public ResponseEntity<StockDTO> consumeStock(@PathVariable UUID id,
                                             @RequestParam @Positive(message = "Quantidade deve ser positiva") Integer quantity) {
         ConsumeStockCommand command = new ConsumeStockCommand(id, quantity);
-        return ResponseEntity.ok(consumeStockUseCase.handle(command));
+        Stock stock = consumeStockUseCase.handle(command);
+        return ResponseEntity.ok(StockMapper.toResponseDTO(stock));
     }
 
     @Override
     @PostMapping("/{id}/add")
     @PreAuthorize("hasAnyRole('ADMIN', 'STOCK_KEEPER')")
-    public ResponseEntity<Stock> addStock(@PathVariable UUID id,
+    public ResponseEntity<StockDTO> addStock(@PathVariable UUID id,
                                          @RequestParam @Positive(message = "Quantidade deve ser positiva") Integer quantity) {
         AddStockCommand command = new AddStockCommand(id, quantity);
-        return ResponseEntity.ok(addStockUseCase.handle(command));
+        Stock stock = addStockUseCase.handle(command);
+        return ResponseEntity.ok(StockMapper.toResponseDTO(stock));
     }
 
 }

@@ -1,5 +1,7 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.stockmovement;
 
+import com.fiapchallenge.garage.adapters.inbound.controller.stockmovement.dto.StockMovementDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.stockmovement.mapper.StockMovementMapper;
 import com.fiapchallenge.garage.application.stockmovement.list.ListStockMovementUseCase;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
 import org.springframework.data.domain.Page;
@@ -23,20 +25,22 @@ public class StockMovementController implements StockMovementControllerOpenApiSp
 
     @GetMapping
     @Override
-    public ResponseEntity<Page<StockMovement>> listAll(
+    public ResponseEntity<Page<StockMovementDTO>> listAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return ResponseEntity.ok(listStockMovementUseCase.handleAll(pageable));
+        Page<StockMovement> stockMovementPage = listStockMovementUseCase.handleAll(pageable);
+        return ResponseEntity.ok(StockMovementMapper.toResponseDTOPage(stockMovementPage));
     }
 
     @GetMapping("/stock/{stockId}")
     @Override
-    public ResponseEntity<Page<StockMovement>> listByStockId(
+    public ResponseEntity<Page<StockMovementDTO>> listByStockId(
             @PathVariable UUID stockId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return ResponseEntity.ok(listStockMovementUseCase.handleByStockId(stockId, pageable));
+        Page<StockMovement> stockMovementPage = listStockMovementUseCase.handleByStockId(stockId, pageable);
+        return ResponseEntity.ok(StockMovementMapper.toResponseDTOPage(stockMovementPage));
     }
 }

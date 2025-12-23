@@ -3,6 +3,8 @@ package com.fiapchallenge.garage.adapters.inbound.controller.user;
 import com.fiapchallenge.garage.adapters.inbound.controller.user.dto.CreateUserRequestDTO;
 import com.fiapchallenge.garage.adapters.inbound.controller.user.dto.LoginUserRequestDTO;
 import com.fiapchallenge.garage.adapters.inbound.controller.user.dto.LoginUserResponseDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.user.dto.UserDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.user.mapper.UserMapper;
 import com.fiapchallenge.garage.application.user.CreateUserUseCase;
 import com.fiapchallenge.garage.application.user.LoginUserUseCase;
 import com.fiapchallenge.garage.application.user.command.CreateUserCommand;
@@ -32,7 +34,7 @@ public class UserController implements UserControllerOpenApiSpec {
     @Override
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<User> create(@Valid @RequestBody CreateUserRequestDTO createUserDTO) {
+    public ResponseEntity<UserDTO> create(@Valid @RequestBody CreateUserRequestDTO createUserDTO) {
         CreateUserCommand command = new CreateUserCommand(
                 createUserDTO.fullname(),
                 createUserDTO.email(),
@@ -40,7 +42,8 @@ public class UserController implements UserControllerOpenApiSpec {
                 createUserDTO.role()
         );
 
-        return ResponseEntity.ok(createUserUseCase.handle(command));
+        User user = createUserUseCase.handle(command);
+        return ResponseEntity.ok(UserMapper.toResponseDTO(user));
     }
 
     @Override

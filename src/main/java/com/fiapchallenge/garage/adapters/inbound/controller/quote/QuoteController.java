@@ -1,5 +1,7 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.quote;
 
+import com.fiapchallenge.garage.adapters.inbound.controller.quote.dto.QuoteResponseDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.quote.mapper.QuoteMapper;
 import com.fiapchallenge.garage.application.quote.*;
 import com.fiapchallenge.garage.domain.quote.Quote;
 
@@ -29,24 +31,24 @@ public class QuoteController implements QuoteControllerOpenApiSpec {
     @Override
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
     @GetMapping("/service-order/{serviceOrderId}")
-    public ResponseEntity<Quote> generateQuote(@PathVariable UUID serviceOrderId) {
+    public ResponseEntity<QuoteResponseDTO> generateQuote(@PathVariable UUID serviceOrderId) {
         Quote quote = generateQuoteUseCase.handle(serviceOrderId);
-        return ResponseEntity.ok(quote);
+        return ResponseEntity.ok(QuoteMapper.toResponseDTO(quote));
     }
 
     @Override
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
     @PostMapping("/service-order/{serviceOrderId}/approve")
-    public ResponseEntity<Quote> approveQuote(@PathVariable UUID serviceOrderId) {
+    public ResponseEntity<QuoteResponseDTO> approveQuote(@PathVariable UUID serviceOrderId) {
         Quote quote = approveQuoteUseCase.handle(serviceOrderId);
-        return ResponseEntity.ok(quote);
+        return ResponseEntity.ok(QuoteMapper.toResponseDTO(quote));
     }
 
     @Override
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
     @PostMapping("/service-order/{serviceOrderId}/reject")
-    public ResponseEntity<Quote> rejectQuote(@PathVariable UUID serviceOrderId) {
+    public ResponseEntity<QuoteResponseDTO> rejectQuote(@PathVariable UUID serviceOrderId) {
         Quote quote = rejectQuoteUseCase.handle(serviceOrderId);
-        return ResponseEntity.ok(quote);
+        return ResponseEntity.ok(QuoteMapper.toResponseDTO(quote));
     }
 }

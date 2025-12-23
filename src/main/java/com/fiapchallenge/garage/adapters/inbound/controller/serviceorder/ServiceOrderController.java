@@ -1,7 +1,9 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.serviceorder;
 
 import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.CreateServiceOrderDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.ServiceOrderResponseDTO;
 import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.StockItemDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.mapper.ServiceOrderMapper;
 import com.fiapchallenge.garage.application.serviceorder.addservicetypes.AddServiceTypesUseCase;
 import com.fiapchallenge.garage.application.serviceorder.addstockitems.AddStockItemsUseCase;
 import com.fiapchallenge.garage.application.serviceorder.cancel.CancelServiceOrderUseCase;
@@ -81,107 +83,96 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     @Override
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
-    public ResponseEntity<ServiceOrder> create(@Valid @RequestBody CreateServiceOrderDTO createServiceOrderDTO) {
+    public ResponseEntity<ServiceOrderResponseDTO> create(@Valid @RequestBody CreateServiceOrderDTO createServiceOrderDTO) {
         ServiceOrder serviceOrder = createServiceOrderUseCase.handle(new CreateServiceOrderCommand(createServiceOrderDTO));
-
-        return ResponseEntity.ok(serviceOrder);
+        return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
     }
 
     @Override
     @PostMapping("/{id}/start-diagnosis")
     @PreAuthorize("hasAnyRole('ADMIN', 'MECHANIC')")
-    public ResponseEntity<ServiceOrder> startDiagnosis(@PathVariable UUID id) {
+    public ResponseEntity<ServiceOrderResponseDTO> startDiagnosis(@PathVariable UUID id) {
         ServiceOrder serviceOrder = startServiceOrderDiagnosticUseCase.handle(new StartServiceOrderDiagnosticCommand(id));
-
-        return ResponseEntity.ok(serviceOrder);
+        return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
     }
 
     @Override
     @PostMapping("/{id}/finish-diagnosis")
     @PreAuthorize("hasAnyRole('ADMIN', 'MECHANIC')")
-    public ResponseEntity<ServiceOrder> finishDiagnosis(@PathVariable UUID id) {
+    public ResponseEntity<ServiceOrderResponseDTO> finishDiagnosis(@PathVariable UUID id) {
         ServiceOrder serviceOrder = finishServiceOrderDiagnosticUseCase.handle(new FinishServiceOrderDiagnosticCommand(id));
-
-        return ResponseEntity.ok(serviceOrder);
+        return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
     }
 
     @Override
     @PostMapping("/{id}/finish")
     @PreAuthorize("hasAnyRole('ADMIN', 'MECHANIC')")
-    public ResponseEntity<ServiceOrder> finish(@PathVariable UUID id) {
+    public ResponseEntity<ServiceOrderResponseDTO> finish(@PathVariable UUID id) {
         ServiceOrder serviceOrder = completeServiceOrderUseCase.handle(new CompleteServiceOrderCommand(id));
-
-        return ResponseEntity.ok(serviceOrder);
+        return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
     }
 
     @Override
     @PostMapping("/{id}/deliver")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
-    public ResponseEntity<ServiceOrder> deliver(@PathVariable UUID id) {
+    public ResponseEntity<ServiceOrderResponseDTO> deliver(@PathVariable UUID id) {
         ServiceOrder serviceOrder = deliverServiceOrderUseCase.handle(new DeliverServiceOrderCommand(id));
-
-        return ResponseEntity.ok(serviceOrder);
+        return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
     }
 
     @Override
     @PostMapping("/{id}/cancel")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
-    public ResponseEntity<ServiceOrder> setCancelled(@PathVariable UUID id) {
+    public ResponseEntity<ServiceOrderResponseDTO> setCancelled(@PathVariable UUID id) {
         ServiceOrder serviceOrder = cancelServiceOrderUseCase.handle(new CancelServiceOrderCommand(id));
-
-        return ResponseEntity.ok(serviceOrder);
+        return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
     }
 
     @Override
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
-    public ResponseEntity<ServiceOrder> getServiceOrderDetails(@PathVariable UUID id) {
+    public ResponseEntity<ServiceOrderResponseDTO> getServiceOrderDetails(@PathVariable UUID id) {
         ServiceOrder serviceOrder = getServiceOrderDetailsUseCase.handle(new GetServiceOrderDetailsCommand(id));
-
-        return ResponseEntity.ok(serviceOrder);
+        return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
     }
 
     @Override
     @PostMapping("/{id}/stock-items")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
-    public ResponseEntity<ServiceOrder> addStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
+    public ResponseEntity<ServiceOrderResponseDTO> addStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
         ServiceOrder serviceOrder = addStockItemsUseCase.handle(new AddStockItemsCommand(id, stockItems));
-
-        return ResponseEntity.ok(serviceOrder);
+        return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
     }
 
     @Override
     @DeleteMapping("/{id}/stock-items")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
-    public ResponseEntity<ServiceOrder> removeStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
+    public ResponseEntity<ServiceOrderResponseDTO> removeStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
         ServiceOrder serviceOrder = removeStockItemsUseCase.handle(new RemoveStockItemsCommand(id, stockItems));
-
-        return ResponseEntity.ok(serviceOrder);
+        return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
     }
 
     @Override
     @PostMapping("/{id}/service-types")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
-    public ResponseEntity<ServiceOrder> addServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds) {
+    public ResponseEntity<ServiceOrderResponseDTO> addServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds) {
         ServiceOrder serviceOrder = addServiceTypesUseCase.handle(new AddServiceTypesCommand(id, serviceTypeIds));
-
-        return ResponseEntity.ok(serviceOrder);
+        return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
     }
 
     @Override
     @DeleteMapping("/{id}/service-types")
-    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
-    public ResponseEntity<ServiceOrder> removeServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MECHANIC')")
+    public ResponseEntity<ServiceOrderResponseDTO> removeServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds) {
         ServiceOrder serviceOrder = removeServiceTypesUseCase.handle(new RemoveServiceTypesCommand(id, serviceTypeIds));
-
-        return ResponseEntity.ok(serviceOrder);
+        return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
     }
 
     @Override
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
-    public ResponseEntity<List<ServiceOrder>> listActiveOrders() {
+    public ResponseEntity<List<ServiceOrderResponseDTO>> listActiveOrders() {
         List<ServiceOrder> serviceOrders = listActiveServiceOrdersUseCase.handle();
-        return ResponseEntity.ok(serviceOrders);
+        return ResponseEntity.ok(serviceOrders.stream().map(ServiceOrderMapper::toResponseDTO).toList());
     }
 }

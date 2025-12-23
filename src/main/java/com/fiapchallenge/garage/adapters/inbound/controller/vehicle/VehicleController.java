@@ -1,7 +1,9 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.vehicle;
 
 import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto.UpdateVehicleRequestDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto.VehicleDTO;
 import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto.VehicleRequestDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.mapper.VehicleMapper;
 import com.fiapchallenge.garage.application.vehicle.CreateVehicleUseCase;
 import com.fiapchallenge.garage.application.vehicle.DeleteVehicleUseCase;
 import com.fiapchallenge.garage.application.vehicle.FindVehicleUseCase;
@@ -39,7 +41,7 @@ public class VehicleController implements VehicleControllerOpenApiSpec {
     @Override
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
-    public ResponseEntity<Vehicle> create(@Valid @RequestBody VehicleRequestDTO vehicleRequestDTO) {
+    public ResponseEntity<VehicleDTO> create(@Valid @RequestBody VehicleRequestDTO vehicleRequestDTO) {
         CreateVehicleCommand command = new CreateVehicleCommand(
                 vehicleRequestDTO.model(),
                 vehicleRequestDTO.brand(),
@@ -51,29 +53,29 @@ public class VehicleController implements VehicleControllerOpenApiSpec {
         );
 
         Vehicle vehicle = createVehicleUseCase.handle(command);
-        return ResponseEntity.ok(vehicle);
+        return ResponseEntity.ok(VehicleMapper.toResponseDTO(vehicle));
     }
 
     @Override
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
-    public ResponseEntity<List<Vehicle>> listByCustomer(@RequestParam UUID customerId) {
+    public ResponseEntity<List<VehicleDTO>> listByCustomer(@RequestParam UUID customerId) {
         List<Vehicle> vehicles = listVehicleUseCase.handle(customerId);
-        return ResponseEntity.ok(vehicles);
+        return ResponseEntity.ok(VehicleMapper.toResponseDTOList(vehicles));
     }
 
     @Override
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
-    public ResponseEntity<Vehicle> findById(@PathVariable UUID id) {
+    public ResponseEntity<VehicleDTO> findById(@PathVariable UUID id) {
         Vehicle vehicle = findVehicleUseCase.handle(id);
-        return ResponseEntity.ok(vehicle);
+        return ResponseEntity.ok(VehicleMapper.toResponseDTO(vehicle));
     }
 
     @Override
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
-    public ResponseEntity<Vehicle> update(@PathVariable UUID id, @Valid @RequestBody UpdateVehicleRequestDTO dto) {
+    public ResponseEntity<VehicleDTO> update(@PathVariable UUID id, @Valid @RequestBody UpdateVehicleRequestDTO dto) {
         UpdateVehicleCommand command = new UpdateVehicleCommand(
                 id,
                 dto.model(),
@@ -84,7 +86,7 @@ public class VehicleController implements VehicleControllerOpenApiSpec {
         );
 
         Vehicle vehicle = updateVehicleUseCase.handle(command);
-        return ResponseEntity.ok(vehicle);
+        return ResponseEntity.ok(VehicleMapper.toResponseDTO(vehicle));
     }
 
     @Override

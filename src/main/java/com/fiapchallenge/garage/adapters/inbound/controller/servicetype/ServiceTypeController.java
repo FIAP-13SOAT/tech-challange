@@ -1,7 +1,9 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.servicetype;
 
+import com.fiapchallenge.garage.adapters.inbound.controller.servicetype.dto.ServiceTypeDTO;
 import com.fiapchallenge.garage.adapters.inbound.controller.servicetype.dto.ServiceTypeRequestDTO;
 import com.fiapchallenge.garage.adapters.inbound.controller.servicetype.dto.UpdateServiceTypeDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.servicetype.mapper.ServiceTypeMapper;
 import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeUseCase;
 import com.fiapchallenge.garage.application.servicetype.command.CreateServiceTypeCommand;
 import com.fiapchallenge.garage.application.servicetype.delete.DeleteServiceTypeUseCase;
@@ -37,26 +39,26 @@ public class ServiceTypeController implements ServiceTypeOpenApiSpec {
     @Override
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'STOCK_KEEPER')")
-    public ResponseEntity<ServiceType> create(@Valid @RequestBody ServiceTypeRequestDTO serviceTypeRequestDTO) {
+    public ResponseEntity<ServiceTypeDTO> create(@Valid @RequestBody ServiceTypeRequestDTO serviceTypeRequestDTO) {
         CreateServiceTypeCommand command = new CreateServiceTypeCommand(
                 serviceTypeRequestDTO.description(),
                 serviceTypeRequestDTO.value()
         );
         ServiceType serviceType = createServiceTypeUseCase.handle(command);
-        return ResponseEntity.ok(serviceType);
+        return ResponseEntity.ok(ServiceTypeMapper.toResponseDTO(serviceType));
     }
 
     @Override
     @GetMapping
-    public ResponseEntity<List<ServiceType>> getAll() {
+    public ResponseEntity<List<ServiceTypeDTO>> getAll() {
         List<ServiceType> serviceTypes = serviceTypeRepository.findAll();
-        return ResponseEntity.ok(serviceTypes);
+        return ResponseEntity.ok(ServiceTypeMapper.toResponseDTOList(serviceTypes));
     }
 
     @Override
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'STOCK_KEEPER')")
-    public ResponseEntity<ServiceType> update(@PathVariable UUID id, @Valid @RequestBody UpdateServiceTypeDTO updateServiceTypeDTO) {
+    public ResponseEntity<ServiceTypeDTO> update(@PathVariable UUID id, @Valid @RequestBody UpdateServiceTypeDTO updateServiceTypeDTO) {
         UpdateServiceTypeCmd cmd = new UpdateServiceTypeCmd(
                 id,
                 updateServiceTypeDTO.description(),
@@ -64,7 +66,7 @@ public class ServiceTypeController implements ServiceTypeOpenApiSpec {
         );
 
         ServiceType serviceType = updateServiceTypeUseCase.handle(cmd);
-        return ResponseEntity.ok(serviceType);
+        return ResponseEntity.ok(ServiceTypeMapper.toResponseDTO(serviceType));
     }
 
     @Override

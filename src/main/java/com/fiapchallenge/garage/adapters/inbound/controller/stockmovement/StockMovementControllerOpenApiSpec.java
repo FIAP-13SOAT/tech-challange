@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.stockmovement;
 
-import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
+import com.fiapchallenge.garage.adapters.inbound.controller.stockmovement.dto.StockMovementDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,7 +20,7 @@ public interface StockMovementControllerOpenApiSpec {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista recuperada com sucesso")
     })
-    ResponseEntity<Page<StockMovement>> listAll(
+    ResponseEntity<Page<StockMovementDTO>> listAll(
             @Parameter(description = "Número da página") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Tamanho da página") @RequestParam(defaultValue = "10") int size);
 
@@ -29,7 +29,7 @@ public interface StockMovementControllerOpenApiSpec {
             @ApiResponse(responseCode = "200", description = "Lista recuperada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Item não encontrado")
     })
-    ResponseEntity<Page<StockMovement>> listByStockId(
+    ResponseEntity<Page<StockMovementDTO>> listByStockId(
             @Parameter(description = "ID do item") @PathVariable UUID stockId,
             @Parameter(description = "Número da página") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Tamanho da página") @RequestParam(defaultValue = "10") int size);
