@@ -1,8 +1,8 @@
 package com.fiapchallenge.garage.infra;
 
-import com.fiapchallenge.garage.application.user.UserNotFoundException;
 import com.fiapchallenge.garage.domain.user.User;
 import com.fiapchallenge.garage.domain.user.UserRepository;
+import com.fiapchallenge.garage.domain.user.exception.UserNotFoundException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,5 +1,6 @@
 package com.fiapchallenge.garage.adapters.outbound.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.io.Serializable;
@@ -9,7 +10,10 @@ import java.util.UUID;
 @Embeddable
 public class ServiceOrderServiceTypeId implements Serializable {
 
+    @Column(name = "service_order_id")
     private UUID serviceOrderId;
+
+    @Column(name = "service_type_id")
     private UUID serviceTypeId;
 
     public ServiceOrderServiceTypeId() {}

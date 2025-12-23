@@ -10,7 +10,7 @@ import com.fiapchallenge.garage.application.user.LoginUserUseCase;
 import com.fiapchallenge.garage.application.user.command.CreateUserCommand;
 import com.fiapchallenge.garage.application.user.command.LoginUserCommand;
 import com.fiapchallenge.garage.domain.user.User;
-import com.fiapchallenge.garage.infra.JwtTokenVO;
+import com.fiapchallenge.garage.shared.jwt.JwtTokenVO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

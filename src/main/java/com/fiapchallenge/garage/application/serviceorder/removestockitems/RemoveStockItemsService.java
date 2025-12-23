@@ -22,7 +22,7 @@ public class RemoveStockItemsService implements RemoveStockItemsUseCase {
     public ServiceOrder handle(RemoveStockItemsCommand command) {
         ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(command.serviceOrderId());
         List<ServiceOrderItem> items = command.stockItems().stream()
-                .map(item -> new ServiceOrderItem(null, item.stockId(), item.quantity()))
+                .map(item -> new ServiceOrderItem(null, item.getStockId(), item.getQuantity()))
                 .toList();
         serviceOrder.removeStockItems(items);
         return serviceOrderRepository.save(serviceOrder);

@@ -1,10 +1,10 @@
 package com.fiapchallenge.garage.application.serviceorder.track;
 
-import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.ServiceOrderTrackingDTO;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.customer.CustomerRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderTracking;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
 import com.fiapchallenge.garage.domain.vehicle.VehicleRepository;
 import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
@@ -33,7 +33,7 @@ public class TrackServiceOrderService implements TrackServiceOrderUseCase {
     }
 
     @Override
-    public ServiceOrderTrackingDTO handle(UUID serviceOrderId, String cpfCnpj) {
+    public ServiceOrderTracking handle(UUID serviceOrderId, String cpfCnpj) {
         ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(serviceOrderId);
 
         Vehicle vehicle = vehicleRepository.findById(serviceOrder.getVehicleId())
@@ -55,7 +55,7 @@ public class TrackServiceOrderService implements TrackServiceOrderUseCase {
                 Locale.getDefault()
         );
 
-        return new ServiceOrderTrackingDTO(
+        return new ServiceOrderTracking(
                 vehicle.getLicensePlate(),
                 vehicle.getModel(),
                 vehicle.getBrand(),

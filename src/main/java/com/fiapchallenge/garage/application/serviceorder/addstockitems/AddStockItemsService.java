@@ -22,7 +22,7 @@ public class AddStockItemsService implements AddStockItemsUseCase {
     public ServiceOrder handle(AddStockItemsCommand command) {
         ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(command.serviceOrderId());
         List<ServiceOrderItem> items = command.stockItems().stream()
-                .map(item -> new ServiceOrderItem(null, item.stockId(), item.quantity()))
+                .map(item -> new ServiceOrderItem(null, item.getStockId(), item.getQuantity()))
                 .toList();
         serviceOrder.addStockItems(items);
         return serviceOrderRepository.save(serviceOrder);

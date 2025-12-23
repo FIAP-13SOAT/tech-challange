@@ -1,4 +1,4 @@
-package com.fiapchallenge.garage.infra;
+package com.fiapchallenge.garage.shared.jwt;
 
 import java.time.Instant;
 

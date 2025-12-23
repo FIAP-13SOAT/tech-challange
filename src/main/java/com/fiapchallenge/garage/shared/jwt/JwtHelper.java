@@ -1,5 +1,6 @@
-package com.fiapchallenge.garage.infra;
+package com.fiapchallenge.garage.shared.jwt;
 
+import com.fiapchallenge.garage.infra.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;

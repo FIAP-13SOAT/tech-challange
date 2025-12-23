@@ -1,8 +1,8 @@
 package com.fiapchallenge.garage.application.servicetype;
 
-import com.fiapchallenge.garage.adapters.outbound.repositories.servicetype.ServiceTypeRepositoryImpl;
 import com.fiapchallenge.garage.application.servicetype.command.CreateServiceTypeCommand;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
+import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,9 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CreateServiceTypeService implements CreateServiceTypeUseCase {
 
-    private final ServiceTypeRepositoryImpl serviceTypeRepository;
+    private final ServiceTypeRepository serviceTypeRepository;
 
-    public CreateServiceTypeService(ServiceTypeRepositoryImpl serviceTypeRepository) {
+    public CreateServiceTypeService(ServiceTypeRepository serviceTypeRepository) {
         this.serviceTypeRepository = serviceTypeRepository;
     }
 

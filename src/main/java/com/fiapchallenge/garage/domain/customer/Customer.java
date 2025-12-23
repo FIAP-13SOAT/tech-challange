@@ -1,7 +1,5 @@
 package com.fiapchallenge.garage.domain.customer;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.UUID;
 
 public class Customer {
@@ -60,7 +58,6 @@ public class Customer {
         return cpfCnpj;
     }
 
-    @JsonProperty("cpfCnpj")
     public String getCpfCnpjValue() {
         return cpfCnpj.getValue();
     }

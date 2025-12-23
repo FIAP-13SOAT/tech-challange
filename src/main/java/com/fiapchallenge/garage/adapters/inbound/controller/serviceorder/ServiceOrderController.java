@@ -26,6 +26,7 @@ import com.fiapchallenge.garage.application.serviceorder.finishdiagnosis.FinishS
 import com.fiapchallenge.garage.application.serviceorder.get.GetServiceOrderDetailsCommand;
 import com.fiapchallenge.garage.application.serviceorder.removeservicetypes.RemoveServiceTypesCommand;
 import com.fiapchallenge.garage.application.serviceorder.removestockitems.RemoveStockItemsCommand;
+import com.fiapchallenge.garage.application.serviceorder.create.StockItemCommand;
 import com.fiapchallenge.garage.application.serviceorder.startsdiagnosis.StartServiceOrderDiagnosticCommand;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import jakarta.validation.Valid;
@@ -84,7 +85,15 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK')")
     public ResponseEntity<ServiceOrderResponseDTO> create(@Valid @RequestBody CreateServiceOrderDTO createServiceOrderDTO) {
-        ServiceOrder serviceOrder = createServiceOrderUseCase.handle(new CreateServiceOrderCommand(createServiceOrderDTO));
+        CreateServiceOrderCommand command = new CreateServiceOrderCommand(
+                createServiceOrderDTO.observations(),
+                createServiceOrderDTO.vehicleId(),
+                createServiceOrderDTO.customerId(),
+                createServiceOrderDTO.serviceTypeIdList() != null ? createServiceOrderDTO.serviceTypeIdList() : List.of(),
+                createServiceOrderDTO.stockItems() != null ? createServiceOrderDTO.stockItems().stream()
+                        .map(item -> new StockItemCommand(item.stockId(), item.quantity())).toList() : List.of()
+        );
+        ServiceOrder serviceOrder = createServiceOrderUseCase.handle(command);
         return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
     }
 
@@ -140,7 +149,10 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     @PostMapping("/{id}/stock-items")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
     public ResponseEntity<ServiceOrderResponseDTO> addStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
-        ServiceOrder serviceOrder = addStockItemsUseCase.handle(new AddStockItemsCommand(id, stockItems));
+        List<com.fiapchallenge.garage.domain.serviceorder.StockItem> domainStockItems = stockItems.stream()
+                .map(dto -> new com.fiapchallenge.garage.domain.serviceorder.StockItem(dto.stockId(), dto.quantity()))
+                .toList();
+        ServiceOrder serviceOrder = addStockItemsUseCase.handle(new AddStockItemsCommand(id, domainStockItems));
         return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
     }
 
@@ -148,7 +160,10 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     @DeleteMapping("/{id}/stock-items")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
     public ResponseEntity<ServiceOrderResponseDTO> removeStockItems(@PathVariable UUID id, @RequestBody List<StockItemDTO> stockItems) {
-        ServiceOrder serviceOrder = removeStockItemsUseCase.handle(new RemoveStockItemsCommand(id, stockItems));
+        List<com.fiapchallenge.garage.domain.serviceorder.StockItem> domainStockItems = stockItems.stream()
+                .map(dto -> new com.fiapchallenge.garage.domain.serviceorder.StockItem(dto.stockId(), dto.quantity()))
+                .toList();
+        ServiceOrder serviceOrder = removeStockItemsUseCase.handle(new RemoveStockItemsCommand(id, domainStockItems));
         return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
     }
 

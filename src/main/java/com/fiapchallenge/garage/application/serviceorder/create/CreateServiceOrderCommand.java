@@ -1,7 +1,5 @@
 package com.fiapchallenge.garage.application.serviceorder.create;
 
-import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.CreateServiceOrderDTO;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -11,14 +9,4 @@ public record CreateServiceOrderCommand(
         UUID customerId,
         List<UUID> serviceTypeIdList,
         List<StockItemCommand> stockItems
-) {
-    public CreateServiceOrderCommand(CreateServiceOrderDTO dto) {
-        this(
-                dto.observations(),
-                dto.vehicleId(),
-                dto.customerId(),
-                dto.serviceTypeIdList() != null ? dto.serviceTypeIdList() : List.of(),
-                dto.stockItems() != null ? dto.stockItems().stream().map(item -> new StockItemCommand(item.stockId(), item.quantity())).toList() : List.of()
-        );
-    }
-}
+) {}

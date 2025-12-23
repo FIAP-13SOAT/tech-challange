@@ -1,9 +1,9 @@
 package com.fiapchallenge.garage.application.user;
 
 import com.fiapchallenge.garage.application.user.command.LoginUserCommand;
-import com.fiapchallenge.garage.infra.JwtHelper;
+import com.fiapchallenge.garage.shared.jwt.JwtHelper;
 import com.fiapchallenge.garage.infra.UserDetailsImpl;
-import com.fiapchallenge.garage.infra.JwtTokenVO;
+import com.fiapchallenge.garage.shared.jwt.JwtTokenVO;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

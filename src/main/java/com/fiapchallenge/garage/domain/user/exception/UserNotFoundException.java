@@ -1,4 +1,4 @@
-package com.fiapchallenge.garage.application.user;
+package com.fiapchallenge.garage.domain.user.exception;
 
 public class UserNotFoundException extends RuntimeException {
 
