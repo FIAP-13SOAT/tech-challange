@@ -16,6 +16,7 @@ import com.fiapchallenge.garage.application.serviceorder.list.ListActiveServiceO
 import com.fiapchallenge.garage.application.serviceorder.removeservicetypes.RemoveServiceTypesUseCase;
 import com.fiapchallenge.garage.application.serviceorder.removestockitems.RemoveStockItemsUseCase;
 import com.fiapchallenge.garage.application.serviceorder.startsdiagnosis.StartServiceOrderDiagnosticUseCase;
+import com.fiapchallenge.garage.application.serviceorderexecution.StartServiceOrderExecutionUseCase;
 import com.fiapchallenge.garage.application.serviceorder.addservicetypes.AddServiceTypesCommand;
 import com.fiapchallenge.garage.application.serviceorder.addstockitems.AddStockItemsCommand;
 import com.fiapchallenge.garage.application.serviceorder.cancel.CancelServiceOrderCommand;
@@ -27,6 +28,7 @@ import com.fiapchallenge.garage.application.serviceorder.get.GetServiceOrderDeta
 import com.fiapchallenge.garage.application.serviceorder.removeservicetypes.RemoveServiceTypesCommand;
 import com.fiapchallenge.garage.application.serviceorder.removestockitems.RemoveStockItemsCommand;
 import com.fiapchallenge.garage.application.serviceorder.startsdiagnosis.StartServiceOrderDiagnosticCommand;
+import com.fiapchallenge.garage.application.serviceorderexecution.StartServiceOrderExecutionCommand;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +45,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     private final CreateServiceOrderUseCase createServiceOrderUseCase;
     private final StartServiceOrderDiagnosticUseCase startServiceOrderDiagnosticUseCase;
     private final FinishServiceOrderDiagnosticUseCase finishServiceOrderDiagnosticUseCase;
+    private final StartServiceOrderExecutionUseCase startServiceOrderExecutionUseCase;
     private final CompleteServiceOrderUseCase completeServiceOrderUseCase;
     private final DeliverServiceOrderUseCase deliverServiceOrderUseCase;
     private final CancelServiceOrderUseCase cancelServiceOrderUseCase;
@@ -56,6 +59,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     public ServiceOrderController(CreateServiceOrderUseCase createServiceOrderUseCase,
                                   StartServiceOrderDiagnosticUseCase startServiceOrderDiagnosticUseCase,
                                   FinishServiceOrderDiagnosticUseCase finishServiceOrderDiagnosticUseCase,
+                                  StartServiceOrderExecutionUseCase startServiceOrderExecutionUseCase,
                                   CompleteServiceOrderUseCase completeServiceOrderUseCase,
                                   DeliverServiceOrderUseCase deliverServiceOrderUseCase,
                                   CancelServiceOrderUseCase cancelServiceOrderUseCase,
@@ -69,6 +73,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         this.createServiceOrderUseCase = createServiceOrderUseCase;
         this.startServiceOrderDiagnosticUseCase = startServiceOrderDiagnosticUseCase;
         this.finishServiceOrderDiagnosticUseCase = finishServiceOrderDiagnosticUseCase;
+        this.startServiceOrderExecutionUseCase = startServiceOrderExecutionUseCase;
         this.completeServiceOrderUseCase = completeServiceOrderUseCase;
         this.deliverServiceOrderUseCase = deliverServiceOrderUseCase;
         this.cancelServiceOrderUseCase = cancelServiceOrderUseCase;
@@ -101,6 +106,13 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     @PreAuthorize("hasAnyRole('ADMIN', 'MECHANIC')")
     public ResponseEntity<ServiceOrderResponseDTO> finishDiagnosis(@PathVariable UUID id) {
         ServiceOrder serviceOrder = finishServiceOrderDiagnosticUseCase.handle(new FinishServiceOrderDiagnosticCommand(id));
+        return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
+    }
+
+    @PostMapping("/{id}/start-execution")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MECHANIC')")
+    public ResponseEntity<ServiceOrderResponseDTO> startExecution(@PathVariable UUID id) {
+        ServiceOrder serviceOrder = startServiceOrderExecutionUseCase.handle(new StartServiceOrderExecutionCommand(id));
         return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
     }
 

@@ -99,9 +99,16 @@ public class ServiceOrder {
         this.status = ServiceOrderStatus.CANCELLED;
     }
 
-    public void startProgress() {
+    public void approve() {
         if (this.status != ServiceOrderStatus.AWAITING_APPROVAL) {
-            throw new IllegalStateException("Ordem de serviço deve estar no status aguardando aprovação para iniciar execução.");
+            throw new IllegalStateException("Ordem de serviço deve estar no status aguardando aprovação para aprovar.");
+        }
+        this.status = ServiceOrderStatus.AWAITING_EXECUTION;
+    }
+
+    public void startProgress() {
+        if (this.status != ServiceOrderStatus.AWAITING_EXECUTION) {
+            throw new IllegalStateException("Ordem de serviço deve estar no status aguardando execução para iniciar execução.");
         }
         this.status = ServiceOrderStatus.IN_PROGRESS;
     }

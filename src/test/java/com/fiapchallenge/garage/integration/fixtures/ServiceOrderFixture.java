@@ -26,8 +26,6 @@ public class ServiceOrderFixture {
         );
 
         ServiceOrder serviceOrder = createServiceOrderService.handle(command);
-        serviceOrder.startDiagnostic();
-        serviceOrder.sendToApproval();
         return serviceOrderRepository.save(serviceOrder);
     }
 

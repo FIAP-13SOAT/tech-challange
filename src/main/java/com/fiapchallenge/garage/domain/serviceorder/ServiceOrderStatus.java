@@ -2,9 +2,10 @@ package com.fiapchallenge.garage.domain.serviceorder;
 
 public enum ServiceOrderStatus {
 
-    RECEIVED(4),
-    IN_DIAGNOSIS(3),
-    AWAITING_APPROVAL(2),
+    RECEIVED(5),
+    IN_DIAGNOSIS(4),
+    AWAITING_APPROVAL(3),
+    AWAITING_EXECUTION(2),
     IN_PROGRESS(1),
     COMPLETED(0),
     DELIVERED(0),

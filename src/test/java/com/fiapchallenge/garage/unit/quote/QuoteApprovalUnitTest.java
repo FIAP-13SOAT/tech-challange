@@ -2,8 +2,6 @@ package com.fiapchallenge.garage.unit.quote;
 
 import com.fiapchallenge.garage.application.quote.ApproveQuoteService;
 import com.fiapchallenge.garage.application.quote.RejectQuoteService;
-import com.fiapchallenge.garage.application.serviceorderexecution.StartServiceOrderExecutionUseCase;
-import com.fiapchallenge.garage.application.serviceorderexecution.StartServiceOrderExecutionCommand;
 import com.fiapchallenge.garage.domain.customer.CpfCnpj;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.quote.Quote;
@@ -40,13 +38,10 @@ class QuoteApprovalUnitTest {
     @InjectMocks
     private RejectQuoteService rejectQuoteService;
 
-    @Mock
-    private StartServiceOrderExecutionUseCase startServiceOrderExecutionUseCase;
-
     private Customer customer = new Customer(UUID.randomUUID(), "Test Customer", "test@test.com", "12345678901", new CpfCnpj("667.713.590-00"));
     private UUID serviceOrderId = UUID.randomUUID();
     @Test
-    void shouldChangeServiceOrderToInProgressWhenQuoteIsApproved() {
+    void shouldChangeServiceOrderToAwaitingExecutionWhenQuoteIsApproved() {
         Quote quote = new Quote(this.serviceOrderId, this.customer.getId(), List.of());
         ServiceOrder serviceOrder = new ServiceOrder(
             this.serviceOrderId, "Test", UUID.randomUUID(),
@@ -57,12 +52,11 @@ class QuoteApprovalUnitTest {
         when(serviceOrderRepository.findByIdOrThrow(serviceOrderId)).thenReturn(serviceOrder);
         when(quoteRepository.save(any(Quote.class))).thenReturn(quote);
         when(serviceOrderRepository.save(any(ServiceOrder.class))).thenReturn(serviceOrder);
-        when(startServiceOrderExecutionUseCase.handle(any(StartServiceOrderExecutionCommand.class))).thenReturn(serviceOrder);
 
         Quote result = approveQuoteService.handle(serviceOrderId);
 
         assertEquals(QuoteStatus.APPROVED, result.getStatus());
-        verify(serviceOrderRepository).save(argThat(so -> so.getStatus() == ServiceOrderStatus.IN_PROGRESS));
+        verify(serviceOrderRepository).save(argThat(so -> so.getStatus() == ServiceOrderStatus.AWAITING_EXECUTION));
     }
 
     @Test

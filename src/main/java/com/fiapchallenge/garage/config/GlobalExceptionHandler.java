@@ -62,6 +62,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<Map<String, String>> handleIllegalStateException(IllegalStateException ex) {
+        return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler
     public ResponseEntity<Map<String, String>> handleException(Exception ex) {
         logger.error("Erro não tratado na API:", ex);
 

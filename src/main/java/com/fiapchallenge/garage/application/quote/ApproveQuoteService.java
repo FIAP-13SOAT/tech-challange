@@ -27,12 +27,10 @@ public class ApproveQuoteService implements ApproveQuoteUseCase {
         quote.approve();
 
         var serviceOrder = serviceOrderRepository.findByIdOrThrow(serviceOrderId);
-        serviceOrder.startProgress();
+        serviceOrder.approve();
         serviceOrderRepository.save(serviceOrder);
 
         quote = quoteRepository.save(quote);
-
-        startServiceOrderExecutionUseCase.handle(new StartServiceOrderExecutionCommand(serviceOrderId));
 
         return quote;
     }

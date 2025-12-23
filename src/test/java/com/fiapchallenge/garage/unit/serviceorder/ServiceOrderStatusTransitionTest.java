@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class ServiceOrderStatusTransitionTest {
     private Customer customer = new Customer(UUID.randomUUID(), "Test Customer", "test@test.com", "12345678901", new CpfCnpj("667.713.590-00"));
     @Test
-    @DisplayName("Deve iniciar progresso quando em status AWAITING_APPROVAL")
-    void shouldStartProgressWhenInAwaitingApprovalStatus() {
+    @DisplayName("Deve iniciar progresso quando em status AWAITING_EXECUTION")
+    void shouldStartProgressWhenInAwaitingExecutionStatus() {
         ServiceOrder serviceOrder = new ServiceOrder(UUID.randomUUID(), "Test", UUID.randomUUID(),
-                ServiceOrderStatus.AWAITING_APPROVAL, List.of(), List.of(), this.customer);
+                ServiceOrderStatus.AWAITING_EXECUTION, List.of(), List.of(), this.customer);
 
         serviceOrder.startProgress();
 
@@ -32,6 +32,17 @@ class ServiceOrderStatusTransitionTest {
                 ServiceOrderStatus.RECEIVED, List.of(), List.of(), this.customer);
 
         assertThrows(IllegalStateException.class, serviceOrder::startProgress);
+    }
+
+    @Test
+    @DisplayName("Deve aprovar quando em status AWAITING_APPROVAL")
+    void shouldApproveWhenInAwaitingApprovalStatus() {
+        ServiceOrder serviceOrder = new ServiceOrder(UUID.randomUUID(), "Test", UUID.randomUUID(),
+                ServiceOrderStatus.AWAITING_APPROVAL, List.of(), List.of(), this.customer);
+
+        serviceOrder.approve();
+
+        assertEquals(ServiceOrderStatus.AWAITING_EXECUTION, serviceOrder.getStatus());
     }
 
     @Test

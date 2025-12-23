@@ -36,6 +36,9 @@ public interface ServiceOrderControllerOpenApiSpec {
     @Operation(summary = "Finalizar diagnóstico", description = "Finaliza diagnóstico da Ordem de Serviço")
     ResponseEntity<ServiceOrderResponseDTO> finishDiagnosis(@PathVariable UUID id);
 
+    @Operation(summary = "Iniciar execução", description = "Inicia execução da Ordem de Serviço")
+    ResponseEntity<ServiceOrderResponseDTO> startExecution(@PathVariable UUID id);
+
     @Operation(summary = "Finalizar ordem de serviço", description = "Finalizar execução da Ordem de Serviço")
     ResponseEntity<ServiceOrderResponseDTO> finish(@PathVariable UUID id);
 
