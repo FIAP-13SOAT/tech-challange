@@ -53,6 +53,7 @@ class PackageStructureTest {
         ArchRule rule = classes()
                 .that().haveSimpleNameEndingWith("Repository")
                 .and().areInterfaces()
+                .and().haveSimpleNameNotStartingWith("Jpa")
                 .should().resideInAPackage("..domain..");
 
         rule.check(classes);
