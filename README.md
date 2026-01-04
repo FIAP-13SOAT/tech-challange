@@ -6,14 +6,20 @@
 - Spring Boot
 - PostgreSQL
 - Docker
+- Terraform (Infraestrutura AWS)
+- Kubernetes (EKS)
 
 ## Requisitos Mínimos
 - Docker 20.10+
 - Docker Compose 2.0+
 - 4GB RAM disponível
 - 2GB espaço em disco
+- Terraform (para deploy na AWS)
+- AWS CLI configurado  (para deploy na AWS)
 
 ## Como Executar
+
+### Execução Local
 
 ### 1. Clone o repositório
 ```bash
@@ -40,6 +46,11 @@ docker-compose -f docker-compose-dev.yml up --build
 ```bash
 docker-compose down
 ```
+
+### Execução na AWS (EKS)
+
+Para deploy na infraestrutura AWS usando Terraform:
+Veja detalhes completos em: [infra/README.md](./infra/README.md)
 
 ## Documentação
 
