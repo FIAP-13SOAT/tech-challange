@@ -141,7 +141,8 @@ resource "aws_iam_role_policy_attachment" "eks_node_group_role_attachments" {
 resource "aws_eks_cluster" "eks_cluster" {
     name = "${local.projectName}-cluster"
     role_arn = aws_iam_role.eks_service_role.arn
-    vpc_config = {
+    
+    vpc_config {
         subnet_ids = [
             aws_subnet.public_subnet.id,
             aws_subnet.private_subnet.id
@@ -150,9 +151,11 @@ resource "aws_eks_cluster" "eks_cluster" {
             aws_security_group.main.id
         ]
     }
+    
     access_config {
         authentication_mode = "API_AND_CONFIG_MAP"
     }
+    
     depends_on = [
         aws_iam_role.eks_service_role
     ]
