@@ -62,9 +62,72 @@ resource "aws_subnet" "private_subnet" {
     vpc_id = aws_vpc.main.id
     cidr_block = "10.0.2.0/24"
     availability_zone = "sa-east-1a"
-    map_public_ip_on_launch = true
+    map_public_ip_on_launch = false
     tags = {
         name = "${local.projectName}-private-subnet"
+    }
+}
+
+# Segunda subnet privada para RDS (obrigatório)
+resource "aws_subnet" "private_subnet_b" {
+    vpc_id = aws_vpc.main.id
+    cidr_block = "10.0.3.0/24"
+    availability_zone = "sa-east-1b"
+    map_public_ip_on_launch = false
+    tags = {
+        name = "${local.projectName}-private-subnet-b"
+    }
+}
+
+// DB Subnet Group para RDS
+resource "aws_db_subnet_group" "main" {
+    name       = "${local.projectName}-db-subnet-group"
+    subnet_ids = [aws_subnet.private_subnet.id, aws_subnet.private_subnet_b.id]
+    
+    tags = {
+        Name = "${local.projectName}-db-subnet-group"
+    }
+}
+
+// Security Group para RDS
+resource "aws_security_group" "rds" {
+    name_prefix = "${local.projectName}-rds-sg"
+    vpc_id      = aws_vpc.main.id
+
+    ingress {
+        from_port       = 5432
+        to_port         = 5432
+        protocol        = "tcp"
+        security_groups = [aws_security_group.main.id]
+    }
+
+    tags = {
+        name = "${local.projectName}-rds-security-group"
+    }
+}
+
+// RDS PostgreSQL
+resource "aws_db_instance" "postgres" {
+    identifier = "${local.projectName}-postgres"
+    
+    engine         = "postgres"
+    engine_version = "15.7"
+    instance_class = "db.t3.micro"
+    
+    allocated_storage = 20
+    storage_type      = "gp2"
+    
+    db_name  = "garage"
+    username = "postgres"
+    password = "postgres123"
+    
+    vpc_security_group_ids = [aws_security_group.rds.id]
+    db_subnet_group_name   = aws_db_subnet_group.main.name
+    
+    skip_final_snapshot = true
+    
+    tags = {
+        Name = "${local.projectName}-postgres"
     }
 }
 
@@ -145,7 +208,8 @@ resource "aws_eks_cluster" "eks_cluster" {
     vpc_config {
         subnet_ids = [
             aws_subnet.public_subnet.id,
-            aws_subnet.private_subnet.id
+            aws_subnet.private_subnet.id,
+            aws_subnet.private_subnet_b.id
         ]
         security_group_ids = [
             aws_security_group.main.id
@@ -206,5 +270,13 @@ resource "aws_eks_access_policy_association" "eks-policy" {
 // Para poder interagir com o Kubernetes, é necessário gerar um arquivo kubeconfig, que será usado pelo kubectl para se conectar ao cluster.
 output "kubeconfig" {
     value = aws_eks_cluster.eks_cluster.endpoint
+}
+
+output "rds_endpoint" {
+    value = aws_db_instance.postgres.endpoint
+}
+
+output "rds_port" {
+    value = aws_db_instance.postgres.port
 }
 
