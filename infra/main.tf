@@ -139,7 +139,7 @@ resource "aws_eks_cluster" "eks_cluster" {
             aws_security_group.main.id
         ]
     }
-    acess_config = {
+    access_config = {
         authentication_mode = var.accessConfig
     }
     depends_on = [
@@ -164,7 +164,7 @@ resource "aws_eks_node_group" "main" {
         min_size     = 1
     }
     update_config = {
-        max_unavaliable = 1
+        max_unavailable = 1
     }
     depends_on = [
         aws_eks_cluster.eks_cluster
