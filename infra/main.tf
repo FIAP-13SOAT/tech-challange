@@ -141,7 +141,7 @@ resource "aws_iam_role_policy_attachment" "eks_node_group_role_attachments" {
 resource "aws_eks_cluster" "eks_cluster" {
     name = "${local.projectName}-cluster"
     role_arn = aws_iam_role.eks_service_role.arn
-    
+
     vpc_config {
         subnet_ids = [
             aws_subnet.public_subnet.id,
@@ -151,11 +151,11 @@ resource "aws_eks_cluster" "eks_cluster" {
             aws_security_group.main.id
         ]
     }
-    
+
     access_config {
         authentication_mode = "API_AND_CONFIG_MAP"
     }
-    
+
     depends_on = [
         aws_iam_role.eks_service_role
     ]
@@ -172,12 +172,12 @@ resource "aws_eks_node_group" "main" {
     instance_types = [
         "t3.medium"
     ]
-    scaling_config = {
+    scaling_config {
         desired_size = 2
         max_size     = 3
         min_size     = 1
     }
-    update_config = {
+    update_config {
         max_unavailable = 1
     }
     depends_on = [
