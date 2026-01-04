@@ -11,12 +11,6 @@ provider "aws" {
     region = "sa-east-1"
 }
 
-variable "accessConfig" {
-    description = "EKS authentication mode"
-    type        = string
-    default     = "API_AND_CONFIG_MAP"
-}
-
 variable "accountId" {
     description = "AWS Account ID"
     type        = string
@@ -156,8 +150,8 @@ resource "aws_eks_cluster" "eks_cluster" {
             aws_security_group.main.id
         ]
     }
-    access_config = {
-        authentication_mode = var.accessConfig
+    access_config {
+        authentication_mode = "API_AND_CONFIG_MAP"
     }
     depends_on = [
         aws_iam_role.eks_service_role
