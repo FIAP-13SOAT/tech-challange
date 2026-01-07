@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: garage-app
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            app: garage-app
+    template:
+        metadata:
+            labels:
+                app: garage-app
+        spec:
+            containers:
+                - name: garage-app
+                  image: your-app:latest
+                  ports:
+                      - containerPort: 8080
+                  env:
+                      - name: DB_HOST
+                        valueFrom:
+                            configMapKeyRef:
+                                name: garage-config
+                                key: DB_HOST

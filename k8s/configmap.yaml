@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: garage-config
+data:
+    DB_HOST: "garage-postgres.xyz.sa-east-1.rds.amazonaws.com"
+    DB_PORT: "5432"
+    DB_NAME: "garage"
+    DB_USER: "postgres"
+    SPRING_PROFILES_ACTIVE: "prod"
