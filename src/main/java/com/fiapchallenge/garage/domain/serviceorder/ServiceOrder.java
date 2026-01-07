@@ -3,6 +3,7 @@ package com.fiapchallenge.garage.domain.serviceorder;
 import com.fiapchallenge.garage.application.serviceorder.create.CreateServiceOrderCommand;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
+import com.fiapchallenge.garage.domain.serviceorder.exceptions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class ServiceOrder {
 
     public ServiceOrder(CreateServiceOrderCommand command, Customer customer) {
         if (customer == null) {
-            throw new IllegalArgumentException("Customer cannot be null");
+            throw new CustomerCannotBeNullException();
         }
         this.observations = command.observations();
         this.vehicleId = command.vehicleId();
@@ -80,49 +81,49 @@ public class ServiceOrder {
 
     public void startDiagnostic() {
         if (this.status != ServiceOrderStatus.RECEIVED) {
-            throw new IllegalStateException("Ordem de serviço deve estar no status recebida para iniciar diagnóstico.");
+            throw new InvalidStatusToStartDiagnosticException();
         }
         this.status = ServiceOrderStatus.IN_DIAGNOSIS;
     }
 
     public void sendToApproval() {
         if (this.status != ServiceOrderStatus.IN_DIAGNOSIS) {
-            throw new IllegalStateException("Ordem de serviço deve estar no status em diagnóstico para finalizar diagnóstico.");
+            throw new InvalidStatusToSendToApprovalException();
         }
         this.status = ServiceOrderStatus.AWAITING_APPROVAL;
     }
 
     public void cancel() {
         if (this.status == ServiceOrderStatus.COMPLETED || this.status == ServiceOrderStatus.DELIVERED || this.status == ServiceOrderStatus.CANCELLED) {
-            throw new IllegalStateException("Não é possível cancelar uma ordem de serviço que já esteja completada, entregue ou cancelada.");
+            throw new InvalidStatusToCancelException();
         }
         this.status = ServiceOrderStatus.CANCELLED;
     }
 
     public void approve() {
         if (this.status != ServiceOrderStatus.AWAITING_APPROVAL) {
-            throw new IllegalStateException("Ordem de serviço deve estar no status aguardando aprovação para aprovar.");
+            throw new InvalidStatusToApproveException();
         }
         this.status = ServiceOrderStatus.AWAITING_EXECUTION;
     }
 
     public void startProgress() {
         if (this.status != ServiceOrderStatus.AWAITING_EXECUTION) {
-            throw new IllegalStateException("Ordem de serviço deve estar no status aguardando execução para iniciar execução.");
+            throw new InvalidStatusToStartProgressException();
         }
         this.status = ServiceOrderStatus.IN_PROGRESS;
     }
 
     public void complete() {
         if (this.status != ServiceOrderStatus.IN_PROGRESS) {
-            throw new IllegalStateException("Ordem de serviço deve estar no status em execução para concluir.");
+            throw new InvalidStatusToCompleteException();
         }
         this.status = ServiceOrderStatus.COMPLETED;
     }
 
     public void deliver() {
         if (this.status != ServiceOrderStatus.COMPLETED) {
-            throw new IllegalStateException("Ordem de serviço deve estar no status concluída para entregar.");
+            throw new InvalidStatusToDeliverException();
         }
         this.status = ServiceOrderStatus.DELIVERED;
     }
