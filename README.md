@@ -52,6 +52,10 @@ docker-compose down
 Para deploy completo na infraestrutura AWS usando Terraform + Kubernetes:
 Veja detalhes completos em: [Setup em prod](./deploy_prod.md)
 
+### Teste Local com Kubernetes (minikube)
+
+Veja detalhes completos em: [Setup em dev](./deploy_dev.md)
+
 ## Documentação
 
 - Documentação da API disponibilizada em: http://localhost:8080/swagger-ui/index.html
