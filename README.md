@@ -49,8 +49,8 @@ docker-compose down
 
 ### Execução na AWS (EKS)
 
-Para deploy na infraestrutura AWS usando Terraform:
-Veja detalhes completos em: [infra/README.md](./infra/README.md)
+Para deploy completo na infraestrutura AWS usando Terraform + Kubernetes:
+Veja detalhes completos em: [Setup em prod](./deploy_prod.md)
 
 ## Documentação
 
