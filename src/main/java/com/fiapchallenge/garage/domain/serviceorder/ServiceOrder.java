@@ -21,7 +21,7 @@ public class ServiceOrder {
 
     public ServiceOrder(CreateServiceOrderCommand command, Customer customer) {
         if (customer == null) {
-            throw new CustomerCannotBeNullException();
+            throw new ServiceOrderCustomerCannotBeNullException();
         }
         this.observations = command.observations();
         this.vehicleId = command.vehicleId();
