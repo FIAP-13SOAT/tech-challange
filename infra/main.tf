@@ -28,11 +28,6 @@ variable "accountId" {
     type        = string
 }
 
-variable "awsProfile" {
-    description = "AWS Profile"
-    type        = string
-}
-
 variable "roleName" {
     description = "IAM Role name for EKS access"
     type        = string
@@ -40,7 +35,6 @@ variable "roleName" {
 
 provider "aws" {
     region = local.awsRegion
-    profile = var.awsProfile
 }
 
 // VPC personalizada com CIDR block 10.0.0.0/16
