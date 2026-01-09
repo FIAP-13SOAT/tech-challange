@@ -1,5 +1,6 @@
 package com.fiapchallenge.garage.unit.serviceorder;
 
+import com.fiapchallenge.garage.application.quote.GenerateQuoteUseCase;
 import com.fiapchallenge.garage.application.serviceorder.finishdiagnosis.FinishServiceOrderDiagnosticCommand;
 import com.fiapchallenge.garage.application.serviceorder.startsdiagnosis.StartServiceOrderDiagnosticCommand;
 import com.fiapchallenge.garage.application.serviceorder.create.CreateServiceOrderService;
@@ -49,6 +50,9 @@ class ServiceOrderUnitTest {
 
     @Mock
     CustomerRepository customerRepository;
+
+    @Mock
+    GenerateQuoteUseCase generateQuoteUseCase;
 
     @InjectMocks
     private CreateServiceOrderService createServiceOrderService;
@@ -106,9 +110,11 @@ class ServiceOrderUnitTest {
         UUID customerId = UUID.randomUUID();
         Optional<ServiceOrder> mockedServiceOrder = Optional.of(ServiceOrderTestFactory.createServiceOrder(vehicleId, customer, ServiceOrderStatus.IN_DIAGNOSIS));
         when(serviceOrderRepository.findById(any(UUID.class))).thenReturn(mockedServiceOrder);
+        when(generateQuoteUseCase.handle(mockedServiceOrder.get().getId())).thenReturn(null);
         ServiceOrder serviceOrder = finishServiceOrderDiagnosticService.handle(new FinishServiceOrderDiagnosticCommand(ServiceOrderTestFactory.ID));
 
         assertEquals(ServiceOrderStatus.AWAITING_APPROVAL, serviceOrder.getStatus());
         verify(serviceOrderRepository).save(serviceOrder);
+        verify(generateQuoteUseCase).handle(mockedServiceOrder.get().getId());
     }
 }
