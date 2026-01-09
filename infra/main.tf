@@ -19,8 +19,8 @@ locals {
         "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
         "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
         "arn:aws:iam::aws:policy/AmazonVPCFullAccess"
-    ],
-    awsRegion: "us-east-1"
+    ]
+    awsRegion = "us-east-1"
 }
 
 variable "accountId" {
