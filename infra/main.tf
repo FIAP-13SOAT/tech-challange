@@ -7,20 +7,6 @@ terraform {
     }
 }
 
-provider "aws" {
-    region = "sa-east-1"
-}
-
-variable "accountId" {
-    description = "AWS Account ID"
-    type        = string
-}
-
-variable "roleName" {
-    description = "IAM Role name for EKS access"
-    type        = string
-}
-
 locals {
     projectName = "garage"
     eks_service_role_managed_policies = [
@@ -33,7 +19,22 @@ locals {
         "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
         "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
         "arn:aws:iam::aws:policy/AmazonVPCFullAccess"
-    ]
+    ],
+    awsRegion: "us-east-1"
+}
+
+variable "accountId" {
+    description = "AWS Account ID"
+    type        = string
+}
+
+variable "roleName" {
+    description = "IAM Role name for EKS access"
+    type        = string
+}
+
+provider "aws" {
+    region = local.awsRegion
 }
 
 // VPC personalizada com CIDR block 10.0.0.0/16
@@ -50,7 +51,7 @@ resource "aws_vpc" "main" {
 resource "aws_subnet" "public_subnet" {
     vpc_id = aws_vpc.main.id
     cidr_block = "10.0.1.0/24"
-    availability_zone = "sa-east-1a"
+    availability_zone = "${local.awsRegion}a"
     map_public_ip_on_launch = true
     tags = {
         name = "${local.projectName}-public-subnet"
@@ -61,7 +62,7 @@ resource "aws_subnet" "public_subnet" {
 resource "aws_subnet" "private_subnet" {
     vpc_id = aws_vpc.main.id
     cidr_block = "10.0.2.0/24"
-    availability_zone = "sa-east-1a"
+    availability_zone = "${local.awsRegion}a"
     map_public_ip_on_launch = false
     tags = {
         name = "${local.projectName}-private-subnet"
@@ -72,7 +73,7 @@ resource "aws_subnet" "private_subnet" {
 resource "aws_subnet" "private_subnet_b" {
     vpc_id = aws_vpc.main.id
     cidr_block = "10.0.3.0/24"
-    availability_zone = "sa-east-1b"
+    availability_zone = "${local.awsRegion}b"
     map_public_ip_on_launch = false
     tags = {
         name = "${local.projectName}-private-subnet-b"
@@ -83,7 +84,7 @@ resource "aws_subnet" "private_subnet_b" {
 resource "aws_db_subnet_group" "main" {
     name       = "${local.projectName}-db-subnet-group"
     subnet_ids = [aws_subnet.private_subnet.id, aws_subnet.private_subnet_b.id]
-    
+
     tags = {
         Name = "${local.projectName}-db-subnet-group"
     }
@@ -109,23 +110,23 @@ resource "aws_security_group" "rds" {
 // RDS PostgreSQL
 resource "aws_db_instance" "postgres" {
     identifier = "${local.projectName}-postgres"
-    
+
     engine         = "postgres"
     engine_version = "15.7"
     instance_class = "db.t3.micro"
-    
+
     allocated_storage = 20
     storage_type      = "gp2"
-    
+
     db_name  = "garage"
     username = "postgres"
     password = "postgres123"
-    
+
     vpc_security_group_ids = [aws_security_group.rds.id]
     db_subnet_group_name   = aws_db_subnet_group.main.name
-    
+
     skip_final_snapshot = true
-    
+
     tags = {
         Name = "${local.projectName}-postgres"
     }
