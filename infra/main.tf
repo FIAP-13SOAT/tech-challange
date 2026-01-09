@@ -9,17 +9,6 @@ terraform {
 
 locals {
     projectName = "garage"
-    eks_service_role_managed_policies = [
-        "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
-        "arn:aws:iam::aws:policy/AmazonEKSServicePolicy",
-        "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-        "arn:aws:iam::aws:policy/AmazonVPCFullAccess"
-    ]
-    eks_node_group_role_managed_policies = [
-        "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-        "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-        "arn:aws:iam::aws:policy/AmazonVPCFullAccess"
-    ]
     awsRegion = "us-east-1"
 }
 
@@ -156,55 +145,10 @@ resource "aws_security_group" "main" {
     }
 }
 
-// Duas IAM Roles: uma para o EKS Cluster e outra para o Node Group
-resource "aws_iam_role" "eks_service_role" {
-    name = "${local.projectName}-eks-cluster-role"
-
-    assume_role_policy = jsonencode({
-        Version = "2012-10-17"
-        Statement = [{
-            Effect = "Allow"
-            Principal = {
-                Service = "eks.amazonaws.com"
-            }
-            Action = "sts:AssumeRole"
-        }]
-    })
-}
-
-resource "aws_iam_role_policy_attachment" "eks_service_role_attachments" {
-    for_each   = toset(local.eks_service_role_managed_policies)
-
-    role       = aws_iam_role.eks_service_role.name
-    policy_arn = each.value
-}
-
-resource "aws_iam_role" "eks_node_group_role" {
-    name = "${local.projectName}-eks-node-group-role"
-
-    assume_role_policy = jsonencode({
-        Version = "2012-10-17"
-        Statement = [{
-            Effect = "Allow"
-            Principal = {
-                Service = "ec2.amazonaws.com"
-            }
-            Action = "sts:AssumeRole"
-        }]
-    })
-}
-
-resource "aws_iam_role_policy_attachment" "eks_node_group_role_attachments" {
-    for_each   = toset(local.eks_node_group_role_managed_policies)
-
-    role       = aws_iam_role.eks_node_group_role.name
-    policy_arn = each.value
-}
-
-// cluster Kubernetes (EKS) na AWS para orquestrar a aplicação
+// cluster Kubernetes (EKS) na AWS para orquestrar a aplicação, o ideal seria ter roles especificas, porem o aws academy nao permite
 resource "aws_eks_cluster" "eks_cluster" {
     name = "${local.projectName}-cluster"
-    role_arn = aws_iam_role.eks_service_role.arn
+    role_arn = "arn:aws:iam::${var.accountId}:role/LabRole"
 
     vpc_config {
         subnet_ids = [
@@ -222,7 +166,7 @@ resource "aws_eks_cluster" "eks_cluster" {
     }
 
     depends_on = [
-        aws_iam_role.eks_service_role
+        # Removido dependência de roles criadas
     ]
 }
 
@@ -230,7 +174,7 @@ resource "aws_eks_cluster" "eks_cluster" {
 resource "aws_eks_node_group" "main" {
     cluster_name = aws_eks_cluster.eks_cluster.name
     node_group_name = "node-group-01"
-    node_role_arn = aws_iam_role.eks_node_group_role.arn
+    node_role_arn = "arn:aws:iam::${var.accountId}:role/LabRole"
     subnet_ids = [
         aws_subnet.private_subnet.id
     ]
