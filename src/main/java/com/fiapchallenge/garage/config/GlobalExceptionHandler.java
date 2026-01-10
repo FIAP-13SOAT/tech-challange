@@ -4,7 +4,7 @@ import com.fiapchallenge.garage.domain.customer.exceptions.CustomerDomainExcepti
 import com.fiapchallenge.garage.domain.serviceorder.exceptions.ServiceOrderDomainException;
 import com.fiapchallenge.garage.shared.exception.InsufficientStockException;
 import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
-import com.fiapchallenge.garage.shared.exception.ReportErrorException;
+import com.fiapchallenge.garage.application.report.exceptions.ReportErrorException;
 import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
 import com.fiapchallenge.garage.shared.exception.SoatValidationException;
 import jakarta.validation.ConstraintViolationException;
