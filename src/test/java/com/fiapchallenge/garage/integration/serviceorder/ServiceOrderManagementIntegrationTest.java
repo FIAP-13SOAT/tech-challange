@@ -225,7 +225,21 @@ class ServiceOrderManagementIntegrationTest extends BaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        return UUID.fromString(stockResponse.split("\"id\":\"")[1].split("\"")[0]);
+        UUID stockId = UUID.fromString(stockResponse.split("\"id\":\"")[1].split("\"")[0]);
+
+        String addStockJson = """
+            {
+                "quantity": 10
+            }
+        """;
+
+        mockMvc.perform(post("/stock/" + stockId + "/add")
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(addStockJson))
+                .andExpect(status().isOk());
+
+        return stockId;
     }
 
     private UUID createServiceOrderWithStock() throws Exception {
