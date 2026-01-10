@@ -71,8 +71,10 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
 
         UUID stockId = UUID.fromString(stockResponse.split("\"id\":\"")[1].split("\"")[0]);
 
-        mockMvc.perform(post("/stock/" + stockId + "/add?quantity=100")
-                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
+        mockMvc.perform(post("/stock/" + stockId + "/add")
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"quantity\": 100}"))
                 .andExpect(status().isOk());
 
         Stock initialStock = stockRepository.findById(stockId).orElseThrow();
@@ -128,8 +130,10 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
 
         UUID stockId = UUID.fromString(stockResponse.split("\"id\":\"")[1].split("\"")[0]);
 
-        mockMvc.perform(post("/stock/" + stockId + "/add?quantity=50")
-                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
+        mockMvc.perform(post("/stock/" + stockId + "/add")
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"quantity\": 50}"))
                 .andExpect(status().isOk());
 
         Stock initialStock = stockRepository.findById(stockId).orElseThrow();
