@@ -15,7 +15,6 @@ public class StockMovement {
     private LocalDateTime createdAt;
 
     public StockMovement() {
-        // Default constructor for builder pattern
     }
 
     public static Builder builder() {

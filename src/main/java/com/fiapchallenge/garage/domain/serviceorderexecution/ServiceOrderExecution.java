@@ -11,7 +11,6 @@ public class ServiceOrderExecution {
     private LocalDateTime endDate;
     private long executionTime;
 
-
     public ServiceOrderExecution(UUID serviceOrderId) {
         this.serviceOrderId = serviceOrderId;
     }
@@ -46,5 +45,4 @@ public class ServiceOrderExecution {
         this.endDate = LocalDateTime.now();
         this.executionTime = Duration.between(startDate, endDate).toMillis();
     }
-
 }

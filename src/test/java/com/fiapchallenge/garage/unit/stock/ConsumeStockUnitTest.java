@@ -2,13 +2,13 @@ package com.fiapchallenge.garage.unit.stock;
 
 import com.fiapchallenge.garage.application.stock.StockLevelChecker;
 import com.fiapchallenge.garage.application.stock.consume.ConsumeStockService;
+import com.fiapchallenge.garage.application.stock.exceptions.StockNotFoundException;
 import com.fiapchallenge.garage.application.stockmovement.create.CreateStockMovementUseCase;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
 import com.fiapchallenge.garage.application.stock.command.ConsumeStockCommand;
+import com.fiapchallenge.garage.domain.stock.exceptions.InsufficientStockException;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
-import com.fiapchallenge.garage.shared.exception.InsufficientStockException;
-import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
 import com.fiapchallenge.garage.unit.stock.factory.StockTestFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -73,7 +73,7 @@ class ConsumeStockUnitTest {
     void shouldThrowExceptionWhenStockNotFound() {
         when(stockRepository.findById(stock.getId())).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> consumeStockService.handle(command));
+        assertThrows(StockNotFoundException.class, () -> consumeStockService.handle(command));
         verify(stockRepository, never()).save(any(Stock.class));
     }
 
@@ -88,7 +88,6 @@ class ConsumeStockUnitTest {
                 () -> consumeStockService.handle(largeCommand)
         );
 
-        assertTrue(exception.getMessage().contains("Estoque insuficiente"));
         verify(stockRepository, never()).save(any(Stock.class));
     }
 

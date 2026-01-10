@@ -1,5 +1,6 @@
 package com.fiapchallenge.garage.application.serviceorderexecution;
 
+import com.fiapchallenge.garage.application.serviceorder.exceptions.ServiceOrderNotFoundException;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecution;
@@ -22,7 +23,7 @@ public class StartServiceOrderExecutionService implements StartServiceOrderExecu
     @Override
     public ServiceOrder handle(StartServiceOrderExecutionCommand command) {
         ServiceOrder serviceOrder = serviceOrderRepository.findById(command.id())
-                .orElseThrow(() -> new IllegalArgumentException("Ordem de serviço não encontrada"));
+                .orElseThrow(() -> new ServiceOrderNotFoundException(command.id()));
 
         serviceOrder.startProgress();
         serviceOrderRepository.save(serviceOrder);

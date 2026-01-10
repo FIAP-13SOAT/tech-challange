@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.unit.customer;
 
 import com.fiapchallenge.garage.domain.customer.CpfCnpj;
-import com.fiapchallenge.garage.shared.exception.SoatValidationException;
+import com.fiapchallenge.garage.domain.customer.exceptions.InvalidCpfCnpjException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -36,37 +36,37 @@ class CpfCnpjTest {
 
     @Test
     void shouldThrowExceptionForNullValue() {
-        assertThrows(SoatValidationException.class, () -> new CpfCnpj(null));
+        assertThrows(InvalidCpfCnpjException.class, () -> new CpfCnpj(null));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"", " ", "   "})
     void shouldThrowExceptionForEmptyOrBlankValues(String value) {
-        assertThrows(SoatValidationException.class, () -> new CpfCnpj(value));
+        assertThrows(InvalidCpfCnpjException.class, () -> new CpfCnpj(value));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"00000000000", "11111111111", "22222222222"})
     void shouldThrowExceptionForCpfWithAllSameDigits(String cpf) {
-        assertThrows(SoatValidationException.class, () -> new CpfCnpj(cpf));
+        assertThrows(InvalidCpfCnpjException.class, () -> new CpfCnpj(cpf));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"00000000000000", "11111111111111", "22222222222222"})
     void shouldThrowExceptionForCnpjWithAllSameDigits(String cnpj) {
-        assertThrows(SoatValidationException.class, () -> new CpfCnpj(cnpj));
+        assertThrows(InvalidCpfCnpjException.class, () -> new CpfCnpj(cnpj));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"12345678901", "11144477736", "98765432101"})
     void shouldThrowExceptionForInvalidCpf(String cpf) {
-        assertThrows(SoatValidationException.class, () -> new CpfCnpj(cpf));
+        assertThrows(InvalidCpfCnpjException.class, () -> new CpfCnpj(cpf));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"12345678000100", "11222333000180", "98765432000101"})
     void shouldThrowExceptionForInvalidCnpj(String cnpj) {
-        assertThrows(SoatValidationException.class, () -> new CpfCnpj(cnpj));
+        assertThrows(InvalidCpfCnpjException.class, () -> new CpfCnpj(cnpj));
     }
 
     @Test

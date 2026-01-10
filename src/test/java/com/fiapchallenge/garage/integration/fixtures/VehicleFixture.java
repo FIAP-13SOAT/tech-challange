@@ -1,8 +1,8 @@
 package com.fiapchallenge.garage.integration.fixtures;
 
-import com.fiapchallenge.garage.application.vehicle.CreateVehicleService;
+import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
-import com.fiapchallenge.garage.application.vehicle.command.CreateVehicleCommand;
+import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleCommand;
 
 import java.util.UUID;
 
