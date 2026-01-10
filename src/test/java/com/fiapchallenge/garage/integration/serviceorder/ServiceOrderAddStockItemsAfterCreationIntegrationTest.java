@@ -30,18 +30,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * Teste de integração para verificar o bug onde itens de estoque adicionados
- * após a criação da ordem de serviço NÃO são consumidos ao finalizar a OS.
- * 
- * Cenário do bug:
- * 1. Criar ordem de serviço com 1 peça (estoque é consumido)
- * 2. Iniciar diagnóstico
- * 3. Adicionar outra peça via API addStockItems (estoque NÃO é consumido - BUG)
- * 4. Finalizar diagnóstico, gerar orçamento, aprovar e finalizar OS
- * 5. Verificar que o item adicionado posteriormente NÃO foi consumido
- */
-
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
