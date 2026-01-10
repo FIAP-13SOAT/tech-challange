@@ -1,5 +1,6 @@
 package com.fiapchallenge.garage.config;
 
+import com.fiapchallenge.garage.domain.customer.exceptions.CustomerDomainException;
 import com.fiapchallenge.garage.domain.serviceorder.exceptions.ServiceOrderDomainException;
 import com.fiapchallenge.garage.shared.exception.InsufficientStockException;
 import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
@@ -21,6 +22,11 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(CustomerDomainException.class)
+    public ResponseEntity<Map<String, String>> handleCustomerDomainException(CustomerDomainException ex) {
+        return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+    }
 
     @ExceptionHandler(ServiceOrderDomainException.class)
     public ResponseEntity<Map<String, String>> handleServiceOrderDomainException(ServiceOrderDomainException ex) {
