@@ -1,2 +1,0 @@
-accountId = ""
-roleName  = "LabRole"

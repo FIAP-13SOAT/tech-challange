@@ -29,16 +29,16 @@ aws sts get-caller-identity --query Arn --output text
 
 ```bash
 # 1. Inicializar Terraform
-terraform init
+AWS_PROFILE=awsacademy terraform init
 
 # 2. Validar configuração
-terraform validate
+AWS_PROFILE=awsacademy terraform validate
 
 # 3. Ver plano de execução
-terraform plan
+AWS_PROFILE=awsacademy terraform plan
 
 # 4. Aplicar mudanças
-terraform apply
+AWS_PROFILE=awsacademy terraform apply
 ```
 
 ## Recursos Criados

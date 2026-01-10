@@ -7,8 +7,9 @@ terraform {
     }
 }
 
-provider "aws" {
-    region = "sa-east-1"
+locals {
+    projectName = "garage"
+    awsRegion = "us-east-1"
 }
 
 variable "accountId" {
@@ -21,22 +22,17 @@ variable "roleName" {
     type        = string
 }
 
-locals {
-    projectName = "garage"
-    eks_service_role_managed_policies = [
-        "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
-        "arn:aws:iam::aws:policy/AmazonEKSServicePolicy",
-        "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-        "arn:aws:iam::aws:policy/AmazonVPCFullAccess"
-    ]
-    eks_node_group_role_managed_policies = [
-        "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-        "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-        "arn:aws:iam::aws:policy/AmazonVPCFullAccess"
-    ]
+provider "aws" {
+    region = local.awsRegion
 }
 
-// VPC personalizada com CIDR block 10.0.0.0/16
+########################################
+# NETWORK - VPC & INTERNET ACCESS
+########################################
+
+# VPC principal da aplicação
+# Responsável por isolar toda a infraestrutura
+# CIDR definido para permitir expansão futura
 resource "aws_vpc" "main" {
     cidr_block           = "10.0.0.0/16"
     enable_dns_support   = true
@@ -46,25 +42,81 @@ resource "aws_vpc" "main" {
     }
 }
 
+# Internet Gateway
+# Permite comunicação entre recursos da VPC
+# e a internet pública
+resource "aws_internet_gateway" "main" {
+    vpc_id = aws_vpc.main.id
+    tags = {
+        Name = "${local.projectName}-igw"
+    }
+}
+
 // subnet pública
 resource "aws_subnet" "public_subnet" {
     vpc_id = aws_vpc.main.id
     cidr_block = "10.0.1.0/24"
-    availability_zone = "sa-east-1a"
+    availability_zone = "${local.awsRegion}a"
     map_public_ip_on_launch = true
     tags = {
-        name = "${local.projectName}-public-subnet"
+        Name = "${local.projectName}-public-subnet"
+        "kubernetes.io/role/elb" = "1"
     }
+}
+
+// Segunda subnet pública para EKS (diferentes AZs)
+// EKS exige subnets em pelo menos 2 zonas de disponibilidade (AZs)
+resource "aws_subnet" "public_subnet_b" {
+    vpc_id = aws_vpc.main.id
+    cidr_block = "10.0.4.0/24"
+    availability_zone = "${local.awsRegion}b"
+    map_public_ip_on_launch = true
+    tags = {
+        Name = "${local.projectName}-public-subnet-b"
+        "kubernetes.io/role/elb" = "1"
+    }
+}
+
+
+########################################
+# PUBLIC ROUTING
+########################################
+
+# Permite que recursos em subnets públicas tenham acesso direto à internet
+resource "aws_route_table" "public" {
+    vpc_id = aws_vpc.main.id
+
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = aws_internet_gateway.main.id
+    }
+
+    tags = {
+        Name = "${local.projectName}-public-rt"
+    }
+}
+
+// Associação da route table com subnet pública A
+resource "aws_route_table_association" "public_a" {
+    subnet_id      = aws_subnet.public_subnet.id
+    route_table_id = aws_route_table.public.id
+}
+
+// Associação da route table com subnet pública B
+resource "aws_route_table_association" "public_b" {
+    subnet_id      = aws_subnet.public_subnet_b.id
+    route_table_id = aws_route_table.public.id
 }
 
 # Subnet Privada para banco de dados
 resource "aws_subnet" "private_subnet" {
     vpc_id = aws_vpc.main.id
     cidr_block = "10.0.2.0/24"
-    availability_zone = "sa-east-1a"
+    availability_zone = "${local.awsRegion}a"
     map_public_ip_on_launch = false
     tags = {
-        name = "${local.projectName}-private-subnet"
+        Name = "${local.projectName}-private-subnet"
+        "kubernetes.io/role/internal-elb" = "1"
     }
 }
 
@@ -72,10 +124,11 @@ resource "aws_subnet" "private_subnet" {
 resource "aws_subnet" "private_subnet_b" {
     vpc_id = aws_vpc.main.id
     cidr_block = "10.0.3.0/24"
-    availability_zone = "sa-east-1b"
+    availability_zone = "${local.awsRegion}b"
     map_public_ip_on_launch = false
     tags = {
-        name = "${local.projectName}-private-subnet-b"
+        Name = "${local.projectName}-private-subnet-b"
+        "kubernetes.io/role/internal-elb" = "1"
     }
 }
 
@@ -83,13 +136,17 @@ resource "aws_subnet" "private_subnet_b" {
 resource "aws_db_subnet_group" "main" {
     name       = "${local.projectName}-db-subnet-group"
     subnet_ids = [aws_subnet.private_subnet.id, aws_subnet.private_subnet_b.id]
-    
+
     tags = {
         Name = "${local.projectName}-db-subnet-group"
     }
 }
 
-// Security Group para RDS
+########################################
+# SECURITY GROUPS
+########################################
+
+// SG do RDS
 resource "aws_security_group" "rds" {
     name_prefix = "${local.projectName}-rds-sg"
     vpc_id      = aws_vpc.main.id
@@ -106,26 +163,30 @@ resource "aws_security_group" "rds" {
     }
 }
 
+########################################
+# DATABASE
+########################################
+
 // RDS PostgreSQL
 resource "aws_db_instance" "postgres" {
     identifier = "${local.projectName}-postgres"
-    
+
     engine         = "postgres"
-    engine_version = "15.7"
+    engine_version = "16.11"
     instance_class = "db.t3.micro"
-    
+
     allocated_storage = 20
     storage_type      = "gp2"
-    
+
     db_name  = "garage"
     username = "postgres"
     password = "postgres123"
-    
+
     vpc_security_group_ids = [aws_security_group.rds.id]
     db_subnet_group_name   = aws_db_subnet_group.main.name
-    
+
     skip_final_snapshot = true
-    
+
     tags = {
         Name = "${local.projectName}-postgres"
     }
@@ -155,65 +216,28 @@ resource "aws_security_group" "main" {
     }
 }
 
-// Duas IAM Roles: uma para o EKS Cluster e outra para o Node Group
-resource "aws_iam_role" "eks_service_role" {
-    name = "${local.projectName}-eks-cluster-role"
-
-    assume_role_policy = jsonencode({
-        Version = "2012-10-17"
-        Statement = [{
-            Effect = "Allow"
-            Principal = {
-                Service = "eks.amazonaws.com"
-            }
-            Action = "sts:AssumeRole"
-        }]
-    })
-}
-
-resource "aws_iam_role_policy_attachment" "eks_service_role_attachments" {
-    for_each   = toset(local.eks_service_role_managed_policies)
-
-    role       = aws_iam_role.eks_service_role.name
-    policy_arn = each.value
-}
-
-resource "aws_iam_role" "eks_node_group_role" {
-    name = "${local.projectName}-eks-node-group-role"
-
-    assume_role_policy = jsonencode({
-        Version = "2012-10-17"
-        Statement = [{
-            Effect = "Allow"
-            Principal = {
-                Service = "ec2.amazonaws.com"
-            }
-            Action = "sts:AssumeRole"
-        }]
-    })
-}
-
-resource "aws_iam_role_policy_attachment" "eks_node_group_role_attachments" {
-    for_each   = toset(local.eks_node_group_role_managed_policies)
-
-    role       = aws_iam_role.eks_node_group_role.name
-    policy_arn = each.value
-}
+########################################
+# KUBERNETES (EKS)
+########################################
 
 // cluster Kubernetes (EKS) na AWS para orquestrar a aplicação
+// Usando LabRole pois AWS Academy não permite criação de IAM Roles
 resource "aws_eks_cluster" "eks_cluster" {
     name = "${local.projectName}-cluster"
-    role_arn = aws_iam_role.eks_service_role.arn
+    role_arn = "arn:aws:iam::${var.accountId}:role/LabRole"
 
     vpc_config {
         subnet_ids = [
             aws_subnet.public_subnet.id,
+            aws_subnet.public_subnet_b.id,
             aws_subnet.private_subnet.id,
             aws_subnet.private_subnet_b.id
         ]
         security_group_ids = [
             aws_security_group.main.id
         ]
+        endpoint_public_access  = true
+        endpoint_private_access = true
     }
 
     access_config {
@@ -221,7 +245,7 @@ resource "aws_eks_cluster" "eks_cluster" {
     }
 
     depends_on = [
-        aws_iam_role.eks_service_role
+        # Removido dependência de roles criadas
     ]
 }
 
@@ -229,9 +253,10 @@ resource "aws_eks_cluster" "eks_cluster" {
 resource "aws_eks_node_group" "main" {
     cluster_name = aws_eks_cluster.eks_cluster.name
     node_group_name = "node-group-01"
-    node_role_arn = aws_iam_role.eks_node_group_role.arn
+    node_role_arn = "arn:aws:iam::${var.accountId}:role/LabRole"
     subnet_ids = [
-        aws_subnet.private_subnet.id
+        aws_subnet.public_subnet.id,
+        aws_subnet.public_subnet_b.id
     ]
     instance_types = [
         "t3.medium"
