@@ -16,6 +16,7 @@ import com.fiapchallenge.garage.application.serviceorder.list.ListActiveServiceO
 import com.fiapchallenge.garage.application.serviceorder.removeservicetypes.RemoveServiceTypesUseCase;
 import com.fiapchallenge.garage.application.serviceorder.removestockitems.RemoveStockItemsUseCase;
 import com.fiapchallenge.garage.application.serviceorder.startsdiagnosis.StartServiceOrderDiagnosticUseCase;
+import com.fiapchallenge.garage.application.serviceorderexecution.StartServiceOrderExecutionCommand;
 import com.fiapchallenge.garage.application.serviceorderexecution.StartServiceOrderExecutionUseCase;
 import com.fiapchallenge.garage.application.serviceorder.addservicetypes.AddServiceTypesCommand;
 import com.fiapchallenge.garage.application.serviceorder.addstockitems.AddStockItemsCommand;
@@ -28,7 +29,9 @@ import com.fiapchallenge.garage.application.serviceorder.get.GetServiceOrderDeta
 import com.fiapchallenge.garage.application.serviceorder.removeservicetypes.RemoveServiceTypesCommand;
 import com.fiapchallenge.garage.application.serviceorder.removestockitems.RemoveStockItemsCommand;
 import com.fiapchallenge.garage.application.serviceorder.startsdiagnosis.StartServiceOrderDiagnosticCommand;
-import com.fiapchallenge.garage.application.serviceorderexecution.StartServiceOrderExecutionCommand;
+import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.ServiceOrderStatusDTO;
+import com.fiapchallenge.garage.application.serviceorder.getstatus.GetServiceOrderStatusUseCase;
+import com.fiapchallenge.garage.application.serviceorder.getstatus.GetServiceOrderStatusCommand;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -55,6 +58,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     private final AddServiceTypesUseCase addServiceTypesUseCase;
     private final RemoveServiceTypesUseCase removeServiceTypesUseCase;
     private final ListActiveServiceOrdersUseCase listActiveServiceOrdersUseCase;
+    private final GetServiceOrderStatusUseCase getServiceOrderStatusUseCase;
 
     public ServiceOrderController(CreateServiceOrderUseCase createServiceOrderUseCase,
                                   StartServiceOrderDiagnosticUseCase startServiceOrderDiagnosticUseCase,
@@ -68,7 +72,8 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
                                   RemoveStockItemsUseCase removeStockItemsUseCase,
                                   AddServiceTypesUseCase addServiceTypesUseCase,
                                   RemoveServiceTypesUseCase removeServiceTypesUseCase,
-                                  ListActiveServiceOrdersUseCase listActiveServiceOrdersUseCase) {
+                                  ListActiveServiceOrdersUseCase listActiveServiceOrdersUseCase,
+                                  GetServiceOrderStatusUseCase getServiceOrderStatusUseCase) {
 
         this.createServiceOrderUseCase = createServiceOrderUseCase;
         this.startServiceOrderDiagnosticUseCase = startServiceOrderDiagnosticUseCase;
@@ -83,6 +88,7 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
         this.addServiceTypesUseCase = addServiceTypesUseCase;
         this.removeServiceTypesUseCase = removeServiceTypesUseCase;
         this.listActiveServiceOrdersUseCase = listActiveServiceOrdersUseCase;
+        this.getServiceOrderStatusUseCase = getServiceOrderStatusUseCase;
     }
 
     @Override
@@ -178,6 +184,13 @@ public class ServiceOrderController implements ServiceOrderControllerOpenApiSpec
     public ResponseEntity<ServiceOrderResponseDTO> removeServiceTypes(@PathVariable UUID id, @RequestBody List<UUID> serviceTypeIds) {
         ServiceOrder serviceOrder = removeServiceTypesUseCase.handle(new RemoveServiceTypesCommand(id, serviceTypeIds));
         return ResponseEntity.ok(ServiceOrderMapper.toResponseDTO(serviceOrder));
+    }
+
+    @GetMapping("/{id}/status")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
+    public ResponseEntity<ServiceOrderStatusDTO> getServiceOrderStatus(@PathVariable UUID id) {
+        ServiceOrderStatusDTO statusDTO = getServiceOrderStatusUseCase.handle(new GetServiceOrderStatusCommand(id));
+        return ResponseEntity.ok(statusDTO);
     }
 
     @Override
