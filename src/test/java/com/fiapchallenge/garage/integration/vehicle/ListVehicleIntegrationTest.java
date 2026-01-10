@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.integration.vehicle;
 
 import com.fiapchallenge.garage.application.customer.create.CreateCustomerService;
-import com.fiapchallenge.garage.application.vehicle.CreateVehicleService;
+import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;

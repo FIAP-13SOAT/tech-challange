@@ -9,6 +9,7 @@ import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
+import com.fiapchallenge.garage.domain.serviceorder.exceptions.InvalidStatusToCompleteException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,6 +67,6 @@ class CompleteServiceOrderServiceTest {
 
         CompleteServiceOrderCommand command = new CompleteServiceOrderCommand(this.serviceOrderId);
 
-        assertThrows(IllegalStateException.class, () -> completeServiceOrderService.handle(command));
+        assertThrows(InvalidStatusToCompleteException.class, () -> completeServiceOrderService.handle(command));
     }
 }

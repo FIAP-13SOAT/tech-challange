@@ -3,7 +3,7 @@ package com.fiapchallenge.garage.application.report.service;
 import com.fiapchallenge.garage.application.report.command.GenerateServiceOrderExecutionReportCommand;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecution;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionRepository;
-import com.fiapchallenge.garage.shared.exception.ReportErrorException;
+import com.fiapchallenge.garage.application.report.exceptions.ReportErrorException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;

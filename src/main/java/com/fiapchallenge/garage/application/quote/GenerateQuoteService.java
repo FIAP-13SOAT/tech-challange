@@ -1,11 +1,12 @@
 package com.fiapchallenge.garage.application.quote;
 
+import com.fiapchallenge.garage.application.stock.exceptions.StockItemNotFoundException;
+import com.fiapchallenge.garage.application.vehicle.exceptions.VehicleNotFoundException;
 import com.fiapchallenge.garage.domain.quote.Quote;
 import com.fiapchallenge.garage.domain.quote.QuoteItem;
 import com.fiapchallenge.garage.domain.quote.QuoteItemType;
 import com.fiapchallenge.garage.domain.quote.QuoteRepository;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
-import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
@@ -36,7 +37,7 @@ public class GenerateQuoteService implements GenerateQuoteUseCase {
         ServiceOrder serviceOrder = serviceOrderRepository.findById(serviceOrderId).orElseThrow(() -> new SoatNotFoundException("Ordem de serviço não encontrado"));
 
         Vehicle vehicle = vehicleRepository.findById(serviceOrder.getVehicleId())
-            .orElseThrow(() -> new SoatNotFoundException("Veículo não encontrado"));
+            .orElseThrow(() -> new VehicleNotFoundException(serviceOrder.getVehicleId()));
 
         List<QuoteItem> items = new ArrayList<>();
 
@@ -45,7 +46,7 @@ public class GenerateQuoteService implements GenerateQuoteUseCase {
 
         serviceOrder.getStockItems().forEach(item -> {
             var stock = stockRepository.findById(item.getStockId())
-                .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado: " + item.getStockId()));
+                .orElseThrow(() -> new StockItemNotFoundException(item.getStockId()));
             items.add(new QuoteItem(stock.getProductName(), stock.getUnitPrice(), item.getQuantity(), QuoteItemType.STOCK_ITEM));
         });
 

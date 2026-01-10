@@ -2,10 +2,10 @@ package com.fiapchallenge.garage.adapters.outbound.repositories.quote;
 
 import com.fiapchallenge.garage.adapters.outbound.entities.QuoteEntity;
 import com.fiapchallenge.garage.adapters.outbound.entities.QuoteItemEntity;
+import com.fiapchallenge.garage.application.quote.exceptions.QuoteNotFoundException;
 import com.fiapchallenge.garage.domain.quote.Quote;
 import com.fiapchallenge.garage.domain.quote.QuoteItem;
 import com.fiapchallenge.garage.domain.quote.QuoteRepository;
-import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -44,7 +44,7 @@ public class QuoteRepositoryImpl implements QuoteRepository {
     public Quote findByServiceOrderIdOrThrow(UUID serviceOrderId) {
         return jpaQuoteRepository.findByServiceOrderId(serviceOrderId)
             .map(this::convertFromEntity)
-            .orElseThrow(() -> new ResourceNotFoundException("Quote not found for service order: " + serviceOrderId));
+            .orElseThrow(() -> new QuoteNotFoundException(serviceOrderId));
     }
 
     private Quote convertFromEntity(QuoteEntity entity) {

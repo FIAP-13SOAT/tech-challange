@@ -6,6 +6,7 @@ import com.fiapchallenge.garage.domain.customer.CustomerRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderItem;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.application.customer.exceptions.CustomerNotFoundException;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
 import com.fiapchallenge.garage.application.stock.command.ConsumeStockCommand;
@@ -37,7 +38,7 @@ public class CreateServiceOrderService implements CreateServiceOrderUseCase {
     @Override
     public ServiceOrder handle(CreateServiceOrderCommand command) {
         Customer customer = customerRepository.findById(command.customerId())
-                .orElseThrow(() -> new IllegalArgumentException("Customer not found with id: " + command.customerId()));
+                .orElseThrow(() -> new CustomerNotFoundException(command.customerId()));
 
         List<ServiceType> serviceTypesList = command.serviceTypeIdList()
                 .stream()

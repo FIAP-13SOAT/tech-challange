@@ -1,8 +1,9 @@
 package com.fiapchallenge.garage.config;
 
-import com.fiapchallenge.garage.shared.exception.InsufficientStockException;
-import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
-import com.fiapchallenge.garage.shared.exception.ReportErrorException;
+import com.fiapchallenge.garage.domain.customer.exceptions.CustomerDomainException;
+import com.fiapchallenge.garage.domain.serviceorder.exceptions.ServiceOrderDomainException;
+import com.fiapchallenge.garage.domain.stock.exceptions.InsufficientStockException;
+import com.fiapchallenge.garage.application.report.exceptions.ReportErrorException;
 import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
 import com.fiapchallenge.garage.shared.exception.SoatValidationException;
 import jakarta.validation.ConstraintViolationException;
@@ -21,6 +22,16 @@ public class GlobalExceptionHandler {
 
     private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    @ExceptionHandler(CustomerDomainException.class)
+    public ResponseEntity<Map<String, String>> handleCustomerDomainException(CustomerDomainException ex) {
+        return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(ServiceOrderDomainException.class)
+    public ResponseEntity<Map<String, String>> handleServiceOrderDomainException(ServiceOrderDomainException ex) {
+        return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+    }
+
     @ExceptionHandler(SoatValidationException.class)
     public ResponseEntity<Map<String, String>> handleSoatValidationException(SoatValidationException ex) {
         return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
@@ -29,11 +40,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InsufficientStockException.class)
     public ResponseEntity<Map<String, String>> handleInsufficientStockException(InsufficientStockException ex) {
         return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
-    }
-
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        return ResponseEntity.notFound().build();
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
