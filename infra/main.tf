@@ -26,13 +26,29 @@ provider "aws" {
     region = local.awsRegion
 }
 
-// VPC personalizada com CIDR block 10.0.0.0/16
+########################################
+# NETWORK - VPC & INTERNET ACCESS
+########################################
+
+# VPC principal da aplicação
+# Responsável por isolar toda a infraestrutura
+# CIDR definido para permitir expansão futura
 resource "aws_vpc" "main" {
     cidr_block           = "10.0.0.0/16"
     enable_dns_support   = true
     enable_dns_hostnames = true
     tags = {
         name = "${local.projectName}-main-vpc"
+    }
+}
+
+# Internet Gateway
+# Permite comunicação entre recursos da VPC
+# e a internet pública
+resource "aws_internet_gateway" "main" {
+    vpc_id = aws_vpc.main.id
+    tags = {
+        Name = "${local.projectName}-igw"
     }
 }
 
@@ -43,8 +59,53 @@ resource "aws_subnet" "public_subnet" {
     availability_zone = "${local.awsRegion}a"
     map_public_ip_on_launch = true
     tags = {
-        name = "${local.projectName}-public-subnet"
+        Name = "${local.projectName}-public-subnet"
+        "kubernetes.io/role/elb" = "1"
     }
+}
+
+// Segunda subnet pública para EKS (diferentes AZs)
+// EKS exige subnets em pelo menos 2 zonas de disponibilidade (AZs)
+resource "aws_subnet" "public_subnet_b" {
+    vpc_id = aws_vpc.main.id
+    cidr_block = "10.0.4.0/24"
+    availability_zone = "${local.awsRegion}b"
+    map_public_ip_on_launch = true
+    tags = {
+        Name = "${local.projectName}-public-subnet-b"
+        "kubernetes.io/role/elb" = "1"
+    }
+}
+
+
+########################################
+# PUBLIC ROUTING
+########################################
+
+# Permite que recursos em subnets públicas tenham acesso direto à internet
+resource "aws_route_table" "public" {
+    vpc_id = aws_vpc.main.id
+
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = aws_internet_gateway.main.id
+    }
+
+    tags = {
+        Name = "${local.projectName}-public-rt"
+    }
+}
+
+// Associação da route table com subnet pública A
+resource "aws_route_table_association" "public_a" {
+    subnet_id      = aws_subnet.public_subnet.id
+    route_table_id = aws_route_table.public.id
+}
+
+// Associação da route table com subnet pública B
+resource "aws_route_table_association" "public_b" {
+    subnet_id      = aws_subnet.public_subnet_b.id
+    route_table_id = aws_route_table.public.id
 }
 
 # Subnet Privada para banco de dados
@@ -54,7 +115,8 @@ resource "aws_subnet" "private_subnet" {
     availability_zone = "${local.awsRegion}a"
     map_public_ip_on_launch = false
     tags = {
-        name = "${local.projectName}-private-subnet"
+        Name = "${local.projectName}-private-subnet"
+        "kubernetes.io/role/internal-elb" = "1"
     }
 }
 
@@ -65,7 +127,8 @@ resource "aws_subnet" "private_subnet_b" {
     availability_zone = "${local.awsRegion}b"
     map_public_ip_on_launch = false
     tags = {
-        name = "${local.projectName}-private-subnet-b"
+        Name = "${local.projectName}-private-subnet-b"
+        "kubernetes.io/role/internal-elb" = "1"
     }
 }
 
@@ -79,7 +142,11 @@ resource "aws_db_subnet_group" "main" {
     }
 }
 
-// Security Group para RDS
+########################################
+# SECURITY GROUPS
+########################################
+
+// SG do RDS
 resource "aws_security_group" "rds" {
     name_prefix = "${local.projectName}-rds-sg"
     vpc_id      = aws_vpc.main.id
@@ -95,6 +162,10 @@ resource "aws_security_group" "rds" {
         name = "${local.projectName}-rds-security-group"
     }
 }
+
+########################################
+# DATABASE
+########################################
 
 // RDS PostgreSQL
 resource "aws_db_instance" "postgres" {
@@ -145,7 +216,12 @@ resource "aws_security_group" "main" {
     }
 }
 
-// cluster Kubernetes (EKS) na AWS para orquestrar a aplicação, o ideal seria ter roles especificas, porem o aws academy nao permite
+########################################
+# KUBERNETES (EKS)
+########################################
+
+// cluster Kubernetes (EKS) na AWS para orquestrar a aplicação
+// Usando LabRole pois AWS Academy não permite criação de IAM Roles
 resource "aws_eks_cluster" "eks_cluster" {
     name = "${local.projectName}-cluster"
     role_arn = "arn:aws:iam::${var.accountId}:role/LabRole"
@@ -153,12 +229,15 @@ resource "aws_eks_cluster" "eks_cluster" {
     vpc_config {
         subnet_ids = [
             aws_subnet.public_subnet.id,
+            aws_subnet.public_subnet_b.id,
             aws_subnet.private_subnet.id,
             aws_subnet.private_subnet_b.id
         ]
         security_group_ids = [
             aws_security_group.main.id
         ]
+        endpoint_public_access  = true
+        endpoint_private_access = true
     }
 
     access_config {
@@ -176,7 +255,8 @@ resource "aws_eks_node_group" "main" {
     node_group_name = "node-group-01"
     node_role_arn = "arn:aws:iam::${var.accountId}:role/LabRole"
     subnet_ids = [
-        aws_subnet.private_subnet.id
+        aws_subnet.public_subnet.id,
+        aws_subnet.public_subnet_b.id
     ]
     instance_types = [
         "t3.medium"
