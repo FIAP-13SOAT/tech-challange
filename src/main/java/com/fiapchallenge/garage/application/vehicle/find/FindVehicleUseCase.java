@@ -1,4 +1,4 @@
-package com.fiapchallenge.garage.application.vehicle;
+package com.fiapchallenge.garage.application.vehicle.find;
 
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
 

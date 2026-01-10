@@ -1,8 +1,8 @@
-package com.fiapchallenge.garage.application.vehicle;
+package com.fiapchallenge.garage.application.vehicle.update;
 
+import com.fiapchallenge.garage.application.vehicle.exceptions.VehicleNotFoundException;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
 import com.fiapchallenge.garage.domain.vehicle.VehicleRepository;
-import com.fiapchallenge.garage.application.vehicle.command.UpdateVehicleCommand;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,7 +17,7 @@ public class UpdateVehicleService implements UpdateVehicleUseCase {
     @Override
     public Vehicle handle(UpdateVehicleCommand command) {
         Vehicle existingVehicle = vehicleRepository.findById(command.id())
-                .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+                .orElseThrow(() -> new VehicleNotFoundException(command.id()));
 
         Vehicle updatedVehicle = Vehicle.builder()
                 .id(command.id())

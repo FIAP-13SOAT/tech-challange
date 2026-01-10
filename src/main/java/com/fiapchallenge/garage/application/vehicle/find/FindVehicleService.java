@@ -1,8 +1,8 @@
-package com.fiapchallenge.garage.application.vehicle;
+package com.fiapchallenge.garage.application.vehicle.find;
 
+import com.fiapchallenge.garage.application.vehicle.exceptions.VehicleNotFoundException;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
 import com.fiapchallenge.garage.domain.vehicle.VehicleRepository;
-import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
 
 import org.springframework.stereotype.Service;
 
@@ -20,6 +20,6 @@ public class FindVehicleService implements FindVehicleUseCase {
     @Override
     public Vehicle handle(UUID id) {
         return vehicleRepository.findById(id)
-                .orElseThrow(() -> new SoatNotFoundException("Veículo não encontrado."));
+                .orElseThrow(() -> new VehicleNotFoundException(id));
     }
 }

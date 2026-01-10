@@ -1,10 +1,10 @@
-package com.fiapchallenge.garage.application.vehicle;
+package com.fiapchallenge.garage.application.vehicle.create;
 
+import com.fiapchallenge.garage.application.customer.exceptions.CustomerNotFoundException;
 import com.fiapchallenge.garage.domain.customer.CustomerRepository;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
 import com.fiapchallenge.garage.domain.vehicle.VehicleRepository;
-import com.fiapchallenge.garage.application.vehicle.command.CreateVehicleCommand;
-import com.fiapchallenge.garage.shared.exception.SoatValidationException;
+import com.fiapchallenge.garage.domain.vehicle.exceptions.InvalidLicensePlateException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,11 +23,11 @@ public class CreateVehicleService implements CreateVehicleUseCase {
     @Override
     public Vehicle handle(CreateVehicleCommand command) {
         if (!this.isValidBrazilianLicensePlate(command.licensePlate())) {
-            throw new SoatValidationException("Placa informada no formato inválido.");
+            throw new InvalidLicensePlateException(command.licensePlate());
         }
 
         if (!customerRepository.exists(command.customerId())) {
-            throw new SoatValidationException("Necessário informar um cliente válido.");
+            throw new CustomerNotFoundException(command.customerId());
         }
 
         Vehicle vehicle = Vehicle.builder()

@@ -1,12 +1,12 @@
 package com.fiapchallenge.garage.unit.stock;
 
 import com.fiapchallenge.garage.application.stock.add.AddStockService;
+import com.fiapchallenge.garage.application.stock.exceptions.StockNotFoundException;
 import com.fiapchallenge.garage.application.stockmovement.create.CreateStockMovementUseCase;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
 import com.fiapchallenge.garage.application.stock.command.AddStockCommand;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
-import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
 import com.fiapchallenge.garage.unit.stock.factory.StockTestFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -68,7 +68,7 @@ class AddStockUnitTest {
     void shouldThrowExceptionWhenStockNotFound() {
         when(stockRepository.findById(stock.getId())).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> addStockService.handle(command));
+        assertThrows(StockNotFoundException.class, () -> addStockService.handle(command));
         verify(stockRepository, never()).save(any(Stock.class));
     }
 

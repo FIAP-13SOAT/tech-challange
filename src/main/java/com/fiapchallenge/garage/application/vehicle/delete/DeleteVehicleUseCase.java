@@ -1,4 +1,4 @@
-package com.fiapchallenge.garage.application.vehicle;
+package com.fiapchallenge.garage.application.vehicle.delete;
 
 import java.util.UUID;
 

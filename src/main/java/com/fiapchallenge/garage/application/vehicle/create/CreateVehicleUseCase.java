@@ -1,7 +1,6 @@
-package com.fiapchallenge.garage.application.vehicle;
+package com.fiapchallenge.garage.application.vehicle.create;
 
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
-import com.fiapchallenge.garage.application.vehicle.command.CreateVehicleCommand;
 
 public interface CreateVehicleUseCase {
 
