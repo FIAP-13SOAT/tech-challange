@@ -1,4 +1,4 @@
-package com.fiapchallenge.garage.application.servicetype.command;
+package com.fiapchallenge.garage.application.servicetype.create;
 
 import java.math.BigDecimal;
 

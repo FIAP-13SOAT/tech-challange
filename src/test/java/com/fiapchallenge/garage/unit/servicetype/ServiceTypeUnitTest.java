@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.unit.servicetype;
 
 import com.fiapchallenge.garage.adapters.outbound.repositories.servicetype.ServiceTypeRepositoryImpl;
-import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeService;
+import com.fiapchallenge.garage.application.servicetype.create.CreateServiceTypeService;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import com.fiapchallenge.garage.unit.servicetype.utils.factory.ServiceTypeTestFactory;
 import org.junit.jupiter.api.DisplayName;

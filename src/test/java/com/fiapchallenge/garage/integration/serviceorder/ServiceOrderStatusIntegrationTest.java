@@ -1,9 +1,7 @@
 package com.fiapchallenge.garage.integration.serviceorder;
 
 import com.fiapchallenge.garage.application.customer.create.CreateCustomerService;
-import com.fiapchallenge.garage.application.serviceorder.create.CreateServiceOrderService;
-import com.fiapchallenge.garage.application.serviceorder.create.CreateServiceOrderUseCase;
-import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeService;
+import com.fiapchallenge.garage.application.servicetype.create.CreateServiceTypeService;
 import com.fiapchallenge.garage.application.vehicle.CreateVehicleService;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;

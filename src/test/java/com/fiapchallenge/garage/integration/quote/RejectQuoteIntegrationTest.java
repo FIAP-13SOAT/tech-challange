@@ -3,7 +3,7 @@ package com.fiapchallenge.garage.integration.quote;
 import com.fiapchallenge.garage.application.customer.create.CreateCustomerService;
 import com.fiapchallenge.garage.application.quote.GenerateQuoteService;
 import com.fiapchallenge.garage.application.serviceorder.create.CreateServiceOrderService;
-import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeService;
+import com.fiapchallenge.garage.application.servicetype.create.CreateServiceTypeService;
 import com.fiapchallenge.garage.application.vehicle.CreateVehicleService;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.customer.Customer;
