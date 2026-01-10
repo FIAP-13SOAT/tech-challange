@@ -40,6 +40,10 @@ kubectl get nodes
 # Voltar para raiz do projeto
 cd ..
 
+AWS_PROFILE=awsacademy aws eks update-kubeconfig --region us-east-1 --name garage-cluster --profile awsacademy
+
+
+
 # Aplicar manifestos Kubernetes
 kubectl apply -f k8s/
 

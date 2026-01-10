@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
     name: garage-config
 data:
-    DB_HOST: "garage-postgres.xyz.sa-east-1.rds.amazonaws.com"
+    DB_HOST: "garage-postgres.canmvttgiwav.us-east-1.rds.amazonaws.com:5432"
     DB_PORT: "5432"
     DB_NAME: "garage"
     DB_USER: "postgres"

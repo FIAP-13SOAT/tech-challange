@@ -292,6 +292,40 @@ resource "aws_eks_access_policy_association" "eks-policy" {
     }
 }
 
+########################################
+# EKS ACCESS - AWS ACADEMY (voclabs)
+########################################
+
+# Permite que a role "voclabs" (usada pelo AWS Academy) tenha acesso ao cluster EKS
+# Sem isso, comandos como: `kubectl get nodes` falham com erro de autenticação
+resource "aws_eks_access_entry" "access-voclabs" {
+    cluster_name  = aws_eks_cluster.eks_cluster.name
+
+    # Role real usada na autenticação via AWS CLI
+    # aws sts get-caller-identity
+    # -> assumed-role/voclabs/...
+    principal_arn = "arn:aws:iam::${var.accountId}:role/voclabs"
+
+    # STANDARD = acesso via RBAC do Kubernetes
+    type = "STANDARD"
+}
+
+# Associa uma policy administrativa ao cluster
+# para a role voclabs, permite kubectl apply, kubectl get nodes, criação de recursos no cluster
+resource "aws_eks_access_policy_association" "eks-policy-voclabs" {
+    cluster_name  = aws_eks_cluster.eks_cluster.name
+
+    # Policy oficial da AWS para admin do cluster
+    policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
+    principal_arn = "arn:aws:iam::${var.accountId}:role/voclabs"
+
+    access_scope {
+        # Escopo em nível de cluster
+        type = "cluster"
+    }
+}
+
 // Para poder interagir com o Kubernetes, é necessário gerar um arquivo kubeconfig, que será usado pelo kubectl para se conectar ao cluster.
 output "kubeconfig" {
     value = aws_eks_cluster.eks_cluster.endpoint
