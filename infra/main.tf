@@ -155,7 +155,7 @@ resource "aws_security_group" "rds" {
         from_port       = 5432
         to_port         = 5432
         protocol        = "tcp"
-        security_groups = [aws_security_group.main.id]
+        security_groups = [aws_security_group.main.id]  # SG dos nodes
     }
 
     tags = {
@@ -197,11 +197,20 @@ resource "aws_security_group" "main" {
     name_prefix = "${local.projectName}-eks-sg"
     vpc_id      = aws_vpc.main.id
 
+    #Permite comunicação interna com API Server do EKS e outros componentes do cluster
     ingress {
         from_port   = 443
         to_port     = 443
         protocol    = "tcp"
         cidr_blocks = ["10.0.0.0/16"]
+    }
+
+    #Libera comunicação entre os próprios nodes (kubectl logs, etc)
+    ingress {
+        from_port = 10250
+        to_port   = 10250
+        protocol  = "tcp"
+        self      = true
     }
 
     egress {
@@ -216,6 +225,41 @@ resource "aws_security_group" "main" {
     }
 }
 
+#
+# NET GATEWAY para subnets privadas terem saída para a internet:
+# Elastic IP
+resource "aws_eip" "nat" {
+    domain = "vpc"
+}
+
+resource "aws_nat_gateway" "main" {
+    allocation_id = aws_eip.nat.id
+    subnet_id     = aws_subnet.public_subnet.id
+}
+
+resource "aws_route_table" "private" {
+    vpc_id = aws_vpc.main.id
+
+    route {
+        cidr_block     = "0.0.0.0/0"
+        nat_gateway_id = aws_nat_gateway.main.id
+    }
+
+    tags = {
+        Name = "${local.projectName}-private-rt"
+    }
+}
+
+resource "aws_route_table_association" "private_a" {
+    subnet_id      = aws_subnet.private_subnet.id
+    route_table_id = aws_route_table.private.id
+}
+
+resource "aws_route_table_association" "private_b" {
+    subnet_id      = aws_subnet.private_subnet_b.id
+    route_table_id = aws_route_table.private.id
+}
+
 ########################################
 # KUBERNETES (EKS)
 ########################################
@@ -228,8 +272,8 @@ resource "aws_eks_cluster" "eks_cluster" {
 
     vpc_config {
         subnet_ids = [
-            aws_subnet.public_subnet.id,
-            aws_subnet.public_subnet_b.id,
+            #aws_subnet.public_subnet.id,
+            #aws_subnet.public_subnet_b.id,
             aws_subnet.private_subnet.id,
             aws_subnet.private_subnet_b.id
         ]
@@ -256,7 +300,9 @@ resource "aws_eks_node_group" "main" {
     node_role_arn = "arn:aws:iam::${var.accountId}:role/LabRole"
     subnet_ids = [
         aws_subnet.public_subnet.id,
-        aws_subnet.public_subnet_b.id
+        aws_subnet.public_subnet_b.id,
+        aws_subnet.private_subnet.id,
+        aws_subnet.private_subnet_b.id
     ]
     instance_types = [
         "t3.medium"
@@ -325,6 +371,18 @@ resource "aws_eks_access_policy_association" "eks-policy-voclabs" {
         type = "cluster"
     }
 }
+
+# Permite que a role voclabs tenha acesso ao cluster EKS, permitindo interagir com nodes Isso parece n estar funcionando
+# resource "aws_eks_access_policy_association" "eks-node-access" {
+#     cluster_name  = aws_eks_cluster.eks_cluster.name
+#     principal_arn = "arn:aws:iam::${var.accountId}:role/voclabs"
+#
+#     policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+#
+#     access_scope {
+#         type = "cluster"
+#     }
+# }
 
 // Para poder interagir com o Kubernetes, é necessário gerar um arquivo kubeconfig, que será usado pelo kubectl para se conectar ao cluster.
 output "kubeconfig" {
