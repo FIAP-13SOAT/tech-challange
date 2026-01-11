@@ -32,6 +32,11 @@ docker-compose -f docker-compose-dev.yml up --build
 docker-compose down
 ```
 
+### 6. Execução na AWS (EKS)
+
+Para deploy na infraestrutura AWS usando Terraform acesse [infra/README.md](./infra/README.md)
+
+
 ## Documentação da API
 
 A documentação completa da API está disponível em: http://localhost:8080/swagger-ui/index.html
