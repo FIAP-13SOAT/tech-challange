@@ -20,6 +20,12 @@ O projeto está organizado em camadas concêntricas, onde as dependências apont
 └─────────────────────────────────────────┘
 ```
 
+## Arquitetura em nuvem
+
+![Arquitetura da aplicação em nuvem](./architecture.drawio.png)
+<a href="https://drive.google.com/file/d/19DRUmExlrJY1ZxATxG-1WzSbCIiI2Xv_/view?usp=sharing">Link para o drawio</a>
+
+
 ### 1. Domain (Camada de Domínio)
 
 **Localização**: `domain/`
