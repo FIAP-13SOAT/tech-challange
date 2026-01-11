@@ -65,7 +65,7 @@ resource "aws_subnet" "public_subnet" {
 }
 
 // Segunda subnet pública para EKS (diferentes AZs)
-// EKS exige subnets em pelo menos 2 zonas de disponibilidade (AZs)
+// EKS exige subnets em pelo # Segunda subnet pública em AZ diferente (obrigatório para EKS - mínimo 2 AZs)
 resource "aws_subnet" "public_subnet_b" {
     vpc_id = aws_vpc.main.id
     cidr_block = "10.0.4.0/24"
@@ -96,13 +96,13 @@ resource "aws_route_table" "public" {
     }
 }
 
-// Associação da route table com subnet pública A
+# Associação da route table com subnet pública A
 resource "aws_route_table_association" "public_a" {
     subnet_id      = aws_subnet.public_subnet.id
     route_table_id = aws_route_table.public.id
 }
 
-// Associação da route table com subnet pública B
+# Associação da route table com subnet pública B
 resource "aws_route_table_association" "public_b" {
     subnet_id      = aws_subnet.public_subnet_b.id
     route_table_id = aws_route_table.public.id
@@ -132,7 +132,7 @@ resource "aws_subnet" "private_subnet_b" {
     }
 }
 
-// DB Subnet Group para RDS
+# DB Subnet Group para RDS (requer subnets em pelo menos 2 AZs)
 resource "aws_db_subnet_group" "main" {
     name       = "${local.projectName}-db-subnet-group"
     subnet_ids = [aws_subnet.private_subnet.id, aws_subnet.private_subnet_b.id]
@@ -146,7 +146,7 @@ resource "aws_db_subnet_group" "main" {
 # SECURITY GROUPS
 ########################################
 
-// SG do RDS
+# Security Group do RDS - controla acesso ao banco de dados
 resource "aws_security_group" "rds" {
     name_prefix = "${local.projectName}-rds-sg"
     vpc_id      = aws_vpc.main.id
@@ -164,9 +164,8 @@ resource "aws_security_group_rule" "rds_ingress_eks" {
     protocol                 = "tcp"
     security_group_id        = aws_security_group.rds.id
 
-    # AQUI ESTÁ O TRUQUE:
-    # Ao invés de usar o aws_security_group.main.id,
-    # usamos o SG que o próprio cluster EKS gerencia e aplica nos nodes.
+    # Permite acesso do EKS ao RDS usando o security group gerenciado pelo cluster
+    # Evita dependência cíclica entre recursos
     source_security_group_id = aws_eks_cluster.eks_cluster.vpc_config[0].cluster_security_group_id
 
     description = "Allow EKS Nodes to access RDS"
@@ -176,7 +175,7 @@ resource "aws_security_group_rule" "rds_ingress_eks" {
 # DATABASE
 ########################################
 
-// RDS PostgreSQL
+# RDS PostgreSQL - banco de dados da aplicação
 resource "aws_db_instance" "postgres" {
     identifier = "${local.projectName}-postgres"
 
@@ -201,12 +200,12 @@ resource "aws_db_instance" "postgres" {
     }
 }
 
-// Security Group para o EKS cluster
+# Security Group para o EKS cluster - controla tráfego de rede
 resource "aws_security_group" "main" {
     name_prefix = "${local.projectName}-eks-sg"
     vpc_id      = aws_vpc.main.id
 
-    #Permite comunicação interna com API Server do EKS e outros componentes do cluster
+    # Permite comunicação interna com API Server do EKS e outros componentes do cluster
     ingress {
         from_port   = 443
         to_port     = 443
@@ -214,7 +213,7 @@ resource "aws_security_group" "main" {
         cidr_blocks = ["10.0.0.0/16"]
     }
 
-    #Libera comunicação entre os próprios nodes (kubectl logs, etc)
+    # Libera comunicação entre os próprios nodes (kubectl logs, exec, etc)
     ingress {
         from_port = 10250
         to_port   = 10250
@@ -234,9 +233,11 @@ resource "aws_security_group" "main" {
     }
 }
 
-#
-# NET GATEWAY para subnets privadas terem saída para a internet:
-# Elastic IP
+########################################
+# NAT GATEWAY
+########################################
+
+# Elastic IP para o NAT Gateway
 resource "aws_eip" "nat" {
     domain = "vpc"
 }
@@ -273,8 +274,8 @@ resource "aws_route_table_association" "private_b" {
 # KUBERNETES (EKS)
 ########################################
 
-// cluster Kubernetes (EKS) na AWS para orquestrar a aplicação
-// Usando LabRole pois AWS Academy não permite criação de IAM Roles
+# Cluster Kubernetes (EKS) na AWS para orquestrar a aplicação
+# Usando LabRole pois AWS Academy não permite criação de IAM Roles customizadas
 resource "aws_eks_cluster" "eks_cluster" {
     name = "${local.projectName}-cluster"
     role_arn = "arn:aws:iam::${var.accountId}:role/LabRole"
@@ -300,7 +301,7 @@ resource "aws_eks_cluster" "eks_cluster" {
     ]
 }
 
-// Node Groups: Instancias EC2 que executam os Workloads do Kubernetes
+# Node Groups: Instâncias EC2 que executam os workloads do Kubernetes
 resource "aws_eks_node_group" "main" {
     cluster_name = aws_eks_cluster.eks_cluster.name
     node_group_name = "node-group-01"
@@ -325,7 +326,7 @@ resource "aws_eks_node_group" "main" {
     ]
 }
 
-// controle de acesso no EKS, permitindo que usuarios interajam com o cluster
+# Controle de acesso no EKS - permite que usuários interajam com o cluster
 resource "aws_eks_access_entry" "access-entry" {
     cluster_name  = aws_eks_cluster.eks_cluster.name
     principal_arn = "arn:aws:iam::${var.accountId}:role/${var.roleName}"
@@ -377,16 +378,25 @@ resource "aws_eks_access_policy_association" "eks-policy-voclabs" {
     }
 }
 
-// Para poder interagir com o Kubernetes, é necessário gerar um arquivo kubeconfig, que será usado pelo kubectl para se conectar ao cluster.
+########################################
+# OUTPUTS
+########################################
+
+# Endpoint do cluster EKS para configuração do kubectl
 output "kubeconfig" {
-    value = aws_eks_cluster.eks_cluster.endpoint
+    description = "Endpoint do cluster EKS"
+    value       = aws_eks_cluster.eks_cluster.endpoint
 }
 
+# Endpoint do banco RDS para conexão da aplicação
 output "rds_endpoint" {
-    value = aws_db_instance.postgres.endpoint
+    description = "Endpoint do banco PostgreSQL"
+    value       = aws_db_instance.postgres.endpoint
 }
 
+# Porta do banco RDS
 output "rds_port" {
-    value = aws_db_instance.postgres.port
+    description = "Porta do banco PostgreSQL"
+    value       = aws_db_instance.postgres.port
 }
 
