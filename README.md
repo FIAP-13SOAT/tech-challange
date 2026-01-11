@@ -9,7 +9,13 @@
 - Terraform (Infraestrutura AWS)
 - Kubernetes (EKS)
 
+## Arquitetura da aplicação:
+
+![Arquitetura da aplicação](./architecture.drawio.png)
+![Link drawio](https://drive.google.com/file/d/19DRUmExlrJY1ZxATxG-1WzSbCIiI2Xv_/view?usp=sharing)
+
 ## Requisitos Mínimos
+
 - Docker 20.10+
 - Docker Compose 2.0+
 - 4GB RAM disponível
