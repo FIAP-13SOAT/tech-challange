@@ -1,5 +1,6 @@
 package com.fiapchallenge.garage.application.customer.delete;
 
+import com.fiapchallenge.garage.application.customer.exceptions.CustomerNotFoundException;
 import com.fiapchallenge.garage.domain.customer.CustomerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,7 @@ public class DeleteCustomerService implements DeleteCustomerUseCase {
         UUID id = cmd.id();
 
         if (!customerRepository.exists(id)) {
-            throw new IllegalArgumentException("Cliente não encontrado com ID: " + id);
+            throw new CustomerNotFoundException(id);
         }
 
         customerRepository.deleteById(id);

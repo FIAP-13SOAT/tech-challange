@@ -7,6 +7,7 @@ import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
+import com.fiapchallenge.garage.domain.serviceorder.exceptions.InvalidStatusToDeliverException;
 import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,6 +65,6 @@ class DeliverServiceOrderServiceTest {
 
         DeliverServiceOrderCommand command = new DeliverServiceOrderCommand(serviceOrderId);
 
-        assertThrows(IllegalStateException.class, () -> deliverServiceOrderService.handle(command));
+        assertThrows(InvalidStatusToDeliverException.class, () -> deliverServiceOrderService.handle(command));
     }
 }

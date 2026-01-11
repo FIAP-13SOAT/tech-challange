@@ -1,5 +1,6 @@
 package com.fiapchallenge.garage.application.servicetype.delete;
 
+import com.fiapchallenge.garage.application.servicetype.exceptions.ServiceTypeNotFoundException;
 import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
 import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class DeleteServiceTypeService implements DeleteServiceTypeUseCase {
         UUID id = cmd.id();
 
         if (!serviceTypeRepository.exists(id)) {
-            throw new SoatNotFoundException("Tipo de serviço não encontrado com ID: " + id);
+            throw new ServiceTypeNotFoundException(id);
         }
 
         serviceTypeRepository.deleteById(id);

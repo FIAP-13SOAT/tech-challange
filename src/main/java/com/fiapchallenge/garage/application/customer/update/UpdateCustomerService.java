@@ -1,5 +1,6 @@
 package com.fiapchallenge.garage.application.customer.update;
 
+import com.fiapchallenge.garage.application.customer.exceptions.CustomerNotFoundException;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.customer.CustomerRepository;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class UpdateCustomerService implements UpdateCustomerUseCase {
     @Override
     public Customer handle(UpdateCustomerCmd cmd) {
         Customer existingCustomer = customerRepository.findById(cmd.id())
-            .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado com ID: " + cmd.id()));
+            .orElseThrow(() -> new CustomerNotFoundException(cmd.id()));
 
         existingCustomer.setName(cmd.name());
         existingCustomer.setEmail(cmd.email());

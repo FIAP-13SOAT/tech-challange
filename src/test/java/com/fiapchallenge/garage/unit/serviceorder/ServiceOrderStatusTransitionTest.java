@@ -4,6 +4,10 @@ import com.fiapchallenge.garage.domain.customer.CpfCnpj;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
+import com.fiapchallenge.garage.domain.serviceorder.exceptions.InvalidStatusToCancelException;
+import com.fiapchallenge.garage.domain.serviceorder.exceptions.InvalidStatusToCompleteException;
+import com.fiapchallenge.garage.domain.serviceorder.exceptions.InvalidStatusToDeliverException;
+import com.fiapchallenge.garage.domain.serviceorder.exceptions.InvalidStatusToStartProgressException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +35,7 @@ class ServiceOrderStatusTransitionTest {
         ServiceOrder serviceOrder = new ServiceOrder(UUID.randomUUID(), "Test", UUID.randomUUID(),
                 ServiceOrderStatus.RECEIVED, List.of(), List.of(), this.customer);
 
-        assertThrows(IllegalStateException.class, serviceOrder::startProgress);
+        assertThrows(InvalidStatusToStartProgressException.class, serviceOrder::startProgress);
     }
 
     @Test
@@ -62,7 +66,7 @@ class ServiceOrderStatusTransitionTest {
         ServiceOrder serviceOrder = new ServiceOrder(UUID.randomUUID(), "Test", UUID.randomUUID(),
                 ServiceOrderStatus.AWAITING_APPROVAL, List.of(), List.of(), this.customer);
 
-        assertThrows(IllegalStateException.class, serviceOrder::complete);
+        assertThrows(InvalidStatusToCompleteException.class, serviceOrder::complete);
     }
 
     @Test
@@ -82,7 +86,7 @@ class ServiceOrderStatusTransitionTest {
         ServiceOrder serviceOrder = new ServiceOrder(UUID.randomUUID(), "Test", UUID.randomUUID(),
                 ServiceOrderStatus.IN_PROGRESS, List.of(), List.of(), this.customer);
 
-        assertThrows(IllegalStateException.class, serviceOrder::deliver);
+        assertThrows(InvalidStatusToDeliverException.class, serviceOrder::deliver);
     }
 
     @Test
@@ -93,7 +97,7 @@ class ServiceOrderStatusTransitionTest {
         ServiceOrder deliveredOrder = new ServiceOrder(UUID.randomUUID(), "Test", UUID.randomUUID(),
                 ServiceOrderStatus.DELIVERED, List.of(), List.of(), this.customer);
 
-        assertThrows(IllegalStateException.class, completedOrder::cancel);
-        assertThrows(IllegalStateException.class, deliveredOrder::cancel);
+        assertThrows(InvalidStatusToCancelException.class, completedOrder::cancel);
+        assertThrows(InvalidStatusToCancelException.class, deliveredOrder::cancel);
     }
 }

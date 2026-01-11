@@ -1,11 +1,11 @@
 package com.fiapchallenge.garage.application.stock.add;
 
+import com.fiapchallenge.garage.application.stock.exceptions.StockNotFoundException;
 import com.fiapchallenge.garage.application.stockmovement.create.CreateStockMovementUseCase;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
 import com.fiapchallenge.garage.application.stock.command.AddStockCommand;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
-import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,7 +24,7 @@ public class AddStockService implements AddStockUseCase {
     @Override
     public Stock handle(AddStockCommand command) {
         Stock stock = stockRepository.findById(command.stockId())
-                .orElseThrow(() -> new ResourceNotFoundException("Stock", command.stockId().toString()));
+                .orElseThrow(() -> new StockNotFoundException(command.stockId()));
 
         Integer previousQuantity = stock.getQuantity();
         Integer newQuantity = previousQuantity + command.quantity();

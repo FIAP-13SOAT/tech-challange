@@ -1,5 +1,6 @@
 package com.fiapchallenge.garage.application.notification.markread;
 
+import com.fiapchallenge.garage.application.notification.exceptions.NotificationNotFoundException;
 import com.fiapchallenge.garage.domain.notification.Notification;
 import com.fiapchallenge.garage.domain.notification.NotificationRepository;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class MarkNotificationAsReadService implements MarkNotificationAsReadUseC
     @Override
     public void handle(UUID id) {
         Notification notification = notificationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Notification not found"));
+                .orElseThrow(() -> new NotificationNotFoundException(id));
 
         notification.setRead(true);
         notificationRepository.save(notification);

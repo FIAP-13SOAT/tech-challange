@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.unit.vehicle.factory;
 
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
-import com.fiapchallenge.garage.application.vehicle.command.CreateVehicleCommand;
+import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleCommand;
 
 import java.util.UUID;
 
