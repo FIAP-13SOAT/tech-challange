@@ -4,13 +4,13 @@ import com.fiapchallenge.garage.adapters.outbound.entities.ServiceOrderEntity;
 import com.fiapchallenge.garage.adapters.outbound.entities.ServiceOrderItemEntity;
 import com.fiapchallenge.garage.adapters.outbound.entities.ServiceTypeEntity;
 import com.fiapchallenge.garage.adapters.outbound.repositories.servicetype.JpaServiceTypeRepository;
+import com.fiapchallenge.garage.application.serviceorder.exceptions.ServiceOrderNotFoundException;
 import com.fiapchallenge.garage.domain.customer.CpfCnpj;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderItem;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
-import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,7 +70,7 @@ public class ServiceOrderRepositoryImpl implements ServiceOrderRepository {
 
     @Override
     public ServiceOrder findByIdOrThrow(UUID id) {
-        ServiceOrderEntity entity = jpaServiceOrderRepository.findById(id).orElseThrow(() -> new SoatNotFoundException("Ordem de serviço não encontrado"));
+        ServiceOrderEntity entity = jpaServiceOrderRepository.findById(id).orElseThrow(() -> new ServiceOrderNotFoundException(id));
         return convertFromEntity(entity);
     }
 

@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.unit.servicetype.utils.factory;
 
-import com.fiapchallenge.garage.application.servicetype.command.CreateServiceTypeCommand;
+import com.fiapchallenge.garage.application.servicetype.create.CreateServiceTypeCommand;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 
 import java.math.BigDecimal;

@@ -1,5 +1,8 @@
 package com.fiapchallenge.garage.domain.quote;
 
+import com.fiapchallenge.garage.domain.quote.exceptions.CannotApproveQuoteException;
+import com.fiapchallenge.garage.domain.quote.exceptions.CannotRejectQuoteException;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,8 +43,19 @@ public class Quote {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public void approve() { this.status = QuoteStatus.APPROVED; }
-    public void reject() { this.status = QuoteStatus.REJECTED; }
+    public void approve() {
+        if (this.status != QuoteStatus.PENDING) {
+            throw new CannotApproveQuoteException(this.status);
+        }
+        this.status = QuoteStatus.APPROVED;
+    }
+
+    public void reject() {
+        if (this.status != QuoteStatus.PENDING) {
+            throw new CannotRejectQuoteException(this.status);
+        }
+        this.status = QuoteStatus.REJECTED;
+    }
 
     public UUID getId() { return id; }
     public UUID getCustomerId() { return customerId; }

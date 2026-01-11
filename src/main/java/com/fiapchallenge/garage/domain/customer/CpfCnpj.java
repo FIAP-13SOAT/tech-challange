@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.domain.customer;
 
-import com.fiapchallenge.garage.shared.exception.SoatValidationException;
+import com.fiapchallenge.garage.domain.customer.exceptions.InvalidCpfCnpjException;
 
 import java.util.Objects;
 
@@ -10,7 +10,7 @@ public class CpfCnpj {
 
     public CpfCnpj(String value) {
         if (!isValid(value)) {
-            throw new SoatValidationException("CPF ou CNPJ inválido: " + value);
+            throw new InvalidCpfCnpjException(value);
         }
         this.value = value;
     }

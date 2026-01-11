@@ -1,6 +1,7 @@
 package com.fiapchallenge.garage.adapters.outbound.repositories.servicetype;
 
 import com.fiapchallenge.garage.adapters.outbound.entities.ServiceTypeEntity;
+import com.fiapchallenge.garage.application.servicetype.exceptions.ServiceTypeNotFoundException;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
 import com.fiapchallenge.garage.shared.mapper.ServiceTypeMapper;
@@ -29,7 +30,7 @@ public class ServiceTypeRepositoryImpl implements ServiceTypeRepository {
 
     @Override
     public ServiceType findByIdOrThrow(UUID serviceTypeId) {
-        ServiceTypeEntity entity = jpaServiceTypeRepository.findById(serviceTypeId).orElseThrow();
+        ServiceTypeEntity entity = jpaServiceTypeRepository.findById(serviceTypeId).orElseThrow(() -> new ServiceTypeNotFoundException(serviceTypeId));
         return serviceTypeMapper.toDomain(entity);
     }
 
