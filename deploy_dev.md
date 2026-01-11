@@ -5,12 +5,6 @@ Para testar os manifestos Kubernetes localmente sem AWS:
 # Linux
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 sudo install minikube-linux-amd64 /usr/local/bin/minikube
-
-# macOS
-brew install minikube
-
-# Windows
-choco install minikube
 ```
 
 #### 2. Iniciar cluster local

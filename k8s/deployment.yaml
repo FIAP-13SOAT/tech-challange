@@ -14,7 +14,7 @@ spec:
         spec:
             containers:
                 - name: garage-app
-                  image: your-app:latest
+                  image: 964022050595.dkr.ecr.us-east-1.amazonaws.com/garage-app:3
                   ports:
                       - containerPort: 8080
                   env:
@@ -23,3 +23,49 @@ spec:
                             configMapKeyRef:
                                 name: garage-config
                                 key: DB_HOST
+                      - name: DB_PORT
+                        valueFrom:
+                            configMapKeyRef:
+                                name: garage-config
+                                key: DB_PORT
+                      - name: DB_NAME
+                        valueFrom:
+                            configMapKeyRef:
+                                name: garage-config
+                                key: DB_NAME
+                      - name: DB_USER
+                        valueFrom:
+                            configMapKeyRef:
+                                name: garage-config
+                                key: DB_USER
+                      - name: DB_PASSWORD
+                        valueFrom:
+                            configMapKeyRef:
+                                name: garage-config
+                                key: DB_PASSWORD
+                      - name: SPRING_PROFILES_ACTIVE
+                        valueFrom:
+                            configMapKeyRef:
+                                name: garage-config
+                                key: SPRING_PROFILES_ACTIVE
+                  resources:
+                      requests:
+                          memory: "512Mi"
+                          cpu: "250m"
+                      limits:
+                          memory: "1Gi"
+                          cpu: "500m"
+                  livenessProbe:
+                      httpGet:
+                          path: /actuator/health
+                          port: 8080
+                      initialDelaySeconds: 60
+                      periodSeconds: 30
+                      timeoutSeconds: 10
+                  readinessProbe:
+                      httpGet:
+                          path: /actuator/health
+                          port: 8080
+                      initialDelaySeconds: 30
+                      periodSeconds: 10
+                      timeoutSeconds: 5
