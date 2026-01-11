@@ -147,27 +147,52 @@ resource "aws_db_subnet_group" "main" {
 ########################################
 
 // SG do RDS
+# resource "aws_security_group" "rds" {
+#     name_prefix = "${local.projectName}-rds-sg"
+#     vpc_id      = aws_vpc.main.id
+#
+#     ingress {
+#         from_port       = 5432
+#         to_port         = 5432
+#         protocol        = "tcp"
+#         security_groups = [aws_security_group.main.id]  # SG dos nodes
+#     }
+#
+#     ingress {
+#         from_port   = 5432
+#         to_port     = 5432
+#         protocol    = "tcp"
+#         cidr_blocks = ["10.0.2.0/24", "10.0.3.0/24"]  # Subnets privadas
+#     }
+#
+#     tags = {
+#         name = "${local.projectName}-rds-security-group"
+#     }
+# }
+
 resource "aws_security_group" "rds" {
     name_prefix = "${local.projectName}-rds-sg"
     vpc_id      = aws_vpc.main.id
 
-    ingress {
-        from_port       = 5432
-        to_port         = 5432
-        protocol        = "tcp"
-        security_groups = [aws_security_group.main.id]  # SG dos nodes
-    }
-
-    ingress {
-        from_port   = 5432
-        to_port     = 5432
-        protocol    = "tcp"
-        cidr_blocks = ["10.0.2.0/24", "10.0.3.0/24"]  # Subnets privadas
-    }
-
     tags = {
         name = "${local.projectName}-rds-security-group"
     }
+}
+
+# Regra separada para evitar dependência cíclica e garantir clareza
+resource "aws_security_group_rule" "rds_ingress_eks" {
+    type                     = "ingress"
+    from_port                = 5432
+    to_port                  = 5432
+    protocol                 = "tcp"
+    security_group_id        = aws_security_group.rds.id
+
+    # AQUI ESTÁ O TRUQUE:
+    # Ao invés de usar o aws_security_group.main.id,
+    # usamos o SG que o próprio cluster EKS gerencia e aplica nos nodes.
+    source_security_group_id = aws_eks_cluster.eks_cluster.vpc_config[0].cluster_security_group_id
+
+    description = "Allow EKS Nodes to access RDS"
 }
 
 ########################################
