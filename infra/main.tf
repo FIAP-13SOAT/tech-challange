@@ -147,29 +147,6 @@ resource "aws_db_subnet_group" "main" {
 ########################################
 
 // SG do RDS
-# resource "aws_security_group" "rds" {
-#     name_prefix = "${local.projectName}-rds-sg"
-#     vpc_id      = aws_vpc.main.id
-#
-#     ingress {
-#         from_port       = 5432
-#         to_port         = 5432
-#         protocol        = "tcp"
-#         security_groups = [aws_security_group.main.id]  # SG dos nodes
-#     }
-#
-#     ingress {
-#         from_port   = 5432
-#         to_port     = 5432
-#         protocol    = "tcp"
-#         cidr_blocks = ["10.0.2.0/24", "10.0.3.0/24"]  # Subnets privadas
-#     }
-#
-#     tags = {
-#         name = "${local.projectName}-rds-security-group"
-#     }
-# }
-
 resource "aws_security_group" "rds" {
     name_prefix = "${local.projectName}-rds-sg"
     vpc_id      = aws_vpc.main.id
@@ -304,8 +281,6 @@ resource "aws_eks_cluster" "eks_cluster" {
 
     vpc_config {
         subnet_ids = [
-            # aws_subnet.public_subnet.id,
-            # aws_subnet.public_subnet_b.id,
             aws_subnet.private_subnet.id,
             aws_subnet.private_subnet_b.id
         ]
@@ -401,18 +376,6 @@ resource "aws_eks_access_policy_association" "eks-policy-voclabs" {
         type = "cluster"
     }
 }
-
-# Permite que a role voclabs tenha acesso ao cluster EKS, permitindo interagir com nodes Isso parece n estar funcionando
-# resource "aws_eks_access_policy_association" "eks-node-access" {
-#     cluster_name  = aws_eks_cluster.eks_cluster.name
-#     principal_arn = "arn:aws:iam::${var.accountId}:role/voclabs"
-#
-#     policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
-#
-#     access_scope {
-#         type = "cluster"
-#     }
-# }
 
 // Para poder interagir com o Kubernetes, é necessário gerar um arquivo kubeconfig, que será usado pelo kubectl para se conectar ao cluster.
 output "kubeconfig" {
