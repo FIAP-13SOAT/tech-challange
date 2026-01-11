@@ -158,6 +158,13 @@ resource "aws_security_group" "rds" {
         security_groups = [aws_security_group.main.id]  # SG dos nodes
     }
 
+    ingress {
+        from_port   = 5432
+        to_port     = 5432
+        protocol    = "tcp"
+        cidr_blocks = ["10.0.2.0/24", "10.0.3.0/24"]  # Subnets privadas
+    }
+
     tags = {
         name = "${local.projectName}-rds-security-group"
     }
@@ -272,8 +279,8 @@ resource "aws_eks_cluster" "eks_cluster" {
 
     vpc_config {
         subnet_ids = [
-            #aws_subnet.public_subnet.id,
-            #aws_subnet.public_subnet_b.id,
+            # aws_subnet.public_subnet.id,
+            # aws_subnet.public_subnet_b.id,
             aws_subnet.private_subnet.id,
             aws_subnet.private_subnet_b.id
         ]
@@ -299,8 +306,6 @@ resource "aws_eks_node_group" "main" {
     node_group_name = "node-group-01"
     node_role_arn = "arn:aws:iam::${var.accountId}:role/LabRole"
     subnet_ids = [
-        aws_subnet.public_subnet.id,
-        aws_subnet.public_subnet_b.id,
         aws_subnet.private_subnet.id,
         aws_subnet.private_subnet_b.id
     ]
