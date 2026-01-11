@@ -1,15 +1,12 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.stock;
 
-import com.fiapchallenge.garage.adapters.inbound.controller.stock.dto.CreateStockRequestDTO;
-import com.fiapchallenge.garage.adapters.inbound.controller.stock.dto.StockDTO;
-import com.fiapchallenge.garage.adapters.inbound.controller.stock.dto.UpdateStockRequestDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.stock.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,7 +56,7 @@ public interface StockControllerOpenApiSpec {
     })
     ResponseEntity<StockDTO> consumeStock(
             @Parameter(description = "ID do item") @PathVariable UUID id,
-            @Parameter(description = "Quantidade a consumir") @RequestParam @Positive(message = "Quantidade deve ser positiva") Integer quantity);
+            @Valid @RequestBody ConsumeStockRequestDTO request);
 
     @Operation(summary = "Adicionar estoque", description = "Adiciona uma quantidade específica a um item do estoque")
     @ApiResponses(value = {
@@ -69,5 +66,5 @@ public interface StockControllerOpenApiSpec {
     })
     ResponseEntity<StockDTO> addStock(
             @Parameter(description = "ID do item") @PathVariable UUID id,
-            @Parameter(description = "Quantidade a adicionar") @RequestParam @Positive(message = "Quantidade deve ser positiva") Integer quantity);
+            @Valid @RequestBody AddStockRequestDTO request);
 }

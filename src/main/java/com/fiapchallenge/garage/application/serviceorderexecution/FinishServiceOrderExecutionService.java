@@ -1,10 +1,11 @@
 package com.fiapchallenge.garage.application.serviceorderexecution;
 
+import com.fiapchallenge.garage.application.serviceorder.exceptions.ServiceOrderNotFoundException;
+import com.fiapchallenge.garage.application.serviceorderexecution.exceptions.ServiceOrderExecutionNotFoundException;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecution;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionRepository;
-import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +24,10 @@ public class FinishServiceOrderExecutionService implements FinishServiceOrderExe
     @Override
     public ServiceOrder handle(FinishServiceOrderExecutionCommand command) {
         ServiceOrder serviceOrder = serviceOrderRepository.findById(command.id())
-                .orElseThrow(() -> new SoatNotFoundException("Ordem de serviço não encontrada"));
+                .orElseThrow(() -> new ServiceOrderNotFoundException(command.id()));
 
         ServiceOrderExecution serviceOrderExecution = serviceOrderExecutionRepository.findById(command.id())
-                .orElseThrow(() -> new SoatNotFoundException("Execução da ordem de serviço não encontrada"));
+                .orElseThrow(() -> new ServiceOrderExecutionNotFoundException(command.id()));
 
         serviceOrderExecution.finish();
         serviceOrderExecutionRepository.save(serviceOrderExecution);

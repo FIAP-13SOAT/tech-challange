@@ -54,13 +54,15 @@ class StockNotificationIntegrationTest extends BaseIntegrationTest {
 
         mockMvc.perform(post("/stock/{id}/add", stockId)
                         .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
-                        .param("quantity", "15"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"quantity\": 15}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(15));
         
         mockMvc.perform(post("/stock/{id}/consume", stockId)
                         .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
-                        .param("quantity", "8"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"quantity\": 8}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(7));
 
@@ -124,13 +126,15 @@ class StockNotificationIntegrationTest extends BaseIntegrationTest {
 
         mockMvc.perform(post("/stock/{id}/add", stockId)
                         .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
-                        .param("quantity", "50"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"quantity\": 50}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(50));
 
         mockMvc.perform(post("/stock/{id}/consume", stockId)
                         .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
-                        .param("quantity", "10"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"quantity\": 10}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(40)); // 40 > 5 (threshold)
 

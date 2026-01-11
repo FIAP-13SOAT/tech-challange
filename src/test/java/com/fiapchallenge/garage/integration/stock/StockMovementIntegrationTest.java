@@ -50,13 +50,15 @@ class StockMovementIntegrationTest extends BaseIntegrationTest {
 
         mockMvc.perform(post("/stock/{id}/add", stockId)
                         .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
-                        .param("quantity", "50"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"quantity\": 50}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(50));
 
         mockMvc.perform(post("/stock/{id}/consume", stockId)
                         .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
-                        .param("quantity", "10"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"quantity\": 10}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(40));
 
@@ -93,7 +95,8 @@ class StockMovementIntegrationTest extends BaseIntegrationTest {
 
         mockMvc.perform(post("/stock/{id}/consume", stockId)
                         .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
-                        .param("quantity", "100"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"quantity\": 100}"))
                 .andExpect(status().isBadRequest());
     }
 }
