@@ -7,5 +7,5 @@ data:
     DB_PORT: "5432"
     DB_NAME: "garage"
     DB_USER: "postgres"
-    DB_PASSWORD: "postgres123"
+    DB_PASSWORD: "fYB#kbp(_#AIf3J7ASYboH..RG34"
     SPRING_PROFILES_ACTIVE: "prod"
