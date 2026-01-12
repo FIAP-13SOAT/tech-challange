@@ -63,3 +63,7 @@ jobs:
                 run: |
                     sed "s|\${IMAGE_TAG}|$IMAGE_TAG|g" k8s/deployment.yaml > deploy.yaml
                     kubectl apply -f deploy.yaml
+
+            -   name: Wait rollout
+                run: |
+                    kubectl rollout status deployment/garage-app --timeout=10m
