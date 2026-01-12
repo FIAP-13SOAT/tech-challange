@@ -43,6 +43,8 @@ O projeto implementa **Clean Architecture**, garantindo separação de responsab
 - Spring Boot
 - PostgreSQL
 - Docker
+- Terraform (Infraestrutura AWS)
+- Kubernetes (EKS)
 
 ## Documentação Adicional
 
