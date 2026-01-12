@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Pod
 metadata:
-    name: db-test-6
+    name: db-test-7
 spec:
     restartPolicy: Never
     containers:
-        - name: db-test-6
+        - name: db-test-7
           image: postgres:16
           command: ["sh", "-c"]
           args:
@@ -27,4 +27,4 @@ spec:
               - name: DB_USER
                 value: "postgres"
               - name: DB_PASSWORD
-                value: "postgres123"
+                value: "fYB#kbp(_#AIf3J7ASYboH..RG34"
