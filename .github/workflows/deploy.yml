@@ -56,7 +56,7 @@ jobs:
                 id: db-secret
                 run: |
                     SECRET=$(aws secretsmanager get-secret-value \
-                      --secret-id '$DB_SECRET_ARN' \
+                      --secret-id $DB_SECRET_ARN \
                       --query SecretString \
                       --output text)
 
