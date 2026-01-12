@@ -6,6 +6,7 @@ on:
     workflow_dispatch:
 
 env:
+    DB_SECRET_ARN: ${{ secrets.DB_SECRET_ARN }}
     AWS_REGION: us-east-1
     EKS_CLUSTER_NAME: garage-cluster
     ECR_REPOSITORY: garage-app
