@@ -55,6 +55,8 @@ jobs:
             -   name: Get DB secret from AWS
                 id: db-secret
                 run: |
+                    set -x
+                    echo "DB_SECRET_ARN=$DB_SECRET_ARN"
                     SECRET=$(aws secretsmanager get-secret-value \
                       --secret-id $DB_SECRET_ARN \
                       --query SecretString \
