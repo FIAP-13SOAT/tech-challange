@@ -23,7 +23,7 @@ public class PublicController implements PublicControllerOpenApiSpec {
     @Override
     public ResponseEntity<String> home() {
         String html = "<!DOCTYPE html><html><head><title>Garage API</title></head><body>" +
-                      "<h1>Health: OK...</h1>" +
+                      "<h1>Health: OK</h1>" +
                       "<p><a href='/swagger-ui/index.html'>API Documentation</a></p>" +
                       "</body></html>";
         return ResponseEntity.ok().header("Content-Type", "text/html").body(html);
