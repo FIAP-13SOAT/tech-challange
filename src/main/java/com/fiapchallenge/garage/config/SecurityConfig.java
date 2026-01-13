@@ -54,7 +54,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(requests -> requests
                 .requestMatchers("/users/login").permitAll()
                 .requestMatchers(ENDPOINT_SWAGGER).permitAll()
-                .requestMatchers("/", "/robots.txt", "/sitemap.xml").permitAll()
+                .requestMatchers("/", "/actuator/health", "/robots.txt", "/sitemap.xml").permitAll()
                 .requestMatchers("/public/service-orders/**").permitAll()
                 .anyRequest().authenticated()
             ).sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -37,3 +37,6 @@ build/
 zap-reports/
 *.html
 *.xml
+
+### Secrets kubernetes ###
+./k8s/db-secret.yaml
