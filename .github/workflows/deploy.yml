@@ -2,7 +2,7 @@ name: CD - Deploy to EKS
 
 on:
     push:
-        branches: [ kubernetes-03-cd, main ]
+        branches: [ main ]
     workflow_dispatch:
 
 env:
