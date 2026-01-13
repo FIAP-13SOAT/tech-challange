@@ -34,8 +34,8 @@ docker-compose down
 
 ### 6. Execução na AWS (EKS)
 
-Para construção e atualização da infraestrutura AWS usando Terraform acesse [a documentação da infra em terraform](infra/terraform_readme.md)
-Para deploy em kubernetes veja [Deploy em produção](infra/deploy_prod.md)
+Para construção e atualização da infraestrutura AWS usando Terraform acesse [a documentação da infra em terraform](infra/TERRAFORM.md)
+O deploy é automatizado quando o merge é feito na main. Se houver curiosidade em como fazer manualmente verifique [Deploy em produção manualmente](infra/DEPLOY_PROD_MANUALLY.md)
 
 ## Documentação da API
 
