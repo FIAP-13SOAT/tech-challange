@@ -37,6 +37,28 @@ Oficinas mecânicas frequentemente enfrentam desafios na gestão de ordens de se
 
 O projeto implementa **Clean Architecture**, garantindo separação de responsabilidades, testabilidade e manutenibilidade do código. Atualmente desenvolvido como monolito, com estrutura preparada para evolução futura.
 
+# Infraestrutura
+
+A aplicação utiliza orquestração em Kubernetes, com escalonamento automático de pods por meio do **Horizontal Pod Autoscaler (HPA)**.
+Toda a infraestrutura é gerenciada via **Infrastructure as Code (IaC)**, responsável pelo provisionamento do cluster Kubernetes na AWS.
+
+## CI/CD
+
+O projeto conta com uma pipeline de **CI/CD** configurada (GitHub Actions, GitLab CI, entre outras), responsável por:
+
+- Build da aplicação
+- Execução de testes automatizados
+- Criação da imagem Docker
+- Publicação da imagem no registry
+- Deploy automatizado no cluster Kubernetes
+
+Essa automação garante entregas contínuas, padronizadas e confiáveis em todos os ambientes.
+
+## Diagrama de Arquitetura de Infraestrutura
+
+![Arquitetura da aplicação em nuvem](docs/infra/infra.png)
+
+
 ## Tecnologias
 - Java 21
 - Maven
