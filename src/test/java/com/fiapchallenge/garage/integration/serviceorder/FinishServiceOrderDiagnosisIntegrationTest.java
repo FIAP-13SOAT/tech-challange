@@ -58,7 +58,7 @@ class FinishServiceOrderDiagnosisIntegrationTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Deve criar um orçamento quando o diagnóstico da ordem de serviço for finalizado")
     void shouldCreateQuoteWhenServiceOrderDiagnosisIsFinished() throws Exception {
-        Customer customer = CustomerFixture.createCustomer(createCustomerService);
+        Customer customer = CustomerFixture.createCustomer(createCustomerService,"João Jorge","jj@gmail.com","11999999999","84327109541");
         Vehicle vehicle = VehicleFixture.createVehicle(customer.getId(), createVehicleService);
         ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), customer.getId(), createServiceOrderService, createServiceTypeService, serviceOrderRepository);
 
