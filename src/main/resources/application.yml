@@ -2,9 +2,9 @@ spring:
   application:
     name: garage
   datasource:
-    url: jdbc:postgresql://localhost:5432/garage?currentSchema=public
-    username: secret
-    password: secret
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:garage}?currentSchema=public
+    username: ${DB_USER:secret}
+    password: ${DB_PASSWORD:secret}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

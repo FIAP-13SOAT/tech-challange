@@ -2,8 +2,8 @@ package com.fiapchallenge.garage.integration.serviceorder;
 
 import com.fiapchallenge.garage.adapters.outbound.repositories.serviceorder.JpaServiceOrderRepository;
 import com.fiapchallenge.garage.application.customer.create.CreateCustomerService;
-import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeService;
-import com.fiapchallenge.garage.application.vehicle.CreateVehicleService;
+import com.fiapchallenge.garage.application.servicetype.create.CreateServiceTypeService;
+import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
 import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
@@ -225,7 +225,21 @@ class ServiceOrderManagementIntegrationTest extends BaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        return UUID.fromString(stockResponse.split("\"id\":\"")[1].split("\"")[0]);
+        UUID stockId = UUID.fromString(stockResponse.split("\"id\":\"")[1].split("\"")[0]);
+
+        String addStockJson = """
+            {
+                "quantity": 10
+            }
+        """;
+
+        mockMvc.perform(post("/stock/" + stockId + "/add")
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(addStockJson))
+                .andExpect(status().isOk());
+
+        return stockId;
     }
 
     private UUID createServiceOrderWithStock() throws Exception {

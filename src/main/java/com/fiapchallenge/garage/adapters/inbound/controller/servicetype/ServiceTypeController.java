@@ -4,8 +4,8 @@ import com.fiapchallenge.garage.adapters.inbound.controller.servicetype.dto.Serv
 import com.fiapchallenge.garage.adapters.inbound.controller.servicetype.dto.ServiceTypeRequestDTO;
 import com.fiapchallenge.garage.adapters.inbound.controller.servicetype.dto.UpdateServiceTypeDTO;
 import com.fiapchallenge.garage.adapters.inbound.controller.servicetype.mapper.ServiceTypeMapper;
-import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeUseCase;
-import com.fiapchallenge.garage.application.servicetype.command.CreateServiceTypeCommand;
+import com.fiapchallenge.garage.application.servicetype.create.CreateServiceTypeUseCase;
+import com.fiapchallenge.garage.application.servicetype.create.CreateServiceTypeCommand;
 import com.fiapchallenge.garage.application.servicetype.delete.DeleteServiceTypeUseCase;
 import com.fiapchallenge.garage.application.servicetype.delete.DeleteServiceTypeUseCase.DeleteServiceTypeCmd;
 import com.fiapchallenge.garage.application.servicetype.update.UpdateServiceTypeUseCase;

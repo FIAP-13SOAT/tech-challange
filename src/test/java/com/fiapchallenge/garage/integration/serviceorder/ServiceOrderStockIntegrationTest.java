@@ -2,8 +2,8 @@ package com.fiapchallenge.garage.integration.serviceorder;
 
 import com.fiapchallenge.garage.adapters.outbound.repositories.serviceorder.JpaServiceOrderRepository;
 import com.fiapchallenge.garage.application.customer.create.CreateCustomerService;
-import com.fiapchallenge.garage.application.servicetype.CreateServiceTypeService;
-import com.fiapchallenge.garage.application.vehicle.CreateVehicleService;
+import com.fiapchallenge.garage.application.servicetype.create.CreateServiceTypeService;
+import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
 import com.fiapchallenge.garage.domain.user.UserRole;
@@ -71,8 +71,10 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
 
         UUID stockId = UUID.fromString(stockResponse.split("\"id\":\"")[1].split("\"")[0]);
 
-        mockMvc.perform(post("/stock/" + stockId + "/add?quantity=100")
-                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
+        mockMvc.perform(post("/stock/" + stockId + "/add")
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"quantity\": 100}"))
                 .andExpect(status().isOk());
 
         Stock initialStock = stockRepository.findById(stockId).orElseThrow();
@@ -128,8 +130,10 @@ class ServiceOrderStockIntegrationTest extends BaseIntegrationTest {
 
         UUID stockId = UUID.fromString(stockResponse.split("\"id\":\"")[1].split("\"")[0]);
 
-        mockMvc.perform(post("/stock/" + stockId + "/add?quantity=50")
-                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
+        mockMvc.perform(post("/stock/" + stockId + "/add")
+                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"quantity\": 50}"))
                 .andExpect(status().isOk());
 
         Stock initialStock = stockRepository.findById(stockId).orElseThrow();

@@ -105,6 +105,6 @@ class CreateCustomerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Deve retornar erro 404 ao tentar deletar cliente inexistente")
     void shouldReturnNotFoundWhenDeletingNonExistentCustomer() throws Exception {
         mockMvc.perform(delete("/customers/" + UUID.randomUUID()).header("Authorization", getAuthToken()))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 }

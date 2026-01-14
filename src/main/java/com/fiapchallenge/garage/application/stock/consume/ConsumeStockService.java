@@ -1,13 +1,13 @@
 package com.fiapchallenge.garage.application.stock.consume;
 
 import com.fiapchallenge.garage.application.stock.StockLevelChecker;
+import com.fiapchallenge.garage.application.stock.exceptions.StockNotFoundException;
 import com.fiapchallenge.garage.application.stockmovement.create.CreateStockMovementUseCase;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.domain.stock.StockRepository;
 import com.fiapchallenge.garage.application.stock.command.ConsumeStockCommand;
+import com.fiapchallenge.garage.domain.stock.exceptions.InsufficientStockException;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
-import com.fiapchallenge.garage.shared.exception.InsufficientStockException;
-import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,14 +28,13 @@ public class ConsumeStockService implements ConsumeStockUseCase {
     @Override
     public Stock handle(ConsumeStockCommand command) {
         Stock stock = stockRepository.findById(command.stockId())
-                .orElseThrow(() -> new ResourceNotFoundException("Stock", command.stockId().toString()));
+                .orElseThrow(() -> new StockNotFoundException(command.stockId()));
 
         if (stock.getQuantity() == null || stock.getQuantity() < command.quantity()) {
             throw new InsufficientStockException(
-                String.format("Estoque insuficiente para %s. Disponível: %d, Solicitado: %d",
-                    stock.getProductName(),
-                    stock.getQuantity() != null ? stock.getQuantity() : 0,
-                    command.quantity())
+                stock.getProductName(),
+                stock.getQuantity() != null ? stock.getQuantity() : 0,
+                command.quantity()
             );
         }
 

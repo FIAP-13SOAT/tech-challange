@@ -1,10 +1,10 @@
 package com.fiapchallenge.garage.application.serviceorder.cancel;
 
+import com.fiapchallenge.garage.application.serviceorder.exceptions.ServiceOrderNotFoundException;
 import com.fiapchallenge.garage.application.stock.add.AddStockUseCase;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.application.stock.command.AddStockCommand;
-import com.fiapchallenge.garage.shared.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +23,7 @@ public class CancelServiceOrderService implements CancelServiceOrderUseCase {
     @Override
     public ServiceOrder handle(CancelServiceOrderCommand command) {
         ServiceOrder serviceOrder = serviceOrderRepository.findById(command.serviceOrderId())
-                .orElseThrow(() -> new ResourceNotFoundException("Service Order", command.serviceOrderId().toString()));
+                .orElseThrow(() -> new ServiceOrderNotFoundException(command.serviceOrderId()));
 
         if (serviceOrder.getStockItems() != null && !serviceOrder.getStockItems().isEmpty()) {
             for (var item : serviceOrder.getStockItems()) {

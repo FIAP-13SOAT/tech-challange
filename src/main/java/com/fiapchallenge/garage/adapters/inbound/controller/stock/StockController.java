@@ -1,8 +1,6 @@
 package com.fiapchallenge.garage.adapters.inbound.controller.stock;
 
-import com.fiapchallenge.garage.adapters.inbound.controller.stock.dto.CreateStockRequestDTO;
-import com.fiapchallenge.garage.adapters.inbound.controller.stock.dto.StockDTO;
-import com.fiapchallenge.garage.adapters.inbound.controller.stock.dto.UpdateStockRequestDTO;
+import com.fiapchallenge.garage.adapters.inbound.controller.stock.dto.*;
 import com.fiapchallenge.garage.adapters.inbound.controller.stock.mapper.StockMapper;
 import com.fiapchallenge.garage.application.stock.create.CreateStockUseCase;
 import com.fiapchallenge.garage.application.stock.delete.DeleteStockUseCase;
@@ -12,16 +10,13 @@ import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.application.stock.command.CreateStockCommand;
 import com.fiapchallenge.garage.application.stock.command.UpdateStockCommand;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestParam;
 import com.fiapchallenge.garage.application.stock.command.ConsumeStockCommand;
 import com.fiapchallenge.garage.application.stock.consume.ConsumeStockUseCase;
 import com.fiapchallenge.garage.application.stock.command.AddStockCommand;
@@ -31,7 +26,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("stock")
-@Validated
 public class StockController implements StockControllerOpenApiSpec {
 
     private final CreateStockUseCase createStockUseCase;
@@ -109,8 +103,8 @@ public class StockController implements StockControllerOpenApiSpec {
     @PostMapping("/{id}/consume")
     @PreAuthorize("hasAnyRole('ADMIN', 'STOCK_KEEPER')")
     public ResponseEntity<StockDTO> consumeStock(@PathVariable UUID id,
-                                            @RequestParam @Positive(message = "Quantidade deve ser positiva") Integer quantity) {
-        ConsumeStockCommand command = new ConsumeStockCommand(id, quantity);
+                                            @Valid @RequestBody ConsumeStockRequestDTO request) {
+        ConsumeStockCommand command = new ConsumeStockCommand(id, request.quantity());
         Stock stock = consumeStockUseCase.handle(command);
         return ResponseEntity.ok(StockMapper.toResponseDTO(stock));
     }
@@ -119,8 +113,8 @@ public class StockController implements StockControllerOpenApiSpec {
     @PostMapping("/{id}/add")
     @PreAuthorize("hasAnyRole('ADMIN', 'STOCK_KEEPER')")
     public ResponseEntity<StockDTO> addStock(@PathVariable UUID id,
-                                         @RequestParam @Positive(message = "Quantidade deve ser positiva") Integer quantity) {
-        AddStockCommand command = new AddStockCommand(id, quantity);
+                                         @Valid @RequestBody AddStockRequestDTO request) {
+        AddStockCommand command = new AddStockCommand(id, request.quantity());
         Stock stock = addStockUseCase.handle(command);
         return ResponseEntity.ok(StockMapper.toResponseDTO(stock));
     }

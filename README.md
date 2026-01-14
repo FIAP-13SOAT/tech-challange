@@ -1,97 +1,75 @@
 # SOAT Tech-challenge
 
+## Sobre o Projeto
+
+Sistema de gestão para oficinas mecânicas desenvolvido como projeto acadêmico da pós-graduação em Software Architecture da FIAP. A solução digitaliza e centraliza os processos operacionais de uma oficina, desde o atendimento inicial até a conclusão dos serviços, proporcionando maior controle e transparência na gestão.
+
+## Problema que Resolve
+
+Oficinas mecânicas frequentemente enfrentam desafios na gestão de ordens de serviço, controle de estoque de peças, acompanhamento de orçamentos e comunicação com clientes. Este sistema oferece uma plataforma integrada que:
+
+- Centraliza informações de clientes e veículos
+- Automatiza a criação e acompanhamento de ordens de serviço
+- Facilita o controle de estoque de peças e materiais
+- Gera orçamentos de forma ágil
+- Permite que clientes acompanhem o status de seus serviços em tempo real
+
+## Funcionalidades Principais
+
+### Para Funcionários (Uso Interno)
+- **Gestão de Clientes e Veículos**: Cadastro e manutenção de informações de clientes e seus veículos
+- **Controle de Estoque**: Gerenciamento de peças e materiais disponíveis
+- **Ordens de Serviço**: Criação, atualização e acompanhamento de OS
+- **Geração de Orçamentos**: Criação de orçamentos detalhados para aprovação
+- **Relatórios**: Visualização de relatórios de execução das ordens de serviço
+
+### Para Clientes (Acesso Externo)
+- **Acompanhamento de OS**: Consulta do status e andamento da ordem de serviço via endpoint público
+
+## Perfis de Usuário
+
+- **Administrativo**: Acesso completo ao sistema, gestão de usuários e configurações
+- **Atendente**: Cadastro de clientes, veículos, criação de OS e orçamentos
+- **Mecânico**: Atualização de status e execução das ordens de serviço
+- **Cliente**: Consulta de status da própria ordem de serviço
+
+## Arquitetura
+
+O projeto implementa **Clean Architecture**, garantindo separação de responsabilidades, testabilidade e manutenibilidade do código. Atualmente desenvolvido como monolito, com estrutura preparada para evolução futura.
+
+# Infraestrutura
+
+A aplicação utiliza orquestração em Kubernetes, com escalonamento automático de pods por meio do **Horizontal Pod Autoscaler (HPA)**.
+Toda a infraestrutura é gerenciada via **Infrastructure as Code (IaC)**, responsável pelo provisionamento do cluster Kubernetes na AWS.
+
+## CI/CD
+
+O projeto conta com uma pipeline de **CI/CD** configurada (GitHub Actions, GitLab CI, entre outras), responsável por:
+
+- Build da aplicação
+- Execução de testes automatizados
+- Criação da imagem Docker
+- Publicação da imagem no registry
+- Deploy automatizado no cluster Kubernetes
+
+Essa automação garante entregas contínuas, padronizadas e confiáveis em todos os ambientes.
+
+## Diagrama de Arquitetura de Infraestrutura
+
+![Arquitetura da aplicação em nuvem](docs/infra/infra.png)
+
+
 ## Tecnologias
 - Java 21
 - Maven
 - Spring Boot
 - PostgreSQL
 - Docker
+- Terraform (Infraestrutura AWS)
+- Kubernetes (EKS)
 
-## Requisitos Mínimos
-- Docker 20.10+
-- Docker Compose 2.0+
-- 4GB RAM disponível
-- 2GB espaço em disco
+## Documentação Adicional
 
-## Como Executar
-
-### 1. Clone o repositório
-```bash
-git clone <url-do-repositorio>
-cd tech-challange
-```
-
-### 2. Execute com Docker
-```bash
-docker-compose up --build
-```
-
-### 2.1. Para desenvolvimento (banco em debug)
-```bash
-docker-compose -f docker-compose-dev.yml up --build
-```
-
-### 3. Acesse a aplicação
-- **API**: http://localhost:8080
-- **Swagger UI**: http://localhost:8080/swagger-ui/index.html
-- **PostgreSQL**: localhost:5432
-
-### 4. Para parar a aplicação
-```bash
-docker-compose down
-```
-
-## Documentação
-
-- Documentação da API disponibilizada em: http://localhost:8080/swagger-ui/index.html
-
-## Testes:
-### Verificar cobertura de testes:
-Para executar a análise de cobertura de testes localmente com o SonarQube:
-
-#### Para o primeiro acesso:
-1.  **Subir o container docker do SonarQube:**
-    ```bash
-    docker compose -f docker-compose-sonar.yml up -d
-    ```
-
-2.  **Acessar a interface do SonarQube:**
-    * Abra `http://localhost:9000` no seu navegador.
-    * Faça login com as credenciais padrão: `admin` / `admin`f
-
-3.  **Configurar nova senha:**
-    * O SonarQube solicitará que você altere a senha padrão. Faça isso para continuar.
-
-4.  **Desabilitar autenticação forçada:**
-    * Este passo simplifica a análise local, permitindo que o Maven crie o projeto automaticamente na primeira vez, **sem a necessidade de gerar tokens** ou configurar o projeto manualmente na UI.
-    * Navegue até: `Administration` (Administração) > `Configuration` (Configuração) > `General Settings` (Configurações Gerais).
-    * No menu da esquerda, clique em `Security` (Segurança).
-    * Encontre a opção **`Force user authentication`** (Forçar autenticação do usuário) e **DESATIVE-A** (mude o seletor para `false`).
-    * Navegue até: `Administration` (Administração) > `Security` (Segurança) > `Global permissions` (Permissões Gerais).
-    * Marque as opções de Execute Analysis e Create projects para a role Anyone
-
-5.  **Executar a análise:**
-    * Com o SonarQube rodando e a autenticação desabilitada, basta executar o comando Maven no diretório do projeto:
-    ```bash
-    mvn clean verify sonar:sonar
-    ```
-    * Na primeira execução, o scanner do Sonar irá criar automaticamente o projeto `garage-tech-challenge` na sua instância local e enviar o relatório de análise. Você poderá ver os resultados em `http://localhost:9000`.
-
-6.  **Verificar resultado:**
-    * Abra `http://localhost:9000` no seu navegador.
-    * Verifique a última análise executada.
-
-### Testes de Segurança com OWASP ZAP:
-Para executar testes de segurança automatizados:
-
-#### Execução completa com Docker Compose
-```bash
-# Sobe aplicação e executa testes de segurança
-docker compose -f docker-compose-zap.yml up --build
-docker compose -f docker-compose-zap.yml --profile security-test up zap
-```
-
-**Relatórios gerados:**
-- `./zap-reports/baseline-report.html` - Relatório baseline
-- `./zap-reports/full-report.html` - Relatório completo
-- Arquivos XML também são gerados para integração CI/CD
+- **[Arquitetura](docs/ARCHITECTURE.md)** - Regras arquiteturais e organização do código
+- **[Guia de Execução](docs/SETUP.md)** - Instruções para executar o projeto
+- **[Guia de Testes](docs/TESTING.md)** - Instruções para executar análises de cobertura e segurança

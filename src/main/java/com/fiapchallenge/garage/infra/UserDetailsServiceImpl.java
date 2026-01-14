@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.infra;
 
-import com.fiapchallenge.garage.application.user.UserNotFoundException;
+import com.fiapchallenge.garage.application.user.exceptions.UserNotFoundException;
 import com.fiapchallenge.garage.domain.user.User;
 import com.fiapchallenge.garage.domain.user.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,7 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UserNotFoundException {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("O Usuário não foi encontrado"));
+                .orElseThrow(() -> new UserNotFoundException(email));
 
         var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
 

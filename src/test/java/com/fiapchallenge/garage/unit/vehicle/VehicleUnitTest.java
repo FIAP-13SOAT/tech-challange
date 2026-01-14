@@ -2,7 +2,7 @@ package com.fiapchallenge.garage.unit.vehicle;
 
 import com.fiapchallenge.garage.adapters.outbound.repositories.customer.CustomerRepositoryImpl;
 import com.fiapchallenge.garage.adapters.outbound.repositories.vehicle.VehicleRepositoryImpl;
-import com.fiapchallenge.garage.application.vehicle.CreateVehicleService;
+import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
 import com.fiapchallenge.garage.unit.vehicle.factory.VehicleTestFactory;
 import org.junit.jupiter.api.DisplayName;
