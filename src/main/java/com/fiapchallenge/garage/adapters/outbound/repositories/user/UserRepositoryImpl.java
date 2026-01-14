@@ -29,11 +29,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     public Optional<User> findByEmail(String email) {
-        UserEntity userEntity = jpaUserRepository.findByEmail(email);
-        if (userEntity == null) {
-            return Optional.empty();
-        }
-        return Optional.of(convertFromEntity(userEntity));
+        Optional<UserEntity> userEntity = jpaUserRepository.findByEmail(email);
+
+        return userEntity.map(this::convertFromEntity);
     }
 
     private User convertFromEntity(UserEntity userEntity) {
