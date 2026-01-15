@@ -1,5 +1,6 @@
 package com.fiapchallenge.garage.application.serviceorder.finishdiagnosis;
 
+import com.fiapchallenge.garage.application.quote.GenerateQuoteUseCase;
 import com.fiapchallenge.garage.application.serviceorder.exceptions.ServiceOrderNotFoundException;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
@@ -13,8 +14,11 @@ public class FinishServiceOrderDiagnosticService implements FinishServiceOrderDi
 
     private final ServiceOrderRepository serviceOrderRepository;
 
-    public FinishServiceOrderDiagnosticService(ServiceOrderRepository serviceOrderRepository) {
+    private final GenerateQuoteUseCase generateQuoteUseCase;
+
+    public FinishServiceOrderDiagnosticService(ServiceOrderRepository serviceOrderRepository, GenerateQuoteUseCase generateQuoteUseCase) {
         this.serviceOrderRepository = serviceOrderRepository;
+        this.generateQuoteUseCase = generateQuoteUseCase;
     }
 
     @Override
@@ -23,7 +27,7 @@ public class FinishServiceOrderDiagnosticService implements FinishServiceOrderDi
 
         serviceOrder.sendToApproval();
         serviceOrderRepository.save(serviceOrder);
-
+        generateQuoteUseCase.handle(serviceOrder.getId());
         return serviceOrder;
     }
 }

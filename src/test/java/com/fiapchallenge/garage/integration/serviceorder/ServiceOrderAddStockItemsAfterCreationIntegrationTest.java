@@ -116,10 +116,6 @@ class ServiceOrderAddStockItemsAfterCreationIntegrationTest extends BaseIntegrat
                         .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/quotes/service-order/" + serviceOrderId)
-                        .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
-                .andExpect(status().isOk());
-
         mockMvc.perform(post("/quotes/service-order/" + serviceOrderId + "/approve")
                         .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk());
