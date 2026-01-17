@@ -46,22 +46,31 @@ jobs:
 
             -   name: Terraform Plan
                 working-directory: ./infra
+                continue-on-error: true
+                id: plan
                 run: |
                     echo "Planejando infraestrutura..."
-                    terraform plan
+                    terraform plan -detailed-exitcode
 
             -   name: Terraform Apply - Deploy Infrastructure
                 working-directory: ./infra
+                if: steps.plan.outcome == 'failure'
                 run: |
                     echo "Provisionando infraestrutura AWS (VPC, EKS, RDS)..."
                     terraform apply -auto-approve
                     echo "Infraestrutura provisionada com sucesso!"
+
+            -   name: Skip Terraform Apply
+                if: steps.plan.outcome == 'success'
+                run: |
+                    echo "✅ Infraestrutura já está atualizada. Pulando terraform apply."
 
             -   name: Get Terraform Outputs
                 id: tf-output
                 working-directory: ./infra
                 run: |
                     echo "Capturando outputs do Terraform..."
+                    terraform refresh
                     echo "db_endpoint=$(terraform output -raw rds_endpoint)" >> $GITHUB_OUTPUT
 
     # ========================================
