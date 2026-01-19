@@ -53,10 +53,16 @@ jobs:
           working-directory: ./infra
           continue-on-error: true
           run: |
+            set +e
             terraform plan -detailed-exitcode
             PLAN_EXIT_CODE=$?
+            set -e
+            echo "Plan exit code: $PLAN_EXIT_CODE"
             echo "exitcode=$PLAN_EXIT_CODE" >> $GITHUB_OUTPUT
-            exit 0
+
+        - name: Debug Plan Output
+          run: |
+            echo "Captured exit code: ${{ steps.plan.outputs.exitcode }}"
 
         - name: Terraform Apply
           if: steps.plan.outputs.exitcode == '2'
