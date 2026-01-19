@@ -38,6 +38,15 @@ jobs:
             aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
             aws-region: ${{ env.AWS_REGION }}
 
+        - name: Create S3 bucket for Terraform state if not exists
+          run: |
+            if ! aws s3 ls s3://garage-terraform-state-921831200874 2>/dev/null; then
+              echo "Creating S3 bucket for Terraform state..."
+              aws s3 mb s3://garage-terraform-state-921831200874 --region us-east-1
+            else
+              echo "S3 bucket already exists"
+            fi
+
         - name: Setup Terraform
           uses: hashicorp/setup-terraform@v3
           with:
@@ -59,15 +68,14 @@ jobs:
             set -e
             echo "Plan exit code: $PLAN_EXIT_CODE"
             echo "exitcode=$PLAN_EXIT_CODE" >> $GITHUB_OUTPUT
-
-        - name: Debug Plan Output
-          run: |
-            echo "Captured exit code: ${{ steps.plan.outputs.exitcode }}"
+            
 
         - name: Terraform Apply
           if: steps.plan.outputs.exitcode == '2'
           working-directory: ./infra
-          run: terraform apply -auto-approve
+          run: |
+            echo "Applying infrastructure changes..."
+            terraform apply -auto-approve
 
         - name: Get Terraform Outputs
           id: tf-output
