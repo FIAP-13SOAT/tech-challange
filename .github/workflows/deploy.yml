@@ -60,17 +60,18 @@ jobs:
                     terraform apply -auto-approve
                     echo "Infraestrutura provisionada com sucesso!"
 
-            -   name: Skip Terraform Apply
+            -   name: Terraform Refresh - Sync State
+                working-directory: ./infra
                 if: steps.plan.outcome == 'success'
                 run: |
-                    echo "✅ Infraestrutura já está atualizada. Pulando terraform apply."
+                    echo "Sincronizando state com infraestrutura existente..."
+                    terraform refresh -auto-approve
 
             -   name: Get Terraform Outputs
                 id: tf-output
                 working-directory: ./infra
                 run: |
                     echo "Capturando outputs do Terraform..."
-                    terraform refresh
                     echo "db_endpoint=$(terraform output -raw rds_endpoint)" >> $GITHUB_OUTPUT
 
     # ========================================
