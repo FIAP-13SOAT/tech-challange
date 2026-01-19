@@ -42,6 +42,7 @@ jobs:
           uses: hashicorp/setup-terraform@v3
           with:
             terraform_version: 1.5.0
+            terraform_wrapper: false
 
         - name: Terraform Init
           working-directory: ./infra
@@ -86,7 +87,6 @@ jobs:
             echo "📤 Capturando outputs do Terraform..."
             DB_ENDPOINT=$(terraform output -raw rds_endpoint 2>/dev/null || echo "")
             echo "db_endpoint=$DB_ENDPOINT" >> $GITHUB_OUTPUT
-            echo "✅ Output capturado: $DB_ENDPOINT"
 
 
     # ========================================
