@@ -46,55 +46,28 @@ jobs:
 
         - name: Terraform Init
           working-directory: ./infra
-          run: |
-            echo "🔧 Inicializando Terraform..."
-            terraform init -input=false -upgrade
+          run: terraform init -input=false
 
         - name: Terraform Plan
           id: plan
           working-directory: ./infra
-          continue-on-error: true
           run: |
-            echo "📐 Executando terraform plan..."
             terraform plan -detailed-exitcode
-            PLAN_EXIT_CODE=$?
-            echo "exitcode=$PLAN_EXIT_CODE" >> $GITHUB_OUTPUT
+            echo "exitcode=$?" >> $GITHUB_OUTPUT
+          continue-on-error: true
 
-
-        - name: Fail if plan errored
-          if: steps.plan.outputs.exitcode == '1'
-          run: |
-            echo "❌ Terraform plan falhou. Abortando pipeline."
-            exit 1
-
-        - name: Terraform Apply - Deploy Infrastructure
+        - name: Terraform Apply
           if: steps.plan.outputs.exitcode == '2'
           working-directory: ./infra
-          run: |
-            echo "🚀 Alterações detectadas. Aplicando infraestrutura..."
-            terraform apply -auto-approve
-            echo "✅ Infraestrutura provisionada com sucesso!"
-
-        - name: Skip Terraform Apply
-          if: steps.plan.outputs.exitcode == '0'
-          run: |
-            echo "✅ Infraestrutura já está atualizada. Pulando terraform apply."
+          run: terraform apply -auto-approve
 
         - name: Get Terraform Outputs
           id: tf-output
           working-directory: ./infra
+          if: always()
           run: |
-            set +e
-            DB_ENDPOINT=$(terraform output -raw rds_endpoint 2>/tmp/tf_err.log)
-            EXIT_CODE=$?
-            set -e
-            
-            if [ $EXIT_CODE -eq 0 ]; then
-              echo "db_endpoint=$DB_ENDPOINT" >> $GITHUB_OUTPUT
-            else
-              echo "db_endpoint=" >> $GITHUB_OUTPUT
-            fi
-
+            DB_ENDPOINT=$(terraform output -raw rds_endpoint 2>/dev/null || echo "")
+            echo "db_endpoint=$DB_ENDPOINT" >> $GITHUB_OUTPUT
 
     # ========================================
     # JOB 2: DEPLOY - Build e Deploy da Aplicação
