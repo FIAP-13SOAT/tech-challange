@@ -84,13 +84,9 @@ jobs:
           working-directory: ./infra
           run: |
             echo "📤 Capturando outputs do Terraform..."
-
-            if terraform output -json >/dev/null 2>&1; then
-              DB_ENDPOINT=$(terraform output -raw rds_endpoint 2>/dev/null || true)
-              echo "db_endpoint=$DB_ENDPOINT" >> $GITHUB_OUTPUT
-            else
-              echo "db_endpoint=" >> $GITHUB_OUTPUT
-            fi
+            DB_ENDPOINT=$(terraform output -raw rds_endpoint 2>/dev/null || echo "")
+            echo "db_endpoint=$DB_ENDPOINT" >> $GITHUB_OUTPUT
+            echo "✅ Output capturado: $DB_ENDPOINT"
 
 
     # ========================================
