@@ -84,9 +84,16 @@ jobs:
           id: tf-output
           working-directory: ./infra
           run: |
-            echo "📤 Capturando outputs do Terraform..."
-            DB_ENDPOINT=$(terraform output -raw rds_endpoint 2>/dev/null || echo "")
-            echo "db_endpoint=$DB_ENDPOINT" >> $GITHUB_OUTPUT
+            set +e
+            DB_ENDPOINT=$(terraform output -raw rds_endpoint 2>/tmp/tf_err.log)
+            EXIT_CODE=$?
+            set -e
+            
+            if [ $EXIT_CODE -eq 0 ]; then
+              echo "db_endpoint=$DB_ENDPOINT" >> $GITHUB_OUTPUT
+            else
+              echo "db_endpoint=" >> $GITHUB_OUTPUT
+            fi
 
 
     # ========================================
