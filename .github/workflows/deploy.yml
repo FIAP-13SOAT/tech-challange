@@ -60,12 +60,11 @@ jobs:
                     terraform apply -auto-approve
                     echo "Infraestrutura provisionada com sucesso!"
 
-            -   name: Terraform Refresh - Sync State
+            -   name: Skip Terraform Apply
                 working-directory: ./infra
                 if: steps.plan.outcome == 'success'
                 run: |
-                    echo "Sincronizando state com infraestrutura existente..."
-                    terraform refresh -auto-approve
+                    echo "✅ Infraestrutura já está atualizada. Pulando terraform apply."
 
             -   name: Get Terraform Outputs
                 id: tf-output
