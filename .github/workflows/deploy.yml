@@ -16,62 +16,75 @@ jobs:
     # JOB 1: TERRAFORM - Provisiona Infraestrutura AWS
     # ========================================
     terraform:
-        name: Provision Infrastructure with Terraform
-        runs-on: ubuntu-latest
-        outputs:
-            db_endpoint: ${{ steps.tf-output.outputs.db_endpoint }}
+      name: Provision Infrastructure with Terraform
+      runs-on: ubuntu-latest
 
-        steps:
-            -   name: Checkout code
-                uses: actions/checkout@v4
+      concurrency:
+        group: terraform-${{ github.ref }}
+        cancel-in-progress: false
 
-            -   name: Configure AWS credentials
-                uses: aws-actions/configure-aws-credentials@v4
-                with:
-                    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                    aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-                    aws-region: ${{ env.AWS_REGION }}
+      outputs:
+        db_endpoint: ${{ steps.tf-output.outputs.db_endpoint }}
 
-            -   name: Setup Terraform
-                uses: hashicorp/setup-terraform@v3
-                with:
-                    terraform_version: 1.5.0
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-            -   name: Terraform Init
-                working-directory: ./infra
-                run: |
-                    echo "Inicializando Terraform..."
-                    terraform init
+        - name: Configure AWS credentials
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+            aws-region: ${{ env.AWS_REGION }}
 
-            -   name: Terraform Plan
-                working-directory: ./infra
-                continue-on-error: true
-                id: plan
-                run: |
-                    echo "Planejando infraestrutura..."
-                    terraform plan -detailed-exitcode
+        - name: Setup Terraform
+          uses: hashicorp/setup-terraform@v3
+          with:
+            terraform_version: 1.5.0
 
-            -   name: Terraform Apply - Deploy Infrastructure
-                working-directory: ./infra
-                if: steps.plan.outcome == 'failure'
-                run: |
-                    echo "Provisionando infraestrutura AWS (VPC, EKS, RDS)..."
-                    terraform apply -auto-approve
-                    echo "Infraestrutura provisionada com sucesso!"
+        - name: Terraform Init
+          working-directory: ./infra
+          run: |
+            echo "🔧 Inicializando Terraform..."
+            terraform init -input=false -upgrade
 
-            -   name: Skip Terraform Apply
-                working-directory: ./infra
-                if: steps.plan.outcome == 'success'
-                run: |
-                    echo "✅ Infraestrutura já está atualizada. Pulando terraform apply."
+        - name: Terraform Plan
+          id: plan
+          working-directory: ./infra
+          continue-on-error: true
+          run: |
+            echo "📐 Executando terraform plan..."
+            terraform plan -detailed-exitcode
+            echo "exitcode=$?" >> $GITHUB_OUTPUT
 
-            -   name: Get Terraform Outputs
-                id: tf-output
-                working-directory: ./infra
-                run: |
-                    echo "Capturando outputs do Terraform..."
-                    echo "db_endpoint=$(terraform output -raw rds_endpoint)" >> $GITHUB_OUTPUT
+        - name: Fail if plan errored
+          if: steps.plan.outputs.exitcode == '1'
+          run: |
+            echo "❌ Terraform plan falhou. Abortando pipeline."
+            exit 1
+
+        - name: Terraform Apply - Deploy Infrastructure
+          if: steps.plan.outputs.exitcode == '2'
+          working-directory: ./infra
+          run: |
+            echo "🚀 Alterações detectadas. Aplicando infraestrutura..."
+            terraform apply -auto-approve
+            echo "✅ Infraestrutura provisionada com sucesso!"
+
+        - name: Skip Terraform Apply
+          if: steps.plan.outputs.exitcode == '0'
+          run: |
+            echo "✅ Infraestrutura já está atualizada. Pulando terraform apply."
+
+        - name: Get Terraform Outputs
+          id: tf-output
+          working-directory: ./infra
+          run: |
+            echo "📤 Capturando outputs do Terraform..."
+            DB_ENDPOINT=$(terraform output -raw rds_endpoint 2>/dev/null || true)
+            echo "db_endpoint=$DB_ENDPOINT" >> $GITHUB_OUTPUT
+
 
     # ========================================
     # JOB 2: DEPLOY - Build e Deploy da Aplicação
