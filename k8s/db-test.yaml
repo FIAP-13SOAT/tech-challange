@@ -19,11 +19,20 @@ spec:
                   fi
           env:
               - name: DB_HOST
-                value: "garage-postgres.canmvttgiwav.us-east-1.rds.amazonaws.com"
+                valueFrom:
+                    configMapKeyRef:
+                        name: garage-config
+                        key: DB_HOST
               - name: DB_PORT
-                value: "5432"
+                valueFrom:
+                    configMapKeyRef:
+                        name: garage-config
+                        key: DB_PORT
               - name: DB_NAME
-                value: "garage"
+                valueFrom:
+                    configMapKeyRef:
+                        name: garage-config
+                        key: DB_NAME
               - name: DB_USER
                 valueFrom:
                     secretKeyRef:
