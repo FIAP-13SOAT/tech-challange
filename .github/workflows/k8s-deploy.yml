@@ -1,4 +1,4 @@
-name: Deploy Application to EKS
+name: Deploy to Kubernetes
 
 on:
     workflow_call:
@@ -9,30 +9,25 @@ on:
             db_secret_arn:
                 required: true
                 type: string
+            image_tag:
+                required: true
+                type: string
+            ecr_registry:
+                required: true
+                type: string
 
 env:
     AWS_REGION: us-east-1
     EKS_CLUSTER_NAME: garage-cluster
-    ECR_REPOSITORY: garage-app
 
 jobs:
     deploy:
-        name: Build and Deploy Application
+        name: Deploy to EKS
         runs-on: ubuntu-latest
 
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
-
-            - name: Set up JDK 21
-              uses: actions/setup-java@v4
-              with:
-                  java-version: '21'
-                  distribution: 'temurin'
-                  cache: maven
-
-            - name: Build application with Maven
-              run: ./mvnw clean package -DskipTests
 
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@v4
@@ -42,26 +37,12 @@ jobs:
                   aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
                   aws-region: ${{ env.AWS_REGION }}
 
-            - name: Login to Amazon ECR
-              id: login-ecr
-              uses: aws-actions/amazon-ecr-login@v2
-
-            - name: Build and push Docker image
-              env:
-                  ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-                  IMAGE_TAG: ${{ github.sha }}
-              run: |
-                  IMAGE_TAG=${GITHUB_SHA}
-                  docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-                  echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-
             - name: Update kubeconfig
               run: aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_NAME }}
 
             - name: Create ECR pull secret
               env:
-                  ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+                  ECR_REGISTRY: ${{ inputs.ecr_registry }}
               run: |
                   kubectl create secret docker-registry ecr-secret \
                     --namespace default \
@@ -71,7 +52,6 @@ jobs:
                     --dry-run=client -o yaml | kubectl apply -f -
 
             - name: Get DB secret from AWS
-              id: db-secret
               env:
                   DB_SECRET_ARN: ${{ inputs.db_secret_arn }}
               run: |
@@ -109,7 +89,8 @@ jobs:
 
             - name: Apply Deployment
               env:
-                  ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+                  ECR_REGISTRY: ${{ inputs.ecr_registry }}
+                  IMAGE_TAG: ${{ inputs.image_tag }}
               run: |
                   sed -e "s|\${IMAGE_TAG}|$IMAGE_TAG|g" \
                       -e "s|\${ECR_REGISTRY}|$ECR_REGISTRY|g" \
