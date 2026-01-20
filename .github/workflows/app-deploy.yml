@@ -1,0 +1,124 @@
+name: Deploy Application to EKS
+
+on:
+    workflow_call:
+        inputs:
+            db_endpoint:
+                required: true
+                type: string
+            db_secret_arn:
+                required: true
+                type: string
+
+env:
+    AWS_REGION: us-east-1
+    EKS_CLUSTER_NAME: garage-cluster
+    ECR_REPOSITORY: garage-app
+
+jobs:
+    deploy:
+        name: Build and Deploy Application
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up JDK 21
+              uses: actions/setup-java@v4
+              with:
+                  java-version: '21'
+                  distribution: 'temurin'
+                  cache: maven
+
+            - name: Build application with Maven
+              run: ./mvnw clean package -DskipTests
+
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+                  aws-region: ${{ env.AWS_REGION }}
+
+            - name: Login to Amazon ECR
+              id: login-ecr
+              uses: aws-actions/amazon-ecr-login@v2
+
+            - name: Build and push Docker image
+              env:
+                  ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+                  IMAGE_TAG: ${{ github.sha }}
+              run: |
+                  IMAGE_TAG=${GITHUB_SHA}
+                  docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+                  echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+            - name: Update kubeconfig
+              run: aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_NAME }}
+
+            - name: Create ECR pull secret
+              env:
+                  ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+              run: |
+                  kubectl create secret docker-registry ecr-secret \
+                    --namespace default \
+                    --docker-server=$ECR_REGISTRY \
+                    --docker-username=AWS \
+                    --docker-password=$(aws ecr get-login-password --region ${{ env.AWS_REGION }}) \
+                    --dry-run=client -o yaml | kubectl apply -f -
+
+            - name: Get DB secret from AWS
+              id: db-secret
+              env:
+                  DB_SECRET_ARN: ${{ inputs.db_secret_arn }}
+              run: |
+                  if [ -z "$DB_SECRET_ARN" ]; then
+                    echo "Error: DB_SECRET_ARN is empty. RDS secret not created yet."
+                    exit 1
+                  fi
+                  
+                  SECRET=$(aws secretsmanager get-secret-value \
+                    --secret-id "$DB_SECRET_ARN" \
+                    --query SecretString \
+                    --output text)
+
+                  echo "DB_USER=$(echo $SECRET | jq -r .username)" >> $GITHUB_ENV
+                  echo "DB_PASS=$(echo $SECRET | jq -r .password)" >> $GITHUB_ENV
+
+            - name: Apply ConfigMap
+              env:
+                  DB_ENDPOINT: ${{ inputs.db_endpoint }}
+              run: |
+                  DB_HOST=$(echo $DB_ENDPOINT | cut -d':' -f1)
+                  sed -e "s|\${DB_ENDPOINT}|$DB_HOST|g" \
+                      k8s/configmap.yaml | kubectl apply -f -
+
+            - name: Apply Secret
+              run: |
+                  DB_USER_B64=$(echo -n "$DB_USER" | base64)
+                  DB_PASS_B64=$(echo -n "$DB_PASS" | base64)
+                  sed -e "s|<BASE64_USERNAME>|$DB_USER_B64|g" \
+                      -e "s|<BASE64_PASSWORD>|$DB_PASS_B64|g" \
+                      k8s/db-secret.yaml | kubectl apply -f -
+
+            - name: Apply Service
+              run: kubectl apply -f k8s/service.yaml
+
+            - name: Apply Deployment
+              env:
+                  ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+              run: |
+                  sed -e "s|\${IMAGE_TAG}|$IMAGE_TAG|g" \
+                      -e "s|\${ECR_REGISTRY}|$ECR_REGISTRY|g" \
+                      k8s/deployment.yaml | kubectl apply -f -
+                  kubectl rollout restart deployment/garage-app
+
+            - name: Apply HPA
+              run: kubectl apply -f k8s/hpa.yaml
+
+            - name: Wait rollout
+              continue-on-error: true
+              run: kubectl rollout status deployment/garage-app --timeout=5m
