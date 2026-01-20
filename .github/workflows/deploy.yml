@@ -232,8 +232,10 @@ jobs:
                     echo "=== Checking pod status details ==="
                     kubectl get pods -l app=garage-app -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.phase}{"\t"}{.status.containerStatuses[0].state}{"\n"}{end}'
                     echo ""
-                    echo "=== Testing DB connectivity from runner ==="
-                    nc -zv garage-postgres.cayxnal5elqt.us-east-1.rds.amazonaws.com 5432 2>&1 || echo "DB not reachable from runner"
+                    echo "=== Testing DB connectivity from pod ==="
+                    kubectl run db-test --image=busybox --rm -i --restart=Never -- \
+                      sh -c "nc -zv garage-postgres.cayxnal5elqt.us-east-1.rds.amazonaws.com 5432" 2>&1 || \
+                      echo "DB not reachable from cluster"
 
             -   name: Wait rollout
                 continue-on-error: true
