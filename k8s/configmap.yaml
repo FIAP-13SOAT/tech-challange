@@ -3,9 +3,7 @@ kind: ConfigMap
 metadata:
     name: garage-config
 data:
-    DB_HOST: "garage-postgres.cayxnal5elqt.us-east-1.rds.amazonaws.com"
+    DB_HOST: "${DB_ENDPOINT}"
     DB_PORT: "5432"
     DB_NAME: "garage"
-    DB_USER: "postgres"
-    DB_PASSWORD: "fYB#kbp(_#AIf3J7ASYboH..RG34"
     SPRING_PROFILES_ACTIVE: "prod"

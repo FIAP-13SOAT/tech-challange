@@ -6,7 +6,6 @@ on:
     workflow_dispatch:
 
 env:
-    DB_SECRET_ARN: ${{ secrets.DB_SECRET_ARN }}
     AWS_REGION: us-east-1
     EKS_CLUSTER_NAME: garage-cluster
     ECR_REPOSITORY: garage-app
@@ -25,6 +24,7 @@ jobs:
 
       outputs:
         db_endpoint: ${{ steps.tf-output.outputs.db_endpoint }}
+        db_secret_arn: ${{ steps.tf-output.outputs.db_secret_arn }}
 
       steps:
         - name: Checkout code
@@ -84,13 +84,16 @@ jobs:
           run: |
             set +e
             DB_ENDPOINT=$(terraform output -raw rds_endpoint 2>/tmp/tf_err.log)
+            DB_SECRET_ARN=$(terraform output -raw db_secret_arn 2>/tmp/tf_err.log)
             EXIT_CODE=$?
             set -e
             
             if [ $EXIT_CODE -eq 0 ]; then
               echo "db_endpoint=$DB_ENDPOINT" >> $GITHUB_OUTPUT
+              echo "db_secret_arn=$DB_SECRET_ARN" >> $GITHUB_OUTPUT
             else
               echo "db_endpoint=" >> $GITHUB_OUTPUT
+              echo "db_secret_arn=" >> $GITHUB_OUTPUT
             fi
 
     # ========================================
@@ -166,6 +169,8 @@ jobs:
             # 🔐 Buscar credenciais do banco no Secrets Manager
             -   name: Get DB secret from AWS
                 id: db-secret
+                env:
+                    DB_SECRET_ARN: ${{ needs.terraform.outputs.db_secret_arn }}
                 run: |
                     SECRET=$(aws secretsmanager get-secret-value \
                       --secret-id $DB_SECRET_ARN \
@@ -177,8 +182,11 @@ jobs:
 
             # 📝 Aplicar ConfigMap
             -   name: Apply ConfigMap
+                env:
+                    DB_ENDPOINT: ${{ needs.terraform.outputs.db_endpoint }}
                 run: |
-                    kubectl apply -f k8s/configmap.yaml
+                    sed -e "s|\${DB_ENDPOINT}|$DB_ENDPOINT|g" \
+                        k8s/configmap.yaml | kubectl apply -f -
 
             # 🔐 Aplicar Secret (usando YAML)
             -   name: Apply Secret
