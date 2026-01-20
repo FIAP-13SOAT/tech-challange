@@ -181,7 +181,13 @@ jobs:
                 env:
                     DB_ENDPOINT: ${{ needs.terraform.outputs.db_endpoint }}
                 run: |
-                    sed -e "s|\${DB_ENDPOINT}|$DB_ENDPOINT|g" \
+                    # Remover porta do endpoint (RDS retorna host:porta)
+                    DB_HOST=$(echo $DB_ENDPOINT | cut -d':' -f1)
+                    
+                    echo "Debug: DB_ENDPOINT=$DB_ENDPOINT"
+                    echo "Debug: DB_HOST=$DB_HOST"
+                    
+                    sed -e "s|\${DB_ENDPOINT}|$DB_HOST|g" \
                         k8s/configmap.yaml | kubectl apply -f -
 
             # 🔐 Aplicar Secret (usando YAML)
