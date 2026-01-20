@@ -103,11 +103,11 @@ jobs:
             - name: Test database connection
               continue-on-error: true
               run: |
+                  kubectl delete pod db-test --ignore-not-found=true
                   kubectl apply -f k8s/db-test.yaml
-                  kubectl wait --for=jsonpath='{.status.phase}'=Succeeded pod/db-test-8 --timeout=60s || \
-                  kubectl wait --for=jsonpath='{.status.phase}'=Failed pod/db-test-8 --timeout=5s || true
-                  kubectl logs db-test-8 || echo "Could not retrieve logs"
-                  kubectl delete pod db-test-8 --ignore-not-found=true
+                  sleep 30
+                  kubectl logs db-test 2>/dev/null || echo "⚠️ Could not retrieve test logs (pod may still be running)"
+                  kubectl delete pod db-test --ignore-not-found=true
 
             - name: Wait rollout
               continue-on-error: true
