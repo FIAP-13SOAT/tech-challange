@@ -126,6 +126,11 @@ jobs:
                     aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
                     aws-region: ${{ env.AWS_REGION }}
 
+            -   name: Verify AWS Account
+                run: |
+                    echo "Current AWS Account ID:"
+                    aws sts get-caller-identity
+
             -   name: Login to Amazon ECR
                 id: login-ecr
                 uses: aws-actions/amazon-ecr-login@v2
@@ -156,6 +161,12 @@ jobs:
                       --docker-username=AWS \
                       --docker-password=$(aws ecr get-login-password --region ${{ env.AWS_REGION }}) \
                       --dry-run=client -o yaml | kubectl apply -f -
+
+            # 🧹 Limpar pods antigos com imagens inválidas
+            -   name: Clean up old pods
+                run: |
+                    kubectl delete pods -l app=garage-app --field-selector=status.phase=Pending 2>/dev/null || true
+                    kubectl delete pods -l app=garage-app --field-selector=status.phase=Failed 2>/dev/null || true
 
             # 🔐 Buscar credenciais do banco no Secrets Manager
             -   name: Get DB secret from AWS
@@ -205,6 +216,17 @@ jobs:
                 run: |
                     kubectl apply -f k8s/hpa.yaml
 
+            # 🔍 Verificar status inicial dos pods
+            -   name: Check initial pod status
+                run: |
+                    echo "Waiting 30s for pods to start..."
+                    sleep 30
+                    echo "=== Current Pods ==="
+                    kubectl get pods -l app=garage-app -o wide
+                    echo ""
+                    echo "=== Quick log check ==="
+                    kubectl logs -l app=garage-app --tail=50 --all-containers=true 2>&1 || echo "Pods not ready yet"
+
             -   name: Wait rollout
                 run: |
                     kubectl rollout status deployment/garage-app --timeout=5m
@@ -218,8 +240,23 @@ jobs:
                     echo "=== Pod Description ==="
                     kubectl describe pod -l app=garage-app
                     echo ""
-                    echo "=== Application Logs ==="
-                    kubectl logs -l app=garage-app --tail=100 --all-containers=true || echo "No logs available"
+                    echo "=== Application Logs (Current) ==="
+                    for pod in $(kubectl get pods -l app=garage-app -o name); do
+                      echo "--- Logs from $pod ---"
+                      kubectl logs $pod --tail=100 2>&1 || echo "No current logs"
+                    done
+                    echo ""
+                    echo "=== Application Logs (Previous) ==="
+                    for pod in $(kubectl get pods -l app=garage-app -o name); do
+                      echo "--- Previous logs from $pod ---"
+                      kubectl logs $pod --previous --tail=100 2>&1 || echo "No previous logs"
+                    done
+                    echo ""
+                    echo "=== ConfigMap ==="
+                    kubectl get configmap garage-config -o yaml
+                    echo ""
+                    echo "=== Secret (masked) ==="
+                    kubectl get secret db-credentials -o yaml | grep -v "password:\|username:"
                     echo ""
                     echo "=== Recent Events ==="
-                    kubectl get events --sort-by='.lastTimestamp' | tail -20
+                    kubectl get events --sort-by='.lastTimestamp' | tail -30
