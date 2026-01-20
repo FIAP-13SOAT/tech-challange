@@ -100,15 +100,6 @@ jobs:
             - name: Apply HPA
               run: kubectl apply -f k8s/hpa.yaml
 
-            - name: Test database connection
-              continue-on-error: true
-              run: |
-                  kubectl delete pod db-test --ignore-not-found=true
-                  kubectl apply -f k8s/db-test.yaml
-                  sleep 30
-                  kubectl logs db-test 2>/dev/null || echo "⚠️ Could not retrieve test logs (pod may still be running)"
-                  kubectl delete pod db-test --ignore-not-found=true
-
             - name: Wait rollout
               continue-on-error: true
               run: kubectl rollout status deployment/garage-app --timeout=5m
