@@ -157,6 +157,7 @@ jobs:
                     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
                 run: |
                     kubectl create secret docker-registry ecr-secret \
+                      --namespace default \
                       --docker-server=$ECR_REGISTRY \
                       --docker-username=AWS \
                       --docker-password=$(aws ecr get-login-password --region ${{ env.AWS_REGION }}) \
