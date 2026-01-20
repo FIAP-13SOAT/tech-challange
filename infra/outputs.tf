@@ -23,5 +23,5 @@ output "rds_port" {
 # ARN do secret com a senha do banco
 output "db_secret_arn" {
     description = "ARN do secret contendo a senha do banco PostgreSQL"
-    value       = aws_db_instance.postgres.master_user_secret[0].secret_arn
+    value       = length(aws_db_instance.postgres.master_user_secret) > 0 ? aws_db_instance.postgres.master_user_secret[0].secret_arn : ""
 }
