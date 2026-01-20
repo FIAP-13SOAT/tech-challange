@@ -182,8 +182,12 @@ jobs:
 
             # 📦 Aplicar Deployment
             -   name: Apply Deployment
+                env:
+                    ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
                 run: |
-                    sed "s|\${IMAGE_TAG}|$IMAGE_TAG|g" k8s/deployment.yaml | kubectl apply -f -
+                    sed -e "s|\${IMAGE_TAG}|$IMAGE_TAG|g" \
+                        -e "s|\${ECR_REGISTRY}|$ECR_REGISTRY|g" \
+                        k8s/deployment.yaml | kubectl apply -f -
 
             # 📊 Aplicar HPA
             -   name: Apply HPA

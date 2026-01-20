@@ -13,7 +13,8 @@ spec:
         spec:
             containers:
                 - name: garage-app
-                  image: 964022050595.dkr.ecr.us-east-1.amazonaws.com/garage-app:${IMAGE_TAG}
+                  image: ${ECR_REGISTRY}/garage-app:${IMAGE_TAG}
+                  imagePullPolicy: Always
                   ports:
                       - containerPort: 8080
                   env:
