@@ -146,6 +146,17 @@ jobs:
                 run: |
                     aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_NAME }}
 
+            # 🔐 Criar secret para pull de imagens do ECR
+            -   name: Create ECR pull secret
+                env:
+                    ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+                run: |
+                    kubectl create secret docker-registry ecr-secret \
+                      --docker-server=$ECR_REGISTRY \
+                      --docker-username=AWS \
+                      --docker-password=$(aws ecr get-login-password --region ${{ env.AWS_REGION }}) \
+                      --dry-run=client -o yaml | kubectl apply -f -
+
             # 🔐 Buscar credenciais do banco no Secrets Manager
             -   name: Get DB secret from AWS
                 id: db-secret

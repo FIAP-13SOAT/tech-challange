@@ -11,6 +11,8 @@ spec:
             labels:
                 app: garage-app
         spec:
+            imagePullSecrets:
+                - name: ecr-secret
             containers:
                 - name: garage-app
                   image: ${ECR_REGISTRY}/garage-app:${IMAGE_TAG}
