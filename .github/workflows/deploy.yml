@@ -80,21 +80,12 @@ jobs:
         - name: Get Terraform Outputs
           id: tf-output
           working-directory: ./infra
-          if: always()
           run: |
-            set +e
-            DB_ENDPOINT=$(terraform output -raw rds_endpoint 2>/tmp/tf_err.log)
-            DB_SECRET_ARN=$(terraform output -raw db_secret_arn 2>/tmp/tf_err.log)
-            EXIT_CODE=$?
-            set -e
+            DB_ENDPOINT=$(terraform output -raw rds_endpoint)
+            DB_SECRET_ARN=$(terraform output -raw db_secret_arn)
             
-            if [ $EXIT_CODE -eq 0 ]; then
-              echo "db_endpoint=$DB_ENDPOINT" >> $GITHUB_OUTPUT
-              echo "db_secret_arn=$DB_SECRET_ARN" >> $GITHUB_OUTPUT
-            else
-              echo "db_endpoint=" >> $GITHUB_OUTPUT
-              echo "db_secret_arn=" >> $GITHUB_OUTPUT
-            fi
+            echo "db_endpoint=$DB_ENDPOINT" >> $GITHUB_OUTPUT
+            echo "db_secret_arn=$DB_SECRET_ARN" >> $GITHUB_OUTPUT
 
     # ========================================
     # JOB 2: DEPLOY - Build e Deploy da Aplicação
@@ -172,8 +163,13 @@ jobs:
                 env:
                     DB_SECRET_ARN: ${{ needs.terraform.outputs.db_secret_arn }}
                 run: |
+                    if [ -z "$DB_SECRET_ARN" ]; then
+                      echo "Error: DB_SECRET_ARN is empty. RDS secret not created yet."
+                      exit 1
+                    fi
+                    
                     SECRET=$(aws secretsmanager get-secret-value \
-                      --secret-id $DB_SECRET_ARN \
+                      --secret-id "$DB_SECRET_ARN" \
                       --query SecretString \
                       --output text)
 
