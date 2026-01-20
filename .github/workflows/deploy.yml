@@ -191,10 +191,16 @@ jobs:
                     DB_USER_B64=$(echo -n "$DB_USER" | base64)
                     DB_PASS_B64=$(echo -n "$DB_PASS" | base64)
                     
+                    echo "Debug: DB_USER length: ${#DB_USER}"
+                    echo "Debug: DB_PASS length: ${#DB_PASS}"
+                    
                     # Substituir placeholders no YAML
                     sed -e "s|<BASE64_USERNAME>|$DB_USER_B64|g" \
                         -e "s|<BASE64_PASSWORD>|$DB_PASS_B64|g" \
                         k8s/db-secret.yaml | kubectl apply -f -
+                    
+                    # Verificar se secret foi criado
+                    kubectl get secret db-credentials -o yaml
 
             # 🌐 Aplicar Service
             -   name: Apply Service
@@ -209,6 +215,9 @@ jobs:
                     sed -e "s|\${IMAGE_TAG}|$IMAGE_TAG|g" \
                         -e "s|\${ECR_REGISTRY}|$ECR_REGISTRY|g" \
                         k8s/deployment.yaml | kubectl apply -f -
+                    
+                    # Forçar restart dos pods para pegar novo secret
+                    kubectl rollout restart deployment/garage-app
 
             # 📊 Aplicar HPA
             -   name: Apply HPA
