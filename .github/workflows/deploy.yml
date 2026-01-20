@@ -193,3 +193,18 @@ jobs:
             -   name: Wait rollout
                 run: |
                     kubectl rollout status deployment/garage-app --timeout=5m
+
+            -   name: Debug on failure
+                if: failure()
+                run: |
+                    echo "=== Pod Status ==="
+                    kubectl get pods -l app=garage-app
+                    echo ""
+                    echo "=== Pod Description ==="
+                    kubectl describe pod -l app=garage-app
+                    echo ""
+                    echo "=== Application Logs ==="
+                    kubectl logs -l app=garage-app --tail=100 --all-containers=true || echo "No logs available"
+                    echo ""
+                    echo "=== Recent Events ==="
+                    kubectl get events --sort-by='.lastTimestamp' | tail -20
