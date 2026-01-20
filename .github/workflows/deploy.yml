@@ -214,4 +214,4 @@ jobs:
             -   name: Wait rollout
                 continue-on-error: true
                 run: |
-                    kubectl rollout status deployment/garage-app --timeout=2m
+                    kubectl rollout status deployment/garage-app --timeout=5m
