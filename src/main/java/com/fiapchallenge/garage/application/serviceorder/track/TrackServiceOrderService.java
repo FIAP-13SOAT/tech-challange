@@ -2,11 +2,10 @@ package com.fiapchallenge.garage.application.serviceorder.track;
 
 import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.ServiceOrderTrackingDTO;
 import com.fiapchallenge.garage.domain.customer.Customer;
-import com.fiapchallenge.garage.domain.customer.CustomerRepository;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
-import com.fiapchallenge.garage.domain.vehicle.VehicleRepository;
+import com.fiapchallenge.garage.domain.vehicle.VehicleGateway;
 import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -18,17 +17,14 @@ import java.util.UUID;
 public class TrackServiceOrderService implements TrackServiceOrderUseCase {
 
     private final ServiceOrderRepository serviceOrderRepository;
-    private final VehicleRepository vehicleRepository;
-    private final CustomerRepository customerRepository;
+    private final VehicleGateway vehicleGateway;
     private final MessageSource messageSource;
 
     public TrackServiceOrderService(ServiceOrderRepository serviceOrderRepository,
-                                  VehicleRepository vehicleRepository,
-                                  CustomerRepository customerRepository,
+                                  VehicleGateway vehicleGateway,
                                   MessageSource messageSource) {
         this.serviceOrderRepository = serviceOrderRepository;
-        this.vehicleRepository = vehicleRepository;
-        this.customerRepository = customerRepository;
+        this.vehicleGateway = vehicleGateway;
         this.messageSource = messageSource;
     }
 
@@ -36,7 +32,7 @@ public class TrackServiceOrderService implements TrackServiceOrderUseCase {
     public ServiceOrderTrackingDTO handle(UUID serviceOrderId, String cpfCnpj) {
         ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(serviceOrderId);
 
-        Vehicle vehicle = vehicleRepository.findById(serviceOrder.getVehicleId())
+        Vehicle vehicle = vehicleGateway.findById(serviceOrder.getVehicleId())
                 .orElseThrow(() -> new SoatNotFoundException("Ordem de serviço não encontrada"));
 
         Customer customer = serviceOrder.getCustomer();

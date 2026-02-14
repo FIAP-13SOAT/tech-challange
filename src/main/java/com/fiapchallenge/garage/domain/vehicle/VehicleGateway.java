@@ -1,11 +1,10 @@
 package com.fiapchallenge.garage.domain.vehicle;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import java.util.List;
-
-public interface VehicleRepository {
+public interface VehicleGateway {
 
     Vehicle save(Vehicle vehicle);
 
@@ -16,6 +15,6 @@ public interface VehicleRepository {
     Optional<Vehicle> findById(UUID id);
 
     Vehicle update(Vehicle vehicle);
-    
+
     void deleteById(UUID id);
 }

@@ -2,24 +2,21 @@ package com.fiapchallenge.garage.application.vehicle.find;
 
 import com.fiapchallenge.garage.application.vehicle.exceptions.VehicleNotFoundException;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
-import com.fiapchallenge.garage.domain.vehicle.VehicleRepository;
-
-import org.springframework.stereotype.Service;
+import com.fiapchallenge.garage.domain.vehicle.VehicleGateway;
 
 import java.util.UUID;
 
-@Service
 public class FindVehicleService implements FindVehicleUseCase {
 
-    private final VehicleRepository vehicleRepository;
+    private final VehicleGateway vehicleGateway;
 
-    public FindVehicleService(VehicleRepository vehicleRepository) {
-        this.vehicleRepository = vehicleRepository;
+    public FindVehicleService(VehicleGateway vehicleGateway) {
+        this.vehicleGateway = vehicleGateway;
     }
 
     @Override
     public Vehicle handle(UUID id) {
-        return vehicleRepository.findById(id)
+        return vehicleGateway.findById(id)
                 .orElseThrow(() -> new VehicleNotFoundException(id));
     }
 }
