@@ -29,8 +29,6 @@ import com.fiapchallenge.garage.application.serviceorder.removestockitems.Remove
 import com.fiapchallenge.garage.application.serviceorder.removestockitems.RemoveStockItemsUseCase;
 import com.fiapchallenge.garage.application.serviceorder.startsdiagnosis.StartServiceOrderDiagnosticCommand;
 import com.fiapchallenge.garage.application.serviceorder.startsdiagnosis.StartServiceOrderDiagnosticUseCase;
-import com.fiapchallenge.garage.application.serviceorderexecution.StartServiceOrderExecutionCommand;
-import com.fiapchallenge.garage.application.serviceorderexecution.StartServiceOrderExecutionUseCase;
 import com.fiapchallenge.garage.presenters.serviceorder.ServiceOrderPresenter;
 
 import java.util.List;
@@ -42,7 +40,6 @@ public class ServiceOrderController {
     private final CreateServiceOrderUseCase createServiceOrderUseCase;
     private final StartServiceOrderDiagnosticUseCase startServiceOrderDiagnosticUseCase;
     private final FinishServiceOrderDiagnosticUseCase finishServiceOrderDiagnosticUseCase;
-    private final StartServiceOrderExecutionUseCase startServiceOrderExecutionUseCase;
     private final CompleteServiceOrderUseCase completeServiceOrderUseCase;
     private final DeliverServiceOrderUseCase deliverServiceOrderUseCase;
     private final CancelServiceOrderUseCase cancelServiceOrderUseCase;
@@ -59,7 +56,6 @@ public class ServiceOrderController {
             CreateServiceOrderUseCase createServiceOrderUseCase,
             StartServiceOrderDiagnosticUseCase startServiceOrderDiagnosticUseCase,
             FinishServiceOrderDiagnosticUseCase finishServiceOrderDiagnosticUseCase,
-            StartServiceOrderExecutionUseCase startServiceOrderExecutionUseCase,
             CompleteServiceOrderUseCase completeServiceOrderUseCase,
             DeliverServiceOrderUseCase deliverServiceOrderUseCase,
             CancelServiceOrderUseCase cancelServiceOrderUseCase,
@@ -75,7 +71,6 @@ public class ServiceOrderController {
         this.createServiceOrderUseCase = createServiceOrderUseCase;
         this.startServiceOrderDiagnosticUseCase = startServiceOrderDiagnosticUseCase;
         this.finishServiceOrderDiagnosticUseCase = finishServiceOrderDiagnosticUseCase;
-        this.startServiceOrderExecutionUseCase = startServiceOrderExecutionUseCase;
         this.completeServiceOrderUseCase = completeServiceOrderUseCase;
         this.deliverServiceOrderUseCase = deliverServiceOrderUseCase;
         this.cancelServiceOrderUseCase = cancelServiceOrderUseCase;
@@ -98,10 +93,6 @@ public class ServiceOrderController {
 
     public ServiceOrderResponseDTO finishDiagnosis(UUID id) {
         return serviceOrderPresenter.present(finishServiceOrderDiagnosticUseCase.handle(new FinishServiceOrderDiagnosticCommand(id)));
-    }
-
-    public ServiceOrderResponseDTO startExecution(UUID id) {
-        return serviceOrderPresenter.present(startServiceOrderExecutionUseCase.handle(new StartServiceOrderExecutionCommand(id)));
     }
 
     public ServiceOrderResponseDTO finish(UUID id) {

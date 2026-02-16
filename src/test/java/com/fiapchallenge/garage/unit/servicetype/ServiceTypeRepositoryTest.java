@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.unit.servicetype;
 
-import com.fiapchallenge.garage.adapters.outbound.repositories.servicetype.ServiceTypeRepositoryImpl;
+import com.fiapchallenge.garage.adapters.outbound.repositories.servicetype.ServiceTypeGatewayImpl;
 import com.fiapchallenge.garage.adapters.outbound.repositories.servicetype.JpaServiceTypeRepository;
 import com.fiapchallenge.garage.adapters.outbound.entities.ServiceTypeEntity;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
@@ -29,7 +29,7 @@ class ServiceTypeRepositoryTest {
     private ServiceTypeMapper serviceTypeMapper;
 
     @InjectMocks
-    private ServiceTypeRepositoryImpl serviceTypeRepository;
+    private ServiceTypeGatewayImpl serviceTypeRepository;
 
     @Test
     @DisplayName("Deve encontrar todos os tipos de serviço")

@@ -1,9 +1,10 @@
 package com.fiapchallenge.garage.domain.servicetype;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-public interface ServiceTypeRepository {
+public interface ServiceTypeGateway {
 
     ServiceType save(ServiceType serviceType);
 
@@ -11,7 +12,7 @@ public interface ServiceTypeRepository {
 
     List<ServiceType> findAll();
 
-    java.util.Optional<ServiceType> findById(UUID id);
+    Optional<ServiceType> findById(UUID id);
 
     boolean exists(UUID id);
 

@@ -14,9 +14,9 @@ import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.customer.CustomerGateway;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
-import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionRepository;
+import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionGateway;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
-import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
+import com.fiapchallenge.garage.domain.servicetype.ServiceTypeGateway;
 import com.fiapchallenge.garage.unit.serviceorder.util.factory.ServiceOrderTestFactory;
 import com.fiapchallenge.garage.unit.servicetype.utils.factory.ServiceTypeTestFactory;
 import org.junit.jupiter.api.DisplayName;
@@ -40,13 +40,13 @@ import static org.mockito.Mockito.when;
 class ServiceOrderUnitTest {
 
     @Mock
-    ServiceTypeRepository serviceTypeRepository;
+    ServiceTypeGateway serviceTypeGateway;
 
     @Mock
     ServiceOrderGateway serviceOrderGateway;
 
     @Mock
-    ServiceOrderExecutionRepository serviceOrderExecutionRepository;
+    ServiceOrderExecutionGateway serviceOrderExecutionGateway;
 
     @Mock
     CustomerGateway customerGateway;
@@ -77,7 +77,7 @@ class ServiceOrderUnitTest {
         ServiceType serviceType = ServiceTypeTestFactory.build();
         UUID vehicleId = UUID.randomUUID();
 
-        when(serviceTypeRepository.findByIdOrThrow(any(UUID.class))).thenReturn(serviceType);
+        when(serviceTypeGateway.findByIdOrThrow(any(UUID.class))).thenReturn(serviceType);
         when(customerGateway.findById(any(UUID.class))).thenReturn(Optional.of(customer));
         when(serviceOrderGateway.save(any(ServiceOrder.class))).thenReturn(ServiceOrderTestFactory.createServiceOrder(vehicleId, this.customer));
 

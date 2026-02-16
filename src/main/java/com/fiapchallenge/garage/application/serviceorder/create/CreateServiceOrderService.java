@@ -8,7 +8,7 @@ import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderItem;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.application.customer.exceptions.CustomerNotFoundException;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
-import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
+import com.fiapchallenge.garage.domain.servicetype.ServiceTypeGateway;
 import com.fiapchallenge.garage.application.stock.command.ConsumeStockCommand;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,17 +19,17 @@ import java.util.List;
 @Service
 public class CreateServiceOrderService implements CreateServiceOrderUseCase {
 
-    private final ServiceTypeRepository serviceTypeRepository;
+    private final ServiceTypeGateway serviceTypeGateway;
     private final ServiceOrderGateway serviceOrderGateway;
     private final ConsumeStockUseCase consumeStockUseCase;
     private final CustomerGateway customerGateway;
 
-    public CreateServiceOrderService(ServiceTypeRepository serviceTypeRepository,
+    public CreateServiceOrderService(ServiceTypeGateway serviceTypeGateway,
                                    ServiceOrderGateway serviceOrderGateway,
                                    ConsumeStockUseCase consumeStockUseCase,
                                    CustomerGateway customerGateway) {
 
-        this.serviceTypeRepository = serviceTypeRepository;
+        this.serviceTypeGateway = serviceTypeGateway;
         this.serviceOrderGateway = serviceOrderGateway;
         this.consumeStockUseCase = consumeStockUseCase;
         this.customerGateway = customerGateway;
@@ -42,7 +42,7 @@ public class CreateServiceOrderService implements CreateServiceOrderUseCase {
 
         List<ServiceType> serviceTypesList = command.serviceTypeIdList()
                 .stream()
-                .map(serviceTypeRepository::findByIdOrThrow)
+                .map(serviceTypeGateway::findByIdOrThrow)
                 .toList();
 
         command.stockItems().forEach(item -> {

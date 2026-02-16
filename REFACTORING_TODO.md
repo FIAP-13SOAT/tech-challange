@@ -121,21 +121,21 @@ Para cada domínio, garantir:
 - [x] Criar `StockMovementController` como orquestrador (UseCase + Gateway + Presenter), sem HTTP.
 - [x] Remover mappers de stock movement da camada de adapters.
 
-### [ ] Service Type Domain
+### [x] Service Type Domain
 
-- [ ] Rename `ServiceTypeRepository` → `ServiceTypeGateway`.
-- [ ] Create `ServiceTypePresenter`.
-- [ ] Refatorar `ServiceTypeController` para `ServiceTypeResource` (endpoints REST).
-- [ ] Criar `ServiceTypeController` como orquestrador (UseCase + Gateway + Presenter), sem HTTP.
-- [ ] Remover mappers de service type da camada de adapters.
+- [x] Rename `ServiceTypeRepository` → `ServiceTypeGateway`.
+- [x] Create `ServiceTypePresenter`.
+- [x] Refatorar `ServiceTypeController` para `ServiceTypeResource` (endpoints REST).
+- [x] Criar `ServiceTypeController` como orquestrador (UseCase + Gateway + Presenter), sem HTTP.
+- [x] Remover mappers de service type da camada de adapters.
 
-### [ ] Service Order Execution Domain
+### [x] Service Order Execution Domain
 
-- [ ] Rename `ServiceOrderExecutionRepository` → `ServiceOrderExecutionGateway`.
-- [ ] Create `ServiceOrderExecutionPresenter`.
-- [ ] Refatorar controller existente para `ServiceOrderExecutionResource` (endpoints REST).
-- [ ] Criar `ServiceOrderExecutionController` como orquestrador (UseCase + Gateway + Presenter), sem HTTP.
-- [ ] Remover mappers de service order execution da camada de adapters.
+- [x] Rename `ServiceOrderExecutionRepository` → `ServiceOrderExecutionGateway`.
+- [x] Create `ServiceOrderExecutionPresenter`.
+- [x] Refatorar controller existente para `ServiceOrderExecutionResource` (endpoints REST).
+- [x] Criar `ServiceOrderExecutionController` como orquestrador (UseCase + Gateway + Presenter), sem HTTP.
+- [x] Remover mappers de service order execution da camada de adapters.
 
 ### [ ] Quote Domain
 

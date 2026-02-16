@@ -2,7 +2,7 @@ package com.fiapchallenge.garage.adapters.outbound.repositories.serviceorderexec
 
 import com.fiapchallenge.garage.adapters.outbound.entities.ServiceOrderExecutionEntity;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecution;
-import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionRepository;
+import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionGateway;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -11,16 +11,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class ServiceOrderExecutionRepositoryImpl implements ServiceOrderExecutionRepository {
+public class ServiceOrderExecutionGatewayImpl implements ServiceOrderExecutionGateway {
 
     private final JpaServiceOrderExecutionRepository jpaServiceOrderExecutionRepository;
 
-    public ServiceOrderExecutionRepositoryImpl(JpaServiceOrderExecutionRepository jpaServiceOrderExecutionRepository) {
+    public ServiceOrderExecutionGatewayImpl(JpaServiceOrderExecutionRepository jpaServiceOrderExecutionRepository) {
         this.jpaServiceOrderExecutionRepository = jpaServiceOrderExecutionRepository;
     }
 
-    public void save(ServiceOrderExecution serviceOrderExcecution) {
-        ServiceOrderExecutionEntity serviceOrderExecutionEntity = new ServiceOrderExecutionEntity(serviceOrderExcecution);
+    @Override
+    public void save(ServiceOrderExecution serviceOrderExecution) {
+        ServiceOrderExecutionEntity serviceOrderExecutionEntity = new ServiceOrderExecutionEntity(serviceOrderExecution);
         jpaServiceOrderExecutionRepository.save(serviceOrderExecutionEntity);
     }
 
@@ -30,15 +31,18 @@ public class ServiceOrderExecutionRepositoryImpl implements ServiceOrderExecutio
         return serviceOrderExecutionEntity.map(this::convertFromEntity);
     }
 
+    @Override
     public List<ServiceOrderExecution> findByStartDateBetweenOrderByStartDateAsc(
             LocalDateTime startRange,
             LocalDateTime endRange
-    ){
-        return jpaServiceOrderExecutionRepository.findByStartDateBetweenOrderByStartDateAsc(startRange, endRange).stream().map(this::convertFromEntity).toList();
+    ) {
+        return jpaServiceOrderExecutionRepository.findByStartDateBetweenOrderByStartDateAsc(startRange, endRange)
+                .stream()
+                .map(this::convertFromEntity)
+                .toList();
     }
 
     private ServiceOrderExecution convertFromEntity(ServiceOrderExecutionEntity serviceOrderExecutionEntity) {
-
         return new ServiceOrderExecution(
                 serviceOrderExecutionEntity.getServiceOrderId(),
                 serviceOrderExecutionEntity.getStartDate(),

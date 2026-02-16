@@ -4,7 +4,7 @@ import com.fiapchallenge.garage.application.serviceorder.exceptions.ServiceOrder
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecution;
-import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionRepository;
+import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionGateway;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,11 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class StartServiceOrderExecutionService implements StartServiceOrderExecutionUseCase {
 
     private final ServiceOrderGateway serviceOrderGateway;
-    private final ServiceOrderExecutionRepository serviceOrderExecutionRepository;
+    private final ServiceOrderExecutionGateway serviceOrderExecutionGateway;
 
-    public StartServiceOrderExecutionService(ServiceOrderGateway serviceOrderGateway, ServiceOrderExecutionRepository serviceOrderExecutionRepository) {
+    public StartServiceOrderExecutionService(
+            ServiceOrderGateway serviceOrderGateway,
+            ServiceOrderExecutionGateway serviceOrderExecutionGateway
+    ) {
         this.serviceOrderGateway = serviceOrderGateway;
-        this.serviceOrderExecutionRepository = serviceOrderExecutionRepository;
+        this.serviceOrderExecutionGateway = serviceOrderExecutionGateway;
     }
 
     @Override
@@ -30,7 +33,7 @@ public class StartServiceOrderExecutionService implements StartServiceOrderExecu
 
         ServiceOrderExecution serviceOrderExecution = new ServiceOrderExecution(command.id());
         serviceOrderExecution.start();
-        serviceOrderExecutionRepository.save(serviceOrderExecution);
+        serviceOrderExecutionGateway.save(serviceOrderExecution);
 
         return serviceOrder;
     }

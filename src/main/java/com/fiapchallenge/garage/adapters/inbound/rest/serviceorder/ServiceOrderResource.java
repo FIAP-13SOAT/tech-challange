@@ -17,7 +17,6 @@ import com.fiapchallenge.garage.application.serviceorder.list.ListActiveServiceO
 import com.fiapchallenge.garage.application.serviceorder.removeservicetypes.RemoveServiceTypesUseCase;
 import com.fiapchallenge.garage.application.serviceorder.removestockitems.RemoveStockItemsUseCase;
 import com.fiapchallenge.garage.application.serviceorder.startsdiagnosis.StartServiceOrderDiagnosticUseCase;
-import com.fiapchallenge.garage.application.serviceorderexecution.StartServiceOrderExecutionUseCase;
 import com.fiapchallenge.garage.controllers.serviceorder.ServiceOrderController;
 import com.fiapchallenge.garage.presenters.serviceorder.ServiceOrderPresenter;
 import jakarta.validation.Valid;
@@ -44,7 +43,6 @@ public class ServiceOrderResource implements ServiceOrderResourceOpenApiSpec {
             CreateServiceOrderUseCase createServiceOrderUseCase,
             StartServiceOrderDiagnosticUseCase startServiceOrderDiagnosticUseCase,
             FinishServiceOrderDiagnosticUseCase finishServiceOrderDiagnosticUseCase,
-            StartServiceOrderExecutionUseCase startServiceOrderExecutionUseCase,
             CompleteServiceOrderUseCase completeServiceOrderUseCase,
             DeliverServiceOrderUseCase deliverServiceOrderUseCase,
             CancelServiceOrderUseCase cancelServiceOrderUseCase,
@@ -61,7 +59,6 @@ public class ServiceOrderResource implements ServiceOrderResourceOpenApiSpec {
                 createServiceOrderUseCase,
                 startServiceOrderDiagnosticUseCase,
                 finishServiceOrderDiagnosticUseCase,
-                startServiceOrderExecutionUseCase,
                 completeServiceOrderUseCase,
                 deliverServiceOrderUseCase,
                 cancelServiceOrderUseCase,
@@ -94,12 +91,6 @@ public class ServiceOrderResource implements ServiceOrderResourceOpenApiSpec {
     @PreAuthorize("hasAnyRole('ADMIN', 'MECHANIC')")
     public ResponseEntity<ServiceOrderResponseDTO> finishDiagnosis(@PathVariable UUID id) {
         return ResponseEntity.ok(serviceOrderController.finishDiagnosis(id));
-    }
-
-    @PostMapping("/{id}/start-execution")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MECHANIC')")
-    public ResponseEntity<ServiceOrderResponseDTO> startExecution(@PathVariable UUID id) {
-        return ResponseEntity.ok(serviceOrderController.startExecution(id));
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.fiapchallenge.garage.application.serviceorderexecution.exceptions.Ser
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecution;
-import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionRepository;
+import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionGateway;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,11 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class FinishServiceOrderExecutionService implements FinishServiceOrderExecutionUseCase {
 
-    private final ServiceOrderExecutionRepository serviceOrderExecutionRepository;
+    private final ServiceOrderExecutionGateway serviceOrderExecutionGateway;
     private final ServiceOrderGateway serviceOrderGateway;
 
-    public FinishServiceOrderExecutionService(ServiceOrderGateway serviceOrderGateway, ServiceOrderExecutionRepository serviceOrderExecutionRepository) {
-        this.serviceOrderExecutionRepository = serviceOrderExecutionRepository;
+    public FinishServiceOrderExecutionService(
+            ServiceOrderGateway serviceOrderGateway,
+            ServiceOrderExecutionGateway serviceOrderExecutionGateway
+    ) {
+        this.serviceOrderExecutionGateway = serviceOrderExecutionGateway;
         this.serviceOrderGateway = serviceOrderGateway;
     }
 
@@ -26,11 +29,11 @@ public class FinishServiceOrderExecutionService implements FinishServiceOrderExe
         ServiceOrder serviceOrder = serviceOrderGateway.findById(command.id())
                 .orElseThrow(() -> new ServiceOrderNotFoundException(command.id()));
 
-        ServiceOrderExecution serviceOrderExecution = serviceOrderExecutionRepository.findById(command.id())
+        ServiceOrderExecution serviceOrderExecution = serviceOrderExecutionGateway.findById(command.id())
                 .orElseThrow(() -> new ServiceOrderExecutionNotFoundException(command.id()));
 
         serviceOrderExecution.finish();
-        serviceOrderExecutionRepository.save(serviceOrderExecution);
+        serviceOrderExecutionGateway.save(serviceOrderExecution);
 
         return serviceOrder;
     }

@@ -3,7 +3,7 @@ package com.fiapchallenge.garage.application.serviceorder.addservicetypes;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
-import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
+import com.fiapchallenge.garage.domain.servicetype.ServiceTypeGateway;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,19 +14,19 @@ import java.util.List;
 public class AddServiceTypesService implements AddServiceTypesUseCase {
 
     private final ServiceOrderGateway serviceOrderGateway;
-    private final ServiceTypeRepository serviceTypeRepository;
+    private final ServiceTypeGateway serviceTypeGateway;
 
     public AddServiceTypesService(ServiceOrderGateway serviceOrderGateway,
-                                  ServiceTypeRepository serviceTypeRepository) {
+                                  ServiceTypeGateway serviceTypeGateway) {
         this.serviceOrderGateway = serviceOrderGateway;
-        this.serviceTypeRepository = serviceTypeRepository;
+        this.serviceTypeGateway = serviceTypeGateway;
     }
 
     @Override
     public ServiceOrder handle(AddServiceTypesCommand command) {
         ServiceOrder serviceOrder = serviceOrderGateway.findByIdOrThrow(command.serviceOrderId());
         List<ServiceType> serviceTypes = command.serviceTypeIds().stream()
-                .map(serviceTypeRepository::findByIdOrThrow)
+                .map(serviceTypeGateway::findByIdOrThrow)
                 .toList();
         serviceOrder.addServiceTypes(serviceTypes);
         return serviceOrderGateway.save(serviceOrder);

@@ -1,13 +1,11 @@
 package com.fiapchallenge.garage.domain.serviceorderexecution;
 
-
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface ServiceOrderExecutionRepository {
+public interface ServiceOrderExecutionGateway {
 
     void save(ServiceOrderExecution serviceOrderExecution);
 
@@ -17,5 +15,4 @@ public interface ServiceOrderExecutionRepository {
             LocalDateTime startRange,
             LocalDateTime endRange
     );
-
 }
