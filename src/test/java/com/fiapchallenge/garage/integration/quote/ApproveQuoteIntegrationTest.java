@@ -2,7 +2,6 @@ package com.fiapchallenge.garage.integration.quote;
 
 import com.fiapchallenge.garage.application.customer.create.CreateCustomerService;
 import com.fiapchallenge.garage.application.quote.GenerateQuoteService;
-import com.fiapchallenge.garage.application.serviceorder.create.CreateServiceOrderService;
 import com.fiapchallenge.garage.application.servicetype.create.CreateServiceTypeService;
 import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
@@ -36,7 +35,6 @@ class ApproveQuoteIntegrationTest extends BaseIntegrationTest {
     private final MockMvc mockMvc;
     private final CreateCustomerService createCustomerService;
     private final CreateVehicleService createVehicleService;
-    private final CreateServiceOrderService createServiceOrderService;
     private final CreateServiceTypeService createServiceTypeService;
     private final GenerateQuoteService generateQuoteService;
     private final ServiceOrderRepository serviceOrderRepository;
@@ -45,14 +43,12 @@ class ApproveQuoteIntegrationTest extends BaseIntegrationTest {
     public ApproveQuoteIntegrationTest(MockMvc mockMvc,
                                      CreateCustomerService createCustomerService,
                                      CreateVehicleService createVehicleService,
-                                     CreateServiceOrderService createServiceOrderService,
                                      CreateServiceTypeService createServiceTypeService,
                                      GenerateQuoteService generateQuoteService,
                                      ServiceOrderRepository serviceOrderRepository) {
         this.mockMvc = mockMvc;
         this.createCustomerService = createCustomerService;
         this.createVehicleService = createVehicleService;
-        this.createServiceOrderService = createServiceOrderService;
         this.createServiceTypeService = createServiceTypeService;
         this.generateQuoteService = generateQuoteService;
         this.serviceOrderRepository = serviceOrderRepository;
