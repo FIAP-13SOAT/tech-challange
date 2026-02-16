@@ -3,7 +3,7 @@ package com.fiapchallenge.garage.unit.user;
 import com.fiapchallenge.garage.application.user.CreateUserService;
 import com.fiapchallenge.garage.application.user.command.CreateUserCommand;
 import com.fiapchallenge.garage.domain.user.User;
-import com.fiapchallenge.garage.domain.user.UserRepository;
+import com.fiapchallenge.garage.domain.user.UserGateway;
 import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.unit.user.utils.factory.UserTestFactory;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 class CreateUserUnitTest {
 
     @Mock
-    private UserRepository userRepository;
+    private UserGateway userGateway;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -36,7 +36,7 @@ class CreateUserUnitTest {
     @Test
     @DisplayName("Criar usuário")
     void shouldCreateUser() {
-        when(userRepository.create(any(User.class))).thenReturn(UserTestFactory.createUser());
+        when(userGateway.create(any(User.class))).thenReturn(UserTestFactory.createUser());
         when(passwordEncoder.encode(UserTestFactory.PASSWORD)).thenReturn(UserTestFactory.ENCRYPTED_PASSWORD);
 
         CreateUserCommand command = UserTestFactory.createUserCommand();
@@ -50,6 +50,6 @@ class CreateUserUnitTest {
         assertEquals(UserRole.ADMIN, user.getRole());
 
         verify(passwordEncoder).encode(UserTestFactory.PASSWORD);
-        verify(userRepository).create(any(User.class));
+        verify(userGateway).create(any(User.class));
     }
 }

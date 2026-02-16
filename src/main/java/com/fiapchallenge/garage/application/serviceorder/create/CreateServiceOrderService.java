@@ -2,10 +2,10 @@ package com.fiapchallenge.garage.application.serviceorder.create;
 
 import com.fiapchallenge.garage.application.stock.consume.ConsumeStockUseCase;
 import com.fiapchallenge.garage.domain.customer.Customer;
-import com.fiapchallenge.garage.domain.customer.CustomerRepository;
+import com.fiapchallenge.garage.domain.customer.CustomerGateway;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderItem;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.application.customer.exceptions.CustomerNotFoundException;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
@@ -20,24 +20,24 @@ import java.util.List;
 public class CreateServiceOrderService implements CreateServiceOrderUseCase {
 
     private final ServiceTypeRepository serviceTypeRepository;
-    private final ServiceOrderRepository serviceOrderRepository;
+    private final ServiceOrderGateway serviceOrderGateway;
     private final ConsumeStockUseCase consumeStockUseCase;
-    private final CustomerRepository customerRepository;
+    private final CustomerGateway customerGateway;
 
     public CreateServiceOrderService(ServiceTypeRepository serviceTypeRepository,
-                                   ServiceOrderRepository serviceOrderRepository,
+                                   ServiceOrderGateway serviceOrderGateway,
                                    ConsumeStockUseCase consumeStockUseCase,
-                                   CustomerRepository customerRepository) {
+                                   CustomerGateway customerGateway) {
 
         this.serviceTypeRepository = serviceTypeRepository;
-        this.serviceOrderRepository = serviceOrderRepository;
+        this.serviceOrderGateway = serviceOrderGateway;
         this.consumeStockUseCase = consumeStockUseCase;
-        this.customerRepository = customerRepository;
+        this.customerGateway = customerGateway;
     }
 
     @Override
     public ServiceOrder handle(CreateServiceOrderCommand command) {
-        Customer customer = customerRepository.findById(command.customerId())
+        Customer customer = customerGateway.findById(command.customerId())
                 .orElseThrow(() -> new CustomerNotFoundException(command.customerId()));
 
         List<ServiceType> serviceTypesList = command.serviceTypeIdList()
@@ -58,6 +58,6 @@ public class CreateServiceOrderService implements CreateServiceOrderUseCase {
         serviceOrder.setServiceTypeList(serviceTypesList);
         serviceOrder.setStockItems(stockItems);
 
-        return serviceOrderRepository.save(serviceOrder);
+        return serviceOrderGateway.save(serviceOrder);
     }
 }

@@ -1,8 +1,8 @@
 package com.fiapchallenge.garage.unit.customer;
 
-import com.fiapchallenge.garage.adapters.outbound.repositories.customer.CustomerRepositoryImpl;
 import com.fiapchallenge.garage.application.customer.create.CreateCustomerService;
 import com.fiapchallenge.garage.domain.customer.Customer;
+import com.fiapchallenge.garage.domain.customer.CustomerGateway;
 import com.fiapchallenge.garage.unit.customer.util.factory.CustomerTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 class CustomerUnitTest {
 
     @Mock
-    private CustomerRepositoryImpl customerRepository;
+    private CustomerGateway customerGateway;
 
     @InjectMocks
     private CreateCustomerService createCustomerService;
@@ -27,7 +27,7 @@ class CustomerUnitTest {
     @Test
     @DisplayName("Criar cliente")
     void shouldCreateCustomer() {
-        when(customerRepository.save(any(Customer.class))).thenReturn(CustomerTestFactory.build());
+        when(customerGateway.save(any(Customer.class))).thenReturn(CustomerTestFactory.build());
 
         Customer customer = createCustomerService.handle(CustomerTestFactory.buildCommand());
 

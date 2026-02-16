@@ -11,9 +11,9 @@ import com.fiapchallenge.garage.application.serviceorderexecution.StartServiceOr
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
 import com.fiapchallenge.garage.domain.customer.CpfCnpj;
 import com.fiapchallenge.garage.domain.customer.Customer;
-import com.fiapchallenge.garage.domain.customer.CustomerRepository;
+import com.fiapchallenge.garage.domain.customer.CustomerGateway;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionRepository;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import com.fiapchallenge.garage.domain.servicetype.ServiceTypeRepository;
@@ -43,13 +43,13 @@ class ServiceOrderUnitTest {
     ServiceTypeRepository serviceTypeRepository;
 
     @Mock
-    ServiceOrderRepository serviceOrderRepository;
+    ServiceOrderGateway serviceOrderGateway;
 
     @Mock
     ServiceOrderExecutionRepository serviceOrderExecutionRepository;
 
     @Mock
-    CustomerRepository customerRepository;
+    CustomerGateway customerGateway;
 
     @Mock
     GenerateQuoteUseCase generateQuoteUseCase;
@@ -78,8 +78,8 @@ class ServiceOrderUnitTest {
         UUID vehicleId = UUID.randomUUID();
 
         when(serviceTypeRepository.findByIdOrThrow(any(UUID.class))).thenReturn(serviceType);
-        when(customerRepository.findById(any(UUID.class))).thenReturn(Optional.of(customer));
-        when(serviceOrderRepository.save(any(ServiceOrder.class))).thenReturn(ServiceOrderTestFactory.createServiceOrder(vehicleId, this.customer));
+        when(customerGateway.findById(any(UUID.class))).thenReturn(Optional.of(customer));
+        when(serviceOrderGateway.save(any(ServiceOrder.class))).thenReturn(ServiceOrderTestFactory.createServiceOrder(vehicleId, this.customer));
 
         ServiceOrder serviceOrder = createServiceOrderService.handle(ServiceOrderTestFactory.createServiceOrderCommand(vehicleId, customer.getId()));
 
@@ -96,7 +96,7 @@ class ServiceOrderUnitTest {
         UUID vehicleId = UUID.randomUUID();
         UUID customerId = UUID.randomUUID();
         Optional<ServiceOrder> mockedServiceOrder = Optional.of(ServiceOrderTestFactory.createServiceOrder(vehicleId, customer));
-        when(serviceOrderRepository.findById(any(UUID.class))).thenReturn(mockedServiceOrder);
+        when(serviceOrderGateway.findById(any(UUID.class))).thenReturn(mockedServiceOrder);
 
         ServiceOrder serviceOrder = startServiceOrderDiagnosticService.handle(new StartServiceOrderDiagnosticCommand(ServiceOrderTestFactory.ID));
 
@@ -109,12 +109,12 @@ class ServiceOrderUnitTest {
         UUID vehicleId = UUID.randomUUID();
         UUID customerId = UUID.randomUUID();
         Optional<ServiceOrder> mockedServiceOrder = Optional.of(ServiceOrderTestFactory.createServiceOrder(vehicleId, customer, ServiceOrderStatus.IN_DIAGNOSIS));
-        when(serviceOrderRepository.findById(any(UUID.class))).thenReturn(mockedServiceOrder);
+        when(serviceOrderGateway.findById(any(UUID.class))).thenReturn(mockedServiceOrder);
         when(generateQuoteUseCase.handle(mockedServiceOrder.get().getId())).thenReturn(null);
         ServiceOrder serviceOrder = finishServiceOrderDiagnosticService.handle(new FinishServiceOrderDiagnosticCommand(ServiceOrderTestFactory.ID));
 
         assertEquals(ServiceOrderStatus.AWAITING_APPROVAL, serviceOrder.getStatus());
-        verify(serviceOrderRepository).save(serviceOrder);
+        verify(serviceOrderGateway).save(serviceOrder);
         verify(generateQuoteUseCase).handle(mockedServiceOrder.get().getId());
     }
 }

@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.application.serviceorder.list;
 
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,14 +9,14 @@ import java.util.List;
 @Service
 public class ListActiveServiceOrdersService implements ListActiveServiceOrdersUseCase {
 
-    private final ServiceOrderRepository serviceOrderRepository;
+    private final ServiceOrderGateway serviceOrderGateway;
 
-    public ListActiveServiceOrdersService(ServiceOrderRepository serviceOrderRepository) {
-        this.serviceOrderRepository = serviceOrderRepository;
+    public ListActiveServiceOrdersService(ServiceOrderGateway serviceOrderGateway) {
+        this.serviceOrderGateway = serviceOrderGateway;
     }
 
     @Override
     public List<ServiceOrder> handle() {
-        return serviceOrderRepository.findActiveOrdersByPriority();
+        return serviceOrderGateway.findActiveOrdersByPriority();
     }
 }

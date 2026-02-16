@@ -4,7 +4,7 @@ import com.fiapchallenge.garage.application.customer.create.CreateCustomerServic
 import com.fiapchallenge.garage.application.quote.GenerateQuoteService;
 import com.fiapchallenge.garage.application.servicetype.create.CreateServiceTypeService;
 import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
@@ -37,7 +37,7 @@ class ApproveQuoteIntegrationTest extends BaseIntegrationTest {
     private final CreateVehicleService createVehicleService;
     private final CreateServiceTypeService createServiceTypeService;
     private final GenerateQuoteService generateQuoteService;
-    private final ServiceOrderRepository serviceOrderRepository;
+    private final ServiceOrderGateway serviceOrderGateway;
 
     @Autowired
     public ApproveQuoteIntegrationTest(MockMvc mockMvc,
@@ -45,13 +45,13 @@ class ApproveQuoteIntegrationTest extends BaseIntegrationTest {
                                      CreateVehicleService createVehicleService,
                                      CreateServiceTypeService createServiceTypeService,
                                      GenerateQuoteService generateQuoteService,
-                                     ServiceOrderRepository serviceOrderRepository) {
+                                     ServiceOrderGateway serviceOrderGateway) {
         this.mockMvc = mockMvc;
         this.createCustomerService = createCustomerService;
         this.createVehicleService = createVehicleService;
         this.createServiceTypeService = createServiceTypeService;
         this.generateQuoteService = generateQuoteService;
-        this.serviceOrderRepository = serviceOrderRepository;
+        this.serviceOrderGateway = serviceOrderGateway;
     }
 
     @Test
@@ -59,7 +59,7 @@ class ApproveQuoteIntegrationTest extends BaseIntegrationTest {
     void shouldApproveQuoteForValidServiceOrder() throws Exception {
         Customer customer = CustomerFixture.createCustomer(createCustomerService);
         Vehicle vehicle = VehicleFixture.createVehicle(customer.getId(), createVehicleService);
-        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(customer, vehicle.getId(), ServiceOrderStatus.AWAITING_APPROVAL, createServiceTypeService, serviceOrderRepository);
+        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(customer, vehicle.getId(), ServiceOrderStatus.AWAITING_APPROVAL, createServiceTypeService, serviceOrderGateway);
         generateQuoteService.handle(serviceOrder.getId());
 
         mockMvc.perform(post("/quotes/service-order/" + serviceOrder.getId() + "/approve")
@@ -68,7 +68,7 @@ class ApproveQuoteIntegrationTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.serviceOrderId").value(serviceOrder.getId().toString()))
                 .andExpect(jsonPath("$.status").value("APPROVED"));
         
-        ServiceOrder updatedServiceOrder = serviceOrderRepository.findByIdOrThrow(serviceOrder.getId());
+        ServiceOrder updatedServiceOrder = serviceOrderGateway.findByIdOrThrow(serviceOrder.getId());
         assertEquals(ServiceOrderStatus.AWAITING_EXECUTION, updatedServiceOrder.getStatus());
     }
 
@@ -85,7 +85,7 @@ class ApproveQuoteIntegrationTest extends BaseIntegrationTest {
     void shouldAllowAccessWithAdminRole() throws Exception {
         Customer customer = CustomerFixture.createCustomer(createCustomerService);
         Vehicle vehicle = VehicleFixture.createVehicle(customer.getId(), createVehicleService);
-        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(customer, vehicle.getId(), ServiceOrderStatus.AWAITING_APPROVAL, createServiceTypeService, serviceOrderRepository);
+        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(customer, vehicle.getId(), ServiceOrderStatus.AWAITING_APPROVAL, createServiceTypeService, serviceOrderGateway);
         generateQuoteService.handle(serviceOrder.getId());
 
         mockMvc.perform(post("/quotes/service-order/" + serviceOrder.getId() + "/approve")

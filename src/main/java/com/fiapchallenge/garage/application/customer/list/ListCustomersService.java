@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.application.customer.list;
 
 import com.fiapchallenge.garage.domain.customer.Customer;
-import com.fiapchallenge.garage.domain.customer.CustomerRepository;
+import com.fiapchallenge.garage.domain.customer.CustomerGateway;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,18 +11,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ListCustomersService implements ListCustomerUseCase {
 
-    private final CustomerRepository customerRepository;
+    private final CustomerGateway customerGateway;
 
-    public ListCustomersService(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
+    public ListCustomersService(CustomerGateway customerGateway) {
+        this.customerGateway = customerGateway;
     }
 
     @Override
     public Page<Customer> handle(CustomerFilterCmd filter, Pageable pageable) {
         if (!filter.hasFilters()) {
-            return customerRepository.findAll(pageable);
+            return customerGateway.findAll(pageable);
         }
 
-        return customerRepository.findByFilters(filter.name(), filter.email(), filter.cpfCnpj(), pageable);
+        return customerGateway.findByFilters(filter.name(), filter.email(), filter.cpfCnpj(), pageable);
     }
 }

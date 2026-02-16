@@ -4,7 +4,7 @@ import com.fiapchallenge.garage.application.customer.create.CreateCustomerUseCas
 import com.fiapchallenge.garage.application.servicetype.create.CreateServiceTypeService;
 import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
 import com.fiapchallenge.garage.domain.customer.Customer;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
 import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
@@ -38,7 +38,7 @@ class ListActiveServiceOrdersIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private CreateServiceTypeService createServiceTypeService;
     @Autowired
-    private ServiceOrderRepository serviceOrderRepository;
+    private ServiceOrderGateway serviceOrderGateway;
 
     @Test
     @DisplayName("Deve listar ordens ativas ordenadas por prioridade")
@@ -48,11 +48,11 @@ class ListActiveServiceOrdersIntegrationTest extends BaseIntegrationTest {
         Customer customer = CustomerFixture.createCustomer(createCustomerUseCase);
         UUID vehicleId = VehicleFixture.createVehicle(customer.getId(), createVehicleService).getId();
 
-        ServiceOrderFixture.createServiceOrder(customer, vehicleId, ServiceOrderStatus.RECEIVED, createServiceTypeService, serviceOrderRepository);
-        ServiceOrderFixture.createServiceOrder(customer, vehicleId, ServiceOrderStatus.IN_DIAGNOSIS, createServiceTypeService, serviceOrderRepository);
-        ServiceOrderFixture.createServiceOrder(customer, vehicleId, ServiceOrderStatus.AWAITING_APPROVAL, createServiceTypeService, serviceOrderRepository);
-        ServiceOrderFixture.createServiceOrder(customer, vehicleId, ServiceOrderStatus.IN_PROGRESS, createServiceTypeService, serviceOrderRepository);
-        ServiceOrderFixture.createServiceOrder(customer, vehicleId, ServiceOrderStatus.COMPLETED, createServiceTypeService, serviceOrderRepository);
+        ServiceOrderFixture.createServiceOrder(customer, vehicleId, ServiceOrderStatus.RECEIVED, createServiceTypeService, serviceOrderGateway);
+        ServiceOrderFixture.createServiceOrder(customer, vehicleId, ServiceOrderStatus.IN_DIAGNOSIS, createServiceTypeService, serviceOrderGateway);
+        ServiceOrderFixture.createServiceOrder(customer, vehicleId, ServiceOrderStatus.AWAITING_APPROVAL, createServiceTypeService, serviceOrderGateway);
+        ServiceOrderFixture.createServiceOrder(customer, vehicleId, ServiceOrderStatus.IN_PROGRESS, createServiceTypeService, serviceOrderGateway);
+        ServiceOrderFixture.createServiceOrder(customer, vehicleId, ServiceOrderStatus.COMPLETED, createServiceTypeService, serviceOrderGateway);
 
         mockMvc.perform(get("/service-orders")
                 .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
