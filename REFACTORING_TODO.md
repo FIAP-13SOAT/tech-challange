@@ -105,21 +105,21 @@ Para cada domínio, garantir:
 - [x] Criar `UserController` como orquestrador (UseCase + Gateway + Presenter), sem HTTP.
 - [x] Remover mappers de user da camada de adapters.
 
-### [ ] Stock Domain
+### [x] Stock Domain
 
-- [ ] Rename `StockRepository` → `StockGateway` e impl.
-- [ ] Create `StockPresenter`.
-- [ ] Refatorar `StockController` para `StockResource` (endpoints REST).
-- [ ] Criar `StockController` como orquestrador (UseCase + Gateway + Presenter), sem HTTP.
-- [ ] Remover mappers de stock da camada de adapters.
+- [x] Rename `StockRepository` → `StockGateway` e impl.
+- [x] Create `StockPresenter`.
+- [x] Refatorar `StockController` para `StockResource` (endpoints REST).
+- [x] Criar `StockController` como orquestrador (UseCase + Gateway + Presenter), sem HTTP.
+- [x] Remover mappers de stock da camada de adapters.
 
-### [ ] Stock Movement Domain
+### [x] Stock Movement Domain
 
-- [ ] Rename `StockMovementRepository` → `StockMovementGateway`.
-- [ ] Create `StockMovementPresenter`.
-- [ ] Refatorar `StockMovementController` para `StockMovementResource` (endpoints REST).
-- [ ] Criar `StockMovementController` como orquestrador (UseCase + Gateway + Presenter), sem HTTP.
-- [ ] Remover mappers de stock movement da camada de adapters.
+- [x] Rename `StockMovementRepository` → `StockMovementGateway`.
+- [x] Create `StockMovementPresenter`.
+- [x] Refatorar `StockMovementController` para `StockMovementResource` (endpoints REST).
+- [x] Criar `StockMovementController` como orquestrador (UseCase + Gateway + Presenter), sem HTTP.
+- [x] Remover mappers de stock movement da camada de adapters.
 
 ### [ ] Service Type Domain
 

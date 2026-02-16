@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.application.stockmovement.list;
 
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
-import com.fiapchallenge.garage.domain.stockmovement.StockMovementRepository;
+import com.fiapchallenge.garage.domain.stockmovement.StockMovementGateway;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,19 +11,19 @@ import java.util.UUID;
 @Service
 public class ListStockMovementService implements ListStockMovementUseCase {
 
-    private final StockMovementRepository stockMovementRepository;
+    private final StockMovementGateway stockMovementGateway;
 
-    public ListStockMovementService(StockMovementRepository stockMovementRepository) {
-        this.stockMovementRepository = stockMovementRepository;
+    public ListStockMovementService(StockMovementGateway stockMovementGateway) {
+        this.stockMovementGateway = stockMovementGateway;
     }
 
     @Override
     public Page<StockMovement> handleAll(Pageable pageable) {
-        return stockMovementRepository.findAll(pageable);
+        return stockMovementGateway.findAll(pageable);
     }
 
     @Override
     public Page<StockMovement> handleByStockId(UUID stockId, Pageable pageable) {
-        return stockMovementRepository.findByStockId(stockId, pageable);
+        return stockMovementGateway.findByStockId(stockId, pageable);
     }
 }

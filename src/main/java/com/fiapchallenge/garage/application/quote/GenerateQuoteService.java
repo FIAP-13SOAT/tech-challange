@@ -9,7 +9,7 @@ import com.fiapchallenge.garage.domain.quote.QuoteRepository;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
-import com.fiapchallenge.garage.domain.stock.StockRepository;
+import com.fiapchallenge.garage.domain.stock.StockGateway;
 import com.fiapchallenge.garage.domain.vehicle.VehicleGateway;
 import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
 import org.springframework.stereotype.Service;
@@ -22,13 +22,13 @@ import java.util.UUID;
 public class GenerateQuoteService implements GenerateQuoteUseCase {
 
     private final ServiceOrderGateway serviceOrderGateway;
-    private final StockRepository stockRepository;
+    private final StockGateway stockGateway;
     private final QuoteRepository quoteRepository;
     private final VehicleGateway vehicleGateway;
 
-    public GenerateQuoteService(ServiceOrderGateway serviceOrderGateway, StockRepository stockRepository, QuoteRepository quoteRepository, VehicleGateway vehicleGateway) {
+    public GenerateQuoteService(ServiceOrderGateway serviceOrderGateway, StockGateway stockGateway, QuoteRepository quoteRepository, VehicleGateway vehicleGateway) {
         this.serviceOrderGateway = serviceOrderGateway;
-        this.stockRepository = stockRepository;
+        this.stockGateway = stockGateway;
         this.quoteRepository = quoteRepository;
         this.vehicleGateway = vehicleGateway;
     }
@@ -45,7 +45,7 @@ public class GenerateQuoteService implements GenerateQuoteUseCase {
             items.add(new QuoteItem(serviceType.getDescription(), serviceType.getValue(), 1, QuoteItemType.SERVICE)));
 
         serviceOrder.getStockItems().forEach(item -> {
-            var stock = stockRepository.findById(item.getStockId())
+            var stock = stockGateway.findById(item.getStockId())
                 .orElseThrow(() -> new StockItemNotFoundException(item.getStockId()));
             items.add(new QuoteItem(stock.getProductName(), stock.getUnitPrice(), item.getQuantity(), QuoteItemType.STOCK_ITEM));
         });

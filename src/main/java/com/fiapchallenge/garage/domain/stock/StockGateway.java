@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface StockRepository {
+public interface StockGateway {
     Stock save(Stock stock);
     Optional<Stock> findById(UUID id);
     Page<Stock> findAll(Pageable pageable);

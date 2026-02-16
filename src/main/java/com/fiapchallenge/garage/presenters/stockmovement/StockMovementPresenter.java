@@ -1,12 +1,12 @@
-package com.fiapchallenge.garage.adapters.inbound.controller.stockmovement.mapper;
+package com.fiapchallenge.garage.presenters.stockmovement;
 
 import com.fiapchallenge.garage.adapters.inbound.controller.stockmovement.dto.StockMovementDTO;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
 import org.springframework.data.domain.Page;
 
-public class StockMovementMapper {
+public class StockMovementPresenter {
 
-    public static StockMovementDTO toResponseDTO(StockMovement stockMovement) {
+    public StockMovementDTO present(StockMovement stockMovement) {
         return new StockMovementDTO(
                 stockMovement.getId(),
                 stockMovement.getStockId(),
@@ -19,7 +19,7 @@ public class StockMovementMapper {
         );
     }
 
-    public static Page<StockMovementDTO> toResponseDTOPage(Page<StockMovement> stockMovementPage) {
-        return stockMovementPage.map(StockMovementMapper::toResponseDTO);
+    public Page<StockMovementDTO> present(Page<StockMovement> stockMovementPage) {
+        return stockMovementPage.map(this::present);
     }
 }

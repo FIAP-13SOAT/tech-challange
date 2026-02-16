@@ -1,12 +1,12 @@
-package com.fiapchallenge.garage.adapters.inbound.controller.stock.mapper;
+package com.fiapchallenge.garage.presenters.stock;
 
 import com.fiapchallenge.garage.adapters.inbound.controller.stock.dto.StockDTO;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import org.springframework.data.domain.Page;
 
-public class StockMapper {
+public class StockPresenter {
 
-    public static StockDTO toResponseDTO(Stock stock) {
+    public StockDTO present(Stock stock) {
         return new StockDTO(
                 stock.getId(),
                 stock.getProductName(),
@@ -21,7 +21,7 @@ public class StockMapper {
         );
     }
 
-    public static Page<StockDTO> toResponseDTOPage(Page<Stock> stockPage) {
-        return stockPage.map(StockMapper::toResponseDTO);
+    public Page<StockDTO> present(Page<Stock> stockPage) {
+        return stockPage.map(this::present);
     }
 }

@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.application.stockmovement.create;
 
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
-import com.fiapchallenge.garage.domain.stockmovement.StockMovementRepository;
+import com.fiapchallenge.garage.domain.stockmovement.StockMovementGateway;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -10,10 +10,10 @@ import java.util.UUID;
 @Service
 public class CreateStockMovementService implements CreateStockMovementUseCase {
 
-    private final StockMovementRepository stockMovementRepository;
+    private final StockMovementGateway stockMovementGateway;
 
-    public CreateStockMovementService(StockMovementRepository stockMovementRepository) {
-        this.stockMovementRepository = stockMovementRepository;
+    public CreateStockMovementService(StockMovementGateway stockMovementGateway) {
+        this.stockMovementGateway = stockMovementGateway;
     }
 
     @Override
@@ -29,6 +29,6 @@ public class CreateStockMovementService implements CreateStockMovementUseCase {
                 .createdAt(LocalDateTime.now())
                 .build();
         
-        stockMovementRepository.save(movement);
+        stockMovementGateway.save(movement);
     }
 }
