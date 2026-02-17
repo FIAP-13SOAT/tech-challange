@@ -1,11 +1,11 @@
-package com.fiapchallenge.garage.adapters.inbound.controller.quote.mapper;
+package com.fiapchallenge.garage.presenters.quote;
 
 import com.fiapchallenge.garage.adapters.inbound.controller.quote.dto.QuoteResponseDTO;
 import com.fiapchallenge.garage.domain.quote.Quote;
 
-public class QuoteMapper {
+public class QuotePresenter {
 
-    public static QuoteResponseDTO toResponseDTO(Quote quote) {
+    public QuoteResponseDTO present(Quote quote) {
         return new QuoteResponseDTO(
                 quote.getId(),
                 quote.getServiceOrderId(),

@@ -5,7 +5,7 @@ import com.fiapchallenge.garage.application.vehicle.exceptions.VehicleNotFoundEx
 import com.fiapchallenge.garage.domain.quote.Quote;
 import com.fiapchallenge.garage.domain.quote.QuoteItem;
 import com.fiapchallenge.garage.domain.quote.QuoteItemType;
-import com.fiapchallenge.garage.domain.quote.QuoteRepository;
+import com.fiapchallenge.garage.domain.quote.QuoteGateway;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
@@ -23,13 +23,18 @@ public class GenerateQuoteService implements GenerateQuoteUseCase {
 
     private final ServiceOrderGateway serviceOrderGateway;
     private final StockGateway stockGateway;
-    private final QuoteRepository quoteRepository;
+    private final QuoteGateway quoteGateway;
     private final VehicleGateway vehicleGateway;
 
-    public GenerateQuoteService(ServiceOrderGateway serviceOrderGateway, StockGateway stockGateway, QuoteRepository quoteRepository, VehicleGateway vehicleGateway) {
+    public GenerateQuoteService(
+            ServiceOrderGateway serviceOrderGateway,
+            StockGateway stockGateway,
+            QuoteGateway quoteGateway,
+            VehicleGateway vehicleGateway
+    ) {
         this.serviceOrderGateway = serviceOrderGateway;
         this.stockGateway = stockGateway;
-        this.quoteRepository = quoteRepository;
+        this.quoteGateway = quoteGateway;
         this.vehicleGateway = vehicleGateway;
     }
 
@@ -51,6 +56,6 @@ public class GenerateQuoteService implements GenerateQuoteUseCase {
         });
 
         Quote quote = new Quote(vehicle.getCustomerId(), serviceOrderId, items);
-        return quoteRepository.save(quote);
+        return quoteGateway.save(quote);
     }
 }

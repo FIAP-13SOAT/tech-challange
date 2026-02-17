@@ -5,7 +5,7 @@ import com.fiapchallenge.garage.application.quote.RejectQuoteService;
 import com.fiapchallenge.garage.domain.customer.CpfCnpj;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.quote.Quote;
-import com.fiapchallenge.garage.domain.quote.QuoteRepository;
+import com.fiapchallenge.garage.domain.quote.QuoteGateway;
 import com.fiapchallenge.garage.domain.quote.QuoteStatus;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 class QuoteApprovalUnitTest {
 
     @Mock
-    private QuoteRepository quoteRepository;
+    private QuoteGateway quoteGateway;
 
     @Mock
     private ServiceOrderGateway serviceOrderGateway;
@@ -48,9 +48,9 @@ class QuoteApprovalUnitTest {
             ServiceOrderStatus.AWAITING_APPROVAL, List.of(), List.of(), this.customer
         );
 
-        when(quoteRepository.findByServiceOrderIdOrThrow(serviceOrderId)).thenReturn(quote);
+        when(quoteGateway.findByServiceOrderIdOrThrow(serviceOrderId)).thenReturn(quote);
         when(serviceOrderGateway.findByIdOrThrow(serviceOrderId)).thenReturn(serviceOrder);
-        when(quoteRepository.save(any(Quote.class))).thenReturn(quote);
+        when(quoteGateway.save(any(Quote.class))).thenReturn(quote);
         when(serviceOrderGateway.save(any(ServiceOrder.class))).thenReturn(serviceOrder);
 
         Quote result = approveQuoteService.handle(serviceOrderId);
@@ -67,9 +67,9 @@ class QuoteApprovalUnitTest {
             ServiceOrderStatus.AWAITING_APPROVAL, List.of(), List.of(), this.customer
         );
 
-        when(quoteRepository.findByServiceOrderIdOrThrow(serviceOrderId)).thenReturn(quote);
+        when(quoteGateway.findByServiceOrderIdOrThrow(serviceOrderId)).thenReturn(quote);
         when(serviceOrderGateway.findByIdOrThrow(serviceOrderId)).thenReturn(serviceOrder);
-        when(quoteRepository.save(any(Quote.class))).thenReturn(quote);
+        when(quoteGateway.save(any(Quote.class))).thenReturn(quote);
         when(serviceOrderGateway.save(any(ServiceOrder.class))).thenReturn(serviceOrder);
 
         Quote result = rejectQuoteService.handle(serviceOrderId);
