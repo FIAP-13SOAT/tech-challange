@@ -1,10 +1,9 @@
 package com.fiapchallenge.garage.unit.servicetype;
 
-import com.fiapchallenge.garage.adapters.outbound.repositories.servicetype.ServiceTypeGatewayImpl;
-import com.fiapchallenge.garage.adapters.outbound.repositories.servicetype.JpaServiceTypeRepository;
+import com.fiapchallenge.garage.adapters.outbound.gateways.servicetype.ServiceTypeGatewayImpl;
+import com.fiapchallenge.garage.adapters.outbound.gateways.servicetype.JpaServiceTypeRepository;
 import com.fiapchallenge.garage.adapters.outbound.entities.ServiceTypeEntity;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
-import com.fiapchallenge.garage.shared.mapper.ServiceTypeMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,9 +24,6 @@ class ServiceTypeRepositoryTest {
     @Mock
     private JpaServiceTypeRepository jpaServiceTypeRepository;
     
-    @Mock
-    private ServiceTypeMapper serviceTypeMapper;
-
     @InjectMocks
     private ServiceTypeGatewayImpl serviceTypeRepository;
 
@@ -47,12 +43,7 @@ class ServiceTypeRepositoryTest {
         entity2.setDescription("Service 2");
         entity2.setValue(BigDecimal.valueOf(200));
 
-        ServiceType serviceType1 = new ServiceType(id1, BigDecimal.valueOf(100), "Service 1");
-        ServiceType serviceType2 = new ServiceType(id2, BigDecimal.valueOf(200), "Service 2");
-        
         when(jpaServiceTypeRepository.findAll()).thenReturn(List.of(entity1, entity2));
-        when(serviceTypeMapper.toDomain(entity1)).thenReturn(serviceType1);
-        when(serviceTypeMapper.toDomain(entity2)).thenReturn(serviceType2);
 
         List<ServiceType> result = serviceTypeRepository.findAll();
 

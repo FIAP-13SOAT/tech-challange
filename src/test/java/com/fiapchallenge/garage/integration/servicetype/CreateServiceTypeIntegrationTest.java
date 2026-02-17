@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.integration.servicetype;
 
 import com.fiapchallenge.garage.adapters.outbound.entities.ServiceTypeEntity;
-import com.fiapchallenge.garage.adapters.outbound.repositories.servicetype.JpaServiceTypeRepository;
+import com.fiapchallenge.garage.adapters.outbound.gateways.servicetype.JpaServiceTypeRepository;
 import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import org.junit.jupiter.api.DisplayName;

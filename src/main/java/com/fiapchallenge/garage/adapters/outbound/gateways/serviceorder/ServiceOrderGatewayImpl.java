@@ -1,0 +1,118 @@
+package com.fiapchallenge.garage.adapters.outbound.gateways.serviceorder;
+
+import com.fiapchallenge.garage.adapters.outbound.entities.ServiceOrderEntity;
+import com.fiapchallenge.garage.adapters.outbound.entities.ServiceOrderItemEntity;
+import com.fiapchallenge.garage.adapters.outbound.entities.ServiceTypeEntity;
+import com.fiapchallenge.garage.adapters.outbound.gateways.servicetype.JpaServiceTypeRepository;
+import com.fiapchallenge.garage.application.serviceorder.exceptions.ServiceOrderNotFoundException;
+import com.fiapchallenge.garage.domain.customer.CpfCnpj;
+import com.fiapchallenge.garage.domain.customer.Customer;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderItem;
+import com.fiapchallenge.garage.domain.servicetype.ServiceType;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@Component
+public class ServiceOrderGatewayImpl implements ServiceOrderGateway {
+
+    private final JpaServiceOrderRepository jpaServiceOrderRepository;
+    private final JpaServiceTypeRepository jpaServiceTypeRepository;
+    private final JpaServiceOrderItemRepository jpaServiceOrderItemRepository;
+
+    public ServiceOrderGatewayImpl(
+            JpaServiceOrderRepository jpaServiceOrderRepository,
+            JpaServiceTypeRepository jpaServiceTypeRepository,
+            JpaServiceOrderItemRepository jpaServiceOrderItemRepository
+    ) {
+        this.jpaServiceOrderRepository = jpaServiceOrderRepository;
+        this.jpaServiceTypeRepository = jpaServiceTypeRepository;
+        this.jpaServiceOrderItemRepository = jpaServiceOrderItemRepository;
+    }
+
+    @Transactional
+    public ServiceOrder save(ServiceOrder serviceOrder) {
+        List<ServiceTypeEntity> serviceTypeEntities = jpaServiceTypeRepository.findAllById(serviceOrder.getServiceTypeListIds());
+
+        ServiceOrderEntity serviceOrderEntity = new ServiceOrderEntity(serviceOrder);
+        if (serviceOrder.getId() != null) {
+            serviceOrderEntity.setId(serviceOrder.getId());
+        }
+
+        serviceOrderEntity.setServiceTypeList(serviceTypeEntities);
+
+        ServiceOrderEntity savedEntity = jpaServiceOrderRepository.save(serviceOrderEntity);
+
+        if (serviceOrder.getId() != null) {
+            jpaServiceOrderItemRepository.deleteByServiceOrderId(savedEntity.getId());
+        }
+
+        if (serviceOrder.getStockItems() != null && !serviceOrder.getStockItems().isEmpty()) {
+            List<ServiceOrderItemEntity> stockItemEntities = serviceOrder.getStockItems().stream()
+                    .map(item -> new ServiceOrderItemEntity(savedEntity.getId(), item.getStockId(), item.getQuantity()))
+                    .toList();
+            jpaServiceOrderItemRepository.saveAll(stockItemEntities);
+        }
+
+        return convertFromEntity(savedEntity);
+    }
+
+    @Override
+    public Optional<ServiceOrder> findById(UUID id) {
+        Optional<ServiceOrderEntity> serviceOrderEntity = jpaServiceOrderRepository.findById(id);
+
+        return serviceOrderEntity.map(this::convertFromEntity);
+    }
+
+    @Override
+    public ServiceOrder findByIdOrThrow(UUID id) {
+        ServiceOrderEntity entity = jpaServiceOrderRepository.findById(id).orElseThrow(() -> new ServiceOrderNotFoundException(id));
+
+        return convertFromEntity(entity);
+    }
+
+    @Override
+    public List<ServiceOrder> findActiveOrdersByPriority() {
+        List<ServiceOrderEntity> entities = jpaServiceOrderRepository.findActiveOrdersByPriority();
+
+        return entities.stream().map(this::convertFromEntity).toList();
+    }
+
+    private ServiceOrder convertFromEntity(ServiceOrderEntity serviceOrderEntity) {
+        List<ServiceType> serviceTypeList = new ArrayList<>(serviceOrderEntity.getServiceTypeList().stream().map(it ->
+                new ServiceType(it.getId(), it.getValue(), it.getDescription())
+        ).toList());
+
+        List<ServiceOrderItemEntity> stockItemEntities = jpaServiceOrderItemRepository.findByServiceOrderId(serviceOrderEntity.getId());
+        List<ServiceOrderItem> stockItems = new ArrayList<>(stockItemEntities.stream()
+                .map(item -> new ServiceOrderItem(item.getId(), item.getStockId(), item.getQuantity()))
+                .toList());
+
+        Customer customer = null;
+        if (serviceOrderEntity.getCustomer() != null) {
+            customer = new Customer(
+                    serviceOrderEntity.getCustomer().getId(),
+                    serviceOrderEntity.getCustomer().getName(),
+                    serviceOrderEntity.getCustomer().getEmail(),
+                    serviceOrderEntity.getCustomer().getPhone(),
+                    new CpfCnpj(serviceOrderEntity.getCustomer().getCpfCnpj())
+            );
+        }
+
+        return new ServiceOrder(
+                serviceOrderEntity.getId(),
+                serviceOrderEntity.getObservations(),
+                serviceOrderEntity.getVehicleId(),
+                serviceOrderEntity.getStatus(),
+                serviceTypeList,
+                stockItems,
+                customer
+        );
+    }
+}

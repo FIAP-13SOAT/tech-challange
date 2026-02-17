@@ -2,7 +2,7 @@ package com.fiapchallenge.garage.unit.notification;
 
 import com.fiapchallenge.garage.application.notification.list.ListNotificationService;
 import com.fiapchallenge.garage.domain.notification.Notification;
-import com.fiapchallenge.garage.domain.notification.NotificationRepository;
+import com.fiapchallenge.garage.domain.notification.NotificationGateway;
 import com.fiapchallenge.garage.unit.notification.factory.NotificationTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 class ListNotificationUnitTest {
 
     @Mock
-    private NotificationRepository notificationRepository;
+    private NotificationGateway notificationGateway;
 
     @InjectMocks
     private ListNotificationService listNotificationService;
@@ -39,12 +39,12 @@ class ListNotificationUnitTest {
         );
         Page<Notification> page = new PageImpl<>(notifications, pageable, notifications.size());
         
-        when(notificationRepository.findAll(pageable)).thenReturn(page);
+        when(notificationGateway.findAll(pageable)).thenReturn(page);
 
         Page<Notification> result = listNotificationService.handle(pageable);
 
         assertEquals(2, result.getContent().size());
-        verify(notificationRepository).findAll(pageable);
+        verify(notificationGateway).findAll(pageable);
     }
 
     @Test
@@ -56,13 +56,13 @@ class ListNotificationUnitTest {
         );
         Page<Notification> page = new PageImpl<>(unreadNotifications, pageable, unreadNotifications.size());
         
-        when(notificationRepository.findByReadFalse(pageable)).thenReturn(page);
+        when(notificationGateway.findByReadFalse(pageable)).thenReturn(page);
 
         Page<Notification> result = listNotificationService.handleUnread(pageable);
 
         assertEquals(1, result.getContent().size());
         assertFalse(result.getContent().get(0).isRead());
-        verify(notificationRepository).findByReadFalse(pageable);
+        verify(notificationGateway).findByReadFalse(pageable);
     }
 
     @Test
@@ -71,7 +71,7 @@ class ListNotificationUnitTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Notification> emptyPage = new PageImpl<>(List.of(), pageable, 0);
         
-        when(notificationRepository.findAll(pageable)).thenReturn(emptyPage);
+        when(notificationGateway.findAll(pageable)).thenReturn(emptyPage);
 
         Page<Notification> result = listNotificationService.handle(pageable);
 
