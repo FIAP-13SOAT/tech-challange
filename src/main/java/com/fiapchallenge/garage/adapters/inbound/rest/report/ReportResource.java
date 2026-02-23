@@ -3,7 +3,10 @@ package com.fiapchallenge.garage.adapters.inbound.rest.report;
 import com.fiapchallenge.garage.application.report.service.GenerateServiceOrderExecutionReportUseCase;
 import com.fiapchallenge.garage.controllers.report.ReportController;
 import com.fiapchallenge.garage.presenters.report.ReportPresenter;
+import com.fiapchallenge.garage.presenters.report.ReportViewModel;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +33,10 @@ public class ReportResource implements ReportResourceOpenApiSpec {
             @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
             @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate
     ) {
-        return reportController.getServiceOrderExecutionReport(startDate, endDate);
+        ReportViewModel report = reportController.getServiceOrderExecutionReport(startDate, endDate);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(report.contentType()));
+        headers.setContentDispositionFormData("attachment", report.fileName());
+        return ResponseEntity.ok().headers(headers).body(report.content());
     }
 }

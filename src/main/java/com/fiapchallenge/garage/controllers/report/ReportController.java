@@ -3,7 +3,7 @@ package com.fiapchallenge.garage.controllers.report;
 import com.fiapchallenge.garage.application.report.command.GenerateServiceOrderExecutionReportCommand;
 import com.fiapchallenge.garage.application.report.service.GenerateServiceOrderExecutionReportUseCase;
 import com.fiapchallenge.garage.presenters.report.ReportPresenter;
-import org.springframework.http.ResponseEntity;
+import com.fiapchallenge.garage.presenters.report.ReportViewModel;
 
 import java.time.LocalDate;
 
@@ -20,7 +20,7 @@ public class ReportController {
         this.reportPresenter = reportPresenter;
     }
 
-    public ResponseEntity<byte[]> getServiceOrderExecutionReport(LocalDate startDate, LocalDate endDate) {
+    public ReportViewModel getServiceOrderExecutionReport(LocalDate startDate, LocalDate endDate) {
         byte[] pdfBytes = reportUseCase.handle(new GenerateServiceOrderExecutionReportCommand(startDate, endDate));
         return reportPresenter.present(pdfBytes);
     }
