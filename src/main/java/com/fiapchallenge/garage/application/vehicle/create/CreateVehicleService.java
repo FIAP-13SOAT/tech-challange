@@ -3,20 +3,16 @@ package com.fiapchallenge.garage.application.vehicle.create;
 import com.fiapchallenge.garage.application.customer.exceptions.CustomerNotFoundException;
 import com.fiapchallenge.garage.domain.customer.CustomerRepository;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
-import com.fiapchallenge.garage.domain.vehicle.VehicleRepository;
+import com.fiapchallenge.garage.domain.vehicle.VehicleGateway;
 import com.fiapchallenge.garage.domain.vehicle.exceptions.InvalidLicensePlateException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Transactional
 public class CreateVehicleService implements CreateVehicleUseCase {
 
-    private final VehicleRepository vehicleRepository;
+    private final VehicleGateway vehicleGateway;
     private final CustomerRepository customerRepository;
 
-    public CreateVehicleService(VehicleRepository vehicleRepository, CustomerRepository customerRepository) {
-        this.vehicleRepository = vehicleRepository;
+    public CreateVehicleService(VehicleGateway vehicleGateway, CustomerRepository customerRepository) {
+        this.vehicleGateway = vehicleGateway;
         this.customerRepository = customerRepository;
     }
 
@@ -40,7 +36,7 @@ public class CreateVehicleService implements CreateVehicleUseCase {
             .observations(command.observations())
             .build();
 
-        return vehicleRepository.save(vehicle);
+        return vehicleGateway.save(vehicle);
     }
 
     private boolean isValidBrazilianLicensePlate(String licensePlate) {

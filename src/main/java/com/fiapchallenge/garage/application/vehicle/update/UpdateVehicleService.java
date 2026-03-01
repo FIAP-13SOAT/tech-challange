@@ -2,21 +2,19 @@ package com.fiapchallenge.garage.application.vehicle.update;
 
 import com.fiapchallenge.garage.application.vehicle.exceptions.VehicleNotFoundException;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
-import com.fiapchallenge.garage.domain.vehicle.VehicleRepository;
-import org.springframework.stereotype.Service;
+import com.fiapchallenge.garage.domain.vehicle.VehicleGateway;
 
-@Service
 public class UpdateVehicleService implements UpdateVehicleUseCase {
 
-    private final VehicleRepository vehicleRepository;
+    private final VehicleGateway vehicleGateway;
 
-    public UpdateVehicleService(VehicleRepository vehicleRepository) {
-        this.vehicleRepository = vehicleRepository;
+    public UpdateVehicleService(VehicleGateway vehicleGateway) {
+        this.vehicleGateway = vehicleGateway;
     }
 
     @Override
     public Vehicle handle(UpdateVehicleCommand command) {
-        Vehicle existingVehicle = vehicleRepository.findById(command.id())
+        Vehicle existingVehicle = vehicleGateway.findById(command.id())
                 .orElseThrow(() -> new VehicleNotFoundException(command.id()));
 
         Vehicle updatedVehicle = Vehicle.builder()
@@ -30,6 +28,6 @@ public class UpdateVehicleService implements UpdateVehicleUseCase {
                 .observations(command.observations())
                 .build();
 
-        return vehicleRepository.update(updatedVehicle);
+        return vehicleGateway.update(updatedVehicle);
     }
 }

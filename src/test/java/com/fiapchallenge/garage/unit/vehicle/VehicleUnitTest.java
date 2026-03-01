@@ -1,9 +1,9 @@
 package com.fiapchallenge.garage.unit.vehicle;
 
-import com.fiapchallenge.garage.adapters.outbound.repositories.customer.CustomerRepositoryImpl;
-import com.fiapchallenge.garage.adapters.outbound.repositories.vehicle.VehicleRepositoryImpl;
 import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
+import com.fiapchallenge.garage.domain.customer.CustomerRepository;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
+import com.fiapchallenge.garage.domain.vehicle.VehicleGateway;
 import com.fiapchallenge.garage.unit.vehicle.factory.VehicleTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,10 +21,10 @@ import static org.mockito.Mockito.when;
 class VehicleUnitTest {
 
     @Mock
-    private VehicleRepositoryImpl vehicleRepository;
+    private VehicleGateway vehicleGateway;
 
     @Mock
-    private CustomerRepositoryImpl customerRepository;
+    private CustomerRepository customerRepository;
 
     @InjectMocks
     private CreateVehicleService createVehicleService;
@@ -33,7 +33,7 @@ class VehicleUnitTest {
     @DisplayName("Criar veículo")
     void shouldCreateVehicle() {
         when(customerRepository.exists(VehicleTestFactory.CUSTOMER_ID)).thenReturn(true);
-        when(vehicleRepository.save(any(Vehicle.class))).thenReturn(VehicleTestFactory.build());
+        when(vehicleGateway.save(any(Vehicle.class))).thenReturn(VehicleTestFactory.build());
 
         Vehicle vehicle = createVehicleService.handle(VehicleTestFactory.buildCommand());
 

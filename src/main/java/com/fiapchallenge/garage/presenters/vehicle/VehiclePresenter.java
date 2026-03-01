@@ -1,13 +1,13 @@
-package com.fiapchallenge.garage.adapters.inbound.controller.vehicle.mapper;
+package com.fiapchallenge.garage.presenters.vehicle;
 
 import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto.VehicleDTO;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
 
 import java.util.List;
 
-public class VehicleMapper {
+public class VehiclePresenter {
 
-    public static VehicleDTO toResponseDTO(Vehicle vehicle) {
+    public VehicleDTO present(Vehicle vehicle) {
         return new VehicleDTO(
                 vehicle.getId(),
                 vehicle.getModel(),
@@ -20,9 +20,7 @@ public class VehicleMapper {
         );
     }
 
-    public static List<VehicleDTO> toResponseDTOList(List<Vehicle> vehicles) {
-        return vehicles.stream()
-                .map(VehicleMapper::toResponseDTO)
-                .toList();
+    public List<VehicleDTO> present(List<Vehicle> vehicles) {
+        return vehicles.stream().map(this::present).toList();
     }
 }

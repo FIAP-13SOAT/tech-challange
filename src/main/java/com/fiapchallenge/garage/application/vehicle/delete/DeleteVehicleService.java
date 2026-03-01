@@ -1,27 +1,25 @@
 package com.fiapchallenge.garage.application.vehicle.delete;
 
 import com.fiapchallenge.garage.application.vehicle.exceptions.VehicleNotFoundException;
-import com.fiapchallenge.garage.domain.vehicle.VehicleRepository;
-import org.springframework.stereotype.Service;
+import com.fiapchallenge.garage.domain.vehicle.VehicleGateway;
 
 
 import java.util.UUID;
 
-@Service
 public class DeleteVehicleService implements DeleteVehicleUseCase {
 
-    private final VehicleRepository vehicleRepository;
+    private final VehicleGateway vehicleGateway;
 
-    public DeleteVehicleService(VehicleRepository vehicleRepository) {
-        this.vehicleRepository = vehicleRepository;
+    public DeleteVehicleService(VehicleGateway vehicleGateway) {
+        this.vehicleGateway = vehicleGateway;
     }
 
     @Override
     public void handle(UUID id) {
-        if (vehicleRepository.findById(id).isEmpty()) {
+        if (vehicleGateway.findById(id).isEmpty()) {
             throw new VehicleNotFoundException(id);
         }
 
-        vehicleRepository.deleteById(id);
+        vehicleGateway.deleteById(id);
     }
 }
