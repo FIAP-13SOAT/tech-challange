@@ -34,4 +34,5 @@ volumes:
 
 networks:
   garage-network:
+    name: garage_network
     driver: bridge
