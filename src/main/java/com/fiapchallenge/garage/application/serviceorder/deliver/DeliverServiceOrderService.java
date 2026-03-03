@@ -2,7 +2,7 @@ package com.fiapchallenge.garage.application.serviceorder.deliver;
 
 import com.fiapchallenge.garage.application.serviceorder.exceptions.ServiceOrderNotFoundException;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,18 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class DeliverServiceOrderService implements DeliverServiceOrderUseCase {
 
-    private final ServiceOrderRepository serviceOrderRepository;
+    private final ServiceOrderGateway serviceOrderGateway;
 
-    public DeliverServiceOrderService(ServiceOrderRepository serviceOrderRepository) {
-        this.serviceOrderRepository = serviceOrderRepository;
+    public DeliverServiceOrderService(ServiceOrderGateway serviceOrderGateway) {
+        this.serviceOrderGateway = serviceOrderGateway;
     }
 
     @Override
     public ServiceOrder handle(DeliverServiceOrderCommand command) {
-        ServiceOrder serviceOrder = this.serviceOrderRepository.findById(command.serviceOrderId()).orElseThrow(() -> new ServiceOrderNotFoundException(command.serviceOrderId()));
+        ServiceOrder serviceOrder = this.serviceOrderGateway.findById(command.serviceOrderId()).orElseThrow(() -> new ServiceOrderNotFoundException(command.serviceOrderId()));
 
         serviceOrder.deliver();
 
-        return this.serviceOrderRepository.save(serviceOrder);
+        return this.serviceOrderGateway.save(serviceOrder);
     }
 }

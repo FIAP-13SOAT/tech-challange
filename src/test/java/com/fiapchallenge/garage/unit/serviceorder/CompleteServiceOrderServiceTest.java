@@ -7,7 +7,7 @@ import com.fiapchallenge.garage.application.serviceorderexecution.FinishServiceO
 import com.fiapchallenge.garage.domain.customer.CpfCnpj;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
 import com.fiapchallenge.garage.domain.serviceorder.exceptions.InvalidStatusToCompleteException;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 class CompleteServiceOrderServiceTest {
 
     @Mock
-    private ServiceOrderRepository serviceOrderRepository;
+    private ServiceOrderGateway serviceOrderGateway;
 
     @Mock
     private FinishServiceOrderExecutionUseCase finishServiceOrderExecutionUseCase;
@@ -45,16 +45,16 @@ class CompleteServiceOrderServiceTest {
         ServiceOrder serviceOrder = new ServiceOrder(this.serviceOrderId, "Test", UUID.randomUUID(),
                 ServiceOrderStatus.IN_PROGRESS, List.of(), List.of(), this.customer);
 
-        when(serviceOrderRepository.findById(this.serviceOrderId)).thenReturn(Optional.of(serviceOrder));
-        when(serviceOrderRepository.save(any(ServiceOrder.class))).thenReturn(serviceOrder);
+        when(serviceOrderGateway.findById(this.serviceOrderId)).thenReturn(Optional.of(serviceOrder));
+        when(serviceOrderGateway.save(any(ServiceOrder.class))).thenReturn(serviceOrder);
         when(finishServiceOrderExecutionUseCase.handle(any(FinishServiceOrderExecutionCommand.class))).thenReturn(serviceOrder);
 
         CompleteServiceOrderCommand command = new CompleteServiceOrderCommand(this.serviceOrderId);
         ServiceOrder result = completeServiceOrderService.handle(command);
 
         assertEquals(ServiceOrderStatus.COMPLETED, result.getStatus());
-        verify(serviceOrderRepository).findById(this.serviceOrderId);
-        verify(serviceOrderRepository).save(serviceOrder);
+        verify(serviceOrderGateway).findById(this.serviceOrderId);
+        verify(serviceOrderGateway).save(serviceOrder);
     }
 
     @Test
@@ -63,7 +63,7 @@ class CompleteServiceOrderServiceTest {
         ServiceOrder serviceOrder = new ServiceOrder(this.serviceOrderId, "Test", UUID.randomUUID(),
                 ServiceOrderStatus.AWAITING_APPROVAL, List.of(), List.of(), this.customer);
 
-        when(serviceOrderRepository.findById(this.serviceOrderId)).thenReturn(Optional.of(serviceOrder));
+        when(serviceOrderGateway.findById(this.serviceOrderId)).thenReturn(Optional.of(serviceOrder));
 
         CompleteServiceOrderCommand command = new CompleteServiceOrderCommand(this.serviceOrderId);
 

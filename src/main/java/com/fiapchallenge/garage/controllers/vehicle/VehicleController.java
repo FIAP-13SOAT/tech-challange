@@ -1,8 +1,8 @@
 package com.fiapchallenge.garage.controllers.vehicle;
 
-import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto.UpdateVehicleRequestDTO;
-import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto.VehicleDTO;
-import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto.VehicleRequestDTO;
+import com.fiapchallenge.garage.adapters.inbound.rest.vehicle.dto.UpdateVehicleRequestDTO;
+import com.fiapchallenge.garage.adapters.inbound.rest.vehicle.dto.VehicleDTO;
+import com.fiapchallenge.garage.adapters.inbound.rest.vehicle.dto.VehicleRequestDTO;
 import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleCommand;
 import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
 import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleUseCase;
@@ -15,7 +15,7 @@ import com.fiapchallenge.garage.application.vehicle.list.ListVehicleUseCase;
 import com.fiapchallenge.garage.application.vehicle.update.UpdateVehicleCommand;
 import com.fiapchallenge.garage.application.vehicle.update.UpdateVehicleService;
 import com.fiapchallenge.garage.application.vehicle.update.UpdateVehicleUseCase;
-import com.fiapchallenge.garage.domain.customer.CustomerRepository;
+import com.fiapchallenge.garage.domain.customer.CustomerGateway;
 import com.fiapchallenge.garage.domain.vehicle.VehicleGateway;
 import com.fiapchallenge.garage.presenters.vehicle.VehiclePresenter;
 
@@ -33,11 +33,11 @@ public class VehicleController {
 
     public VehicleController(
             VehicleGateway vehicleGateway,
-            CustomerRepository customerRepository,
+            CustomerGateway customerGateway,
             VehiclePresenter vehiclePresenter
     ) {
         this.vehiclePresenter = vehiclePresenter;
-        this.createVehicleUseCase = new CreateVehicleService(vehicleGateway, customerRepository);
+        this.createVehicleUseCase = new CreateVehicleService(vehicleGateway, customerGateway);
         this.findVehicleUseCase = new FindVehicleService(vehicleGateway);
         this.listVehicleUseCase = new ListVehicleService(vehicleGateway);
         this.updateVehicleUseCase = new UpdateVehicleService(vehicleGateway);

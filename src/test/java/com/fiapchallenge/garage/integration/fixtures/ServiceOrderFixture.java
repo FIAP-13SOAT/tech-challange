@@ -5,7 +5,7 @@ import com.fiapchallenge.garage.application.serviceorder.create.CreateServiceOrd
 import com.fiapchallenge.garage.application.servicetype.create.CreateServiceTypeService;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public class ServiceOrderFixture {
 
-    public static ServiceOrder createServiceOrder(UUID vehicleId, UUID customerId, CreateServiceOrderService createServiceOrderService, CreateServiceTypeService createServiceTypeService, ServiceOrderRepository serviceOrderRepository) {
+    public static ServiceOrder createServiceOrder(UUID vehicleId, UUID customerId, CreateServiceOrderService createServiceOrderService, CreateServiceTypeService createServiceTypeService, ServiceOrderGateway serviceOrderGateway) {
         ServiceType serviceType = ServiceTypeFixture.createServiceType(createServiceTypeService);
 
         CreateServiceOrderCommand command = new CreateServiceOrderCommand(
@@ -26,13 +26,13 @@ public class ServiceOrderFixture {
         );
 
         ServiceOrder serviceOrder = createServiceOrderService.handle(command);
-        return serviceOrderRepository.save(serviceOrder);
+        return serviceOrderGateway.save(serviceOrder);
     }
 
-    public static ServiceOrder createServiceOrder(Customer customer, UUID vehicleId, ServiceOrderStatus status, CreateServiceTypeService createServiceTypeService, ServiceOrderRepository serviceOrderRepository) {
+    public static ServiceOrder createServiceOrder(Customer customer, UUID vehicleId, ServiceOrderStatus status, CreateServiceTypeService createServiceTypeService, ServiceOrderGateway serviceOrderGateway) {
         ServiceType serviceType = ServiceTypeFixture.createServiceType(createServiceTypeService);
 
         ServiceOrder serviceOrder = new ServiceOrder(null, "Test service order", vehicleId, status, List.of(serviceType), List.of(), customer);
-        return serviceOrderRepository.save(serviceOrder);
+        return serviceOrderGateway.save(serviceOrder);
     }
 }

@@ -3,7 +3,7 @@ package com.fiapchallenge.garage.unit.report;
 import com.fiapchallenge.garage.application.report.command.GenerateServiceOrderExecutionReportCommand;
 import com.fiapchallenge.garage.application.report.service.GenerateServiceOrderExecutionReportService;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecution;
-import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionRepository;
+import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionGateway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class ReportUnitTest {
 
     @Mock
-    private ServiceOrderExecutionRepository serviceOrderExecutionRepository;
+    private ServiceOrderExecutionGateway serviceOrderExecutionGateway;
 
     @InjectMocks
     private GenerateServiceOrderExecutionReportService generateServiceOrderExecutionReportService;
@@ -62,7 +62,7 @@ class ReportUnitTest {
 
         List<ServiceOrderExecution> mockList = List.of(soe);
 
-        when(serviceOrderExecutionRepository.findByStartDateBetweenOrderByStartDateAsc(startDateTime, endDateTime))
+        when(serviceOrderExecutionGateway.findByStartDateBetweenOrderByStartDateAsc(startDateTime, endDateTime))
                 .thenReturn(mockList);
 
         byte[] result = generateServiceOrderExecutionReportService.handle(command);
@@ -70,14 +70,14 @@ class ReportUnitTest {
         assertNotNull(result, "O array de bytes não deve ser nulo.");
         assertTrue(result.length > 0, "O array de bytes deve conter dados (PDF gerado).");
 
-        verify(serviceOrderExecutionRepository, times(1))
+        verify(serviceOrderExecutionGateway, times(1))
                 .findByStartDateBetweenOrderByStartDateAsc(startDateTime, endDateTime);
     }
 
     @Test
     @DisplayName("Criacao de relatorio quando nao há execucoes.")
     void shouldReturnNonEmptyByteArrayWhenNoServiceOrderExecutionsAreFound() {
-        when(serviceOrderExecutionRepository.findByStartDateBetweenOrderByStartDateAsc(startDateTime, endDateTime))
+        when(serviceOrderExecutionGateway.findByStartDateBetweenOrderByStartDateAsc(startDateTime, endDateTime))
                 .thenReturn(Collections.emptyList());
 
         byte[] result = generateServiceOrderExecutionReportService.handle(command);
@@ -85,7 +85,7 @@ class ReportUnitTest {
         assertNotNull(result, "O array de bytes não deve ser nulo.");
         assertTrue(result.length > 0, "O array de bytes deve conter dados (PDF gerado).");
 
-        verify(serviceOrderExecutionRepository, times(1))
+        verify(serviceOrderExecutionGateway, times(1))
                 .findByStartDateBetweenOrderByStartDateAsc(startDateTime, endDateTime);
     }
 

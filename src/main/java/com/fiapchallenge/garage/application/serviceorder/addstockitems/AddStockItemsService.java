@@ -4,7 +4,7 @@ import com.fiapchallenge.garage.application.stock.command.ConsumeStockCommand;
 import com.fiapchallenge.garage.application.stock.consume.ConsumeStockUseCase;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderItem;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,17 +14,17 @@ import java.util.List;
 @Service
 public class AddStockItemsService implements AddStockItemsUseCase {
 
-    private final ServiceOrderRepository serviceOrderRepository;
+    private final ServiceOrderGateway serviceOrderGateway;
     private final ConsumeStockUseCase consumeStockUseCase;
 
-    public AddStockItemsService(ServiceOrderRepository serviceOrderRepository, ConsumeStockUseCase consumeStockUseCase) {
-        this.serviceOrderRepository = serviceOrderRepository;
+    public AddStockItemsService(ServiceOrderGateway serviceOrderGateway, ConsumeStockUseCase consumeStockUseCase) {
+        this.serviceOrderGateway = serviceOrderGateway;
         this.consumeStockUseCase = consumeStockUseCase;
     }
 
     @Override
     public ServiceOrder handle(AddStockItemsCommand command) {
-        ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(command.serviceOrderId());
+        ServiceOrder serviceOrder = serviceOrderGateway.findByIdOrThrow(command.serviceOrderId());
         
         command.stockItems().forEach(item -> {
             ConsumeStockCommand consumeCommand = new ConsumeStockCommand(item.stockId(), item.quantity());
@@ -35,6 +35,6 @@ public class AddStockItemsService implements AddStockItemsUseCase {
                 .map(item -> new ServiceOrderItem(null, item.stockId(), item.quantity()))
                 .toList();
         serviceOrder.addStockItems(items);
-        return serviceOrderRepository.save(serviceOrder);
+        return serviceOrderGateway.save(serviceOrder);
     }
 }

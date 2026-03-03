@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.unit.vehicle;
 
 import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
-import com.fiapchallenge.garage.domain.customer.CustomerRepository;
+import com.fiapchallenge.garage.domain.customer.CustomerGateway;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
 import com.fiapchallenge.garage.domain.vehicle.VehicleGateway;
 import com.fiapchallenge.garage.unit.vehicle.factory.VehicleTestFactory;
@@ -24,7 +24,7 @@ class VehicleUnitTest {
     private VehicleGateway vehicleGateway;
 
     @Mock
-    private CustomerRepository customerRepository;
+    private CustomerGateway customerGateway;
 
     @InjectMocks
     private CreateVehicleService createVehicleService;
@@ -32,7 +32,7 @@ class VehicleUnitTest {
     @Test
     @DisplayName("Criar veículo")
     void shouldCreateVehicle() {
-        when(customerRepository.exists(VehicleTestFactory.CUSTOMER_ID)).thenReturn(true);
+        when(customerGateway.exists(VehicleTestFactory.CUSTOMER_ID)).thenReturn(true);
         when(vehicleGateway.save(any(Vehicle.class))).thenReturn(VehicleTestFactory.build());
 
         Vehicle vehicle = createVehicleService.handle(VehicleTestFactory.buildCommand());
