@@ -3,12 +3,6 @@ name: Deploy to Kubernetes
 on:
     workflow_call:
         inputs:
-            db_endpoint:
-                required: true
-                type: string
-            db_secret_arn:
-                required: true
-                type: string
             image_tag:
                 required: true
                 type: string

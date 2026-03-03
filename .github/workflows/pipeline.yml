@@ -15,7 +15,5 @@ jobs:
         uses: ./.github/workflows/k8s-deploy.yml
         secrets: inherit
         with:
-            db_endpoint: ${{ needs.terraform.outputs.db_endpoint }}
-            db_secret_arn: ${{ needs.terraform.outputs.db_secret_arn }}
             image_tag: ${{ needs.build.outputs.image_tag }}
             ecr_registry: ${{ needs.build.outputs.ecr_registry }}
