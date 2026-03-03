@@ -53,7 +53,7 @@ jobs:
                       --output text)
 
                     DB_SECRET_ARN=$(aws ssm get-parameter \
-                      --name "/garage/prod/db/secret-arn" \
+                      --name "/garage/prod/db/secret_arn" \
                       --query Parameter.Value \
                       --output text)
 
