@@ -59,8 +59,6 @@ jobs:
 
                     echo "DB_ENDPOINT=$DB_ENDPOINT" >> $GITHUB_ENV
                     echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_ENV
-                    echo "DB_ENDPOINT=$DB_ENDPOINT"
-                    echo "DB_SECRET_ARN=$DB_SECRET_ARN"
 
             - name: Get DB secret from AWS
               run: |
@@ -80,8 +78,6 @@ jobs:
                   echo "DB_PASS=$(echo $SECRET | jq -r .password)" >> $GITHUB_ENV
 
             - name: Apply ConfigMap
-              env:
-                  DB_ENDPOINT: ${{ inputs.db_endpoint }}
               run: |
                   DB_HOST=$(echo $DB_ENDPOINT | cut -d':' -f1)
                   sed -e "s|\${DB_ENDPOINT}|$DB_HOST|g" \
