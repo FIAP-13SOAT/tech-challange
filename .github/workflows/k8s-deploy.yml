@@ -3,12 +3,6 @@ name: Deploy to Kubernetes
 on:
     workflow_call:
         inputs:
-            db_endpoint:
-                required: true
-                type: string
-            db_secret_arn:
-                required: true
-                type: string
             image_tag:
                 required: true
                 type: string
@@ -51,26 +45,39 @@ jobs:
                     --docker-password=$(aws ecr get-login-password --region ${{ env.AWS_REGION }}) \
                     --dry-run=client -o yaml | kubectl apply -f -
 
+            -   name: Load DB Parameters from SSM
+                run: |
+                    DB_ENDPOINT=$(aws ssm get-parameter \
+                      --name "/garage/prod/db/endpoint" \
+                      --query Parameter.Value \
+                      --output text)
+
+                    DB_SECRET_ARN=$(aws ssm get-parameter \
+                      --name "/garage/prod/db/secret_arn" \
+                      --query Parameter.Value \
+                      --output text)
+
+                    echo "DB_ENDPOINT=$DB_ENDPOINT" >> $GITHUB_ENV
+                    echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_ENV
+
             - name: Get DB secret from AWS
-              env:
-                  DB_SECRET_ARN: ${{ inputs.db_secret_arn }}
               run: |
                   if [ -z "$DB_SECRET_ARN" ]; then
                     echo "Error: DB_SECRET_ARN is empty. RDS secret not created yet."
                     exit 1
                   fi
-                  
+
                   SECRET=$(aws secretsmanager get-secret-value \
                     --secret-id "$DB_SECRET_ARN" \
                     --query SecretString \
                     --output text)
 
+                  [ -z "$SECRET" ] && echo "Secret value is empty" && exit 1
+
                   echo "DB_USER=$(echo $SECRET | jq -r .username)" >> $GITHUB_ENV
                   echo "DB_PASS=$(echo $SECRET | jq -r .password)" >> $GITHUB_ENV
 
             - name: Apply ConfigMap
-              env:
-                  DB_ENDPOINT: ${{ inputs.db_endpoint }}
               run: |
                   DB_HOST=$(echo $DB_ENDPOINT | cut -d':' -f1)
                   sed -e "s|\${DB_ENDPOINT}|$DB_HOST|g" \

@@ -32,11 +32,6 @@ docker-compose -f docker-compose-dev.yml up --build
 docker-compose down
 ```
 
-### 6. Execução na AWS (EKS)
-
-Para construção e atualização da infraestrutura AWS usando Terraform acesse [a documentação da infra em terraform](infra/TERRAFORM.md)
-O deploy é automatizado quando o merge é feito na main. Se houver curiosidade em como fazer manualmente verifique [Deploy em produção manualmente](infra/DEPLOY_PROD_MANUALLY.md)
-
 ## Documentação da API
 
 A documentação completa da API está disponível em: http://localhost:8080/swagger-ui/index.html
