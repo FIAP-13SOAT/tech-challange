@@ -59,6 +59,8 @@ jobs:
 
                     echo "DB_ENDPOINT=$DB_ENDPOINT" >> $GITHUB_ENV
                     echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_ENV
+                    echo "DB_ENDPOINT=$DB_ENDPOINT"
+                    echo "DB_SECRET_ARN=$DB_SECRET_ARN"
 
             - name: Get DB secret from AWS
               run: |
