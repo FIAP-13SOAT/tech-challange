@@ -3,7 +3,7 @@ package com.fiapchallenge.garage.application.serviceorder.track;
 import com.fiapchallenge.garage.adapters.inbound.controller.serviceorder.dto.ServiceOrderTrackingDTO;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
 import com.fiapchallenge.garage.domain.vehicle.VehicleGateway;
 import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
@@ -16,21 +16,21 @@ import java.util.UUID;
 @Service
 public class TrackServiceOrderService implements TrackServiceOrderUseCase {
 
-    private final ServiceOrderRepository serviceOrderRepository;
+    private final ServiceOrderGateway serviceOrderGateway;
     private final VehicleGateway vehicleGateway;
     private final MessageSource messageSource;
 
-    public TrackServiceOrderService(ServiceOrderRepository serviceOrderRepository,
+    public TrackServiceOrderService(ServiceOrderGateway serviceOrderGateway,
                                   VehicleGateway vehicleGateway,
                                   MessageSource messageSource) {
-        this.serviceOrderRepository = serviceOrderRepository;
+        this.serviceOrderGateway = serviceOrderGateway;
         this.vehicleGateway = vehicleGateway;
         this.messageSource = messageSource;
     }
 
     @Override
     public ServiceOrderTrackingDTO handle(UUID serviceOrderId, String cpfCnpj) {
-        ServiceOrder serviceOrder = serviceOrderRepository.findByIdOrThrow(serviceOrderId);
+        ServiceOrder serviceOrder = serviceOrderGateway.findByIdOrThrow(serviceOrderId);
 
         Vehicle vehicle = vehicleGateway.findById(serviceOrder.getVehicleId())
                 .orElseThrow(() -> new SoatNotFoundException("Ordem de serviço não encontrada"));

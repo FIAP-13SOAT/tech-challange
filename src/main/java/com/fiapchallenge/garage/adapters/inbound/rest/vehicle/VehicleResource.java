@@ -1,10 +1,10 @@
-package com.fiapchallenge.garage.adapters.inbound.controller.vehicle;
+package com.fiapchallenge.garage.adapters.inbound.rest.vehicle;
 
-import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto.UpdateVehicleRequestDTO;
-import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto.VehicleDTO;
-import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto.VehicleRequestDTO;
+import com.fiapchallenge.garage.adapters.inbound.rest.vehicle.dto.UpdateVehicleRequestDTO;
+import com.fiapchallenge.garage.adapters.inbound.rest.vehicle.dto.VehicleDTO;
+import com.fiapchallenge.garage.adapters.inbound.rest.vehicle.dto.VehicleRequestDTO;
 import com.fiapchallenge.garage.controllers.vehicle.VehicleController;
-import com.fiapchallenge.garage.domain.customer.CustomerRepository;
+import com.fiapchallenge.garage.domain.customer.CustomerGateway;
 import com.fiapchallenge.garage.domain.vehicle.VehicleGateway;
 import com.fiapchallenge.garage.presenters.vehicle.VehiclePresenter;
 import jakarta.validation.Valid;
@@ -29,8 +29,8 @@ public class VehicleResource implements VehicleResourceOpenApiSpec {
 
     private final VehicleController vehicleController;
 
-    public VehicleResource(VehicleGateway vehicleGateway, CustomerRepository customerRepository) {
-        this.vehicleController = new VehicleController(vehicleGateway, customerRepository, new VehiclePresenter());
+    public VehicleResource(VehicleGateway vehicleGateway, CustomerGateway customerGateway) {
+        this.vehicleController = new VehicleController(vehicleGateway, customerGateway, new VehiclePresenter());
     }
 
     @Override

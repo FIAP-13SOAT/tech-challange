@@ -5,10 +5,10 @@ import com.fiapchallenge.garage.application.quote.RejectQuoteService;
 import com.fiapchallenge.garage.domain.customer.CpfCnpj;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.quote.Quote;
-import com.fiapchallenge.garage.domain.quote.QuoteRepository;
+import com.fiapchallenge.garage.domain.quote.QuoteGateway;
 import com.fiapchallenge.garage.domain.quote.QuoteStatus;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,10 +27,10 @@ import static org.mockito.Mockito.*;
 class QuoteApprovalUnitTest {
 
     @Mock
-    private QuoteRepository quoteRepository;
+    private QuoteGateway quoteGateway;
 
     @Mock
-    private ServiceOrderRepository serviceOrderRepository;
+    private ServiceOrderGateway serviceOrderGateway;
 
     @InjectMocks
     private ApproveQuoteService approveQuoteService;
@@ -48,15 +48,15 @@ class QuoteApprovalUnitTest {
             ServiceOrderStatus.AWAITING_APPROVAL, List.of(), List.of(), this.customer
         );
 
-        when(quoteRepository.findByServiceOrderIdOrThrow(serviceOrderId)).thenReturn(quote);
-        when(serviceOrderRepository.findByIdOrThrow(serviceOrderId)).thenReturn(serviceOrder);
-        when(quoteRepository.save(any(Quote.class))).thenReturn(quote);
-        when(serviceOrderRepository.save(any(ServiceOrder.class))).thenReturn(serviceOrder);
+        when(quoteGateway.findByServiceOrderIdOrThrow(serviceOrderId)).thenReturn(quote);
+        when(serviceOrderGateway.findByIdOrThrow(serviceOrderId)).thenReturn(serviceOrder);
+        when(quoteGateway.save(any(Quote.class))).thenReturn(quote);
+        when(serviceOrderGateway.save(any(ServiceOrder.class))).thenReturn(serviceOrder);
 
         Quote result = approveQuoteService.handle(serviceOrderId);
 
         assertEquals(QuoteStatus.APPROVED, result.getStatus());
-        verify(serviceOrderRepository).save(argThat(so -> so.getStatus() == ServiceOrderStatus.AWAITING_EXECUTION));
+        verify(serviceOrderGateway).save(argThat(so -> so.getStatus() == ServiceOrderStatus.AWAITING_EXECUTION));
     }
 
     @Test
@@ -67,14 +67,14 @@ class QuoteApprovalUnitTest {
             ServiceOrderStatus.AWAITING_APPROVAL, List.of(), List.of(), this.customer
         );
 
-        when(quoteRepository.findByServiceOrderIdOrThrow(serviceOrderId)).thenReturn(quote);
-        when(serviceOrderRepository.findByIdOrThrow(serviceOrderId)).thenReturn(serviceOrder);
-        when(quoteRepository.save(any(Quote.class))).thenReturn(quote);
-        when(serviceOrderRepository.save(any(ServiceOrder.class))).thenReturn(serviceOrder);
+        when(quoteGateway.findByServiceOrderIdOrThrow(serviceOrderId)).thenReturn(quote);
+        when(serviceOrderGateway.findByIdOrThrow(serviceOrderId)).thenReturn(serviceOrder);
+        when(quoteGateway.save(any(Quote.class))).thenReturn(quote);
+        when(serviceOrderGateway.save(any(ServiceOrder.class))).thenReturn(serviceOrder);
 
         Quote result = rejectQuoteService.handle(serviceOrderId);
 
         assertEquals(QuoteStatus.REJECTED, result.getStatus());
-        verify(serviceOrderRepository).save(argThat(so -> so.getStatus() == ServiceOrderStatus.CANCELLED));
+        verify(serviceOrderGateway).save(argThat(so -> so.getStatus() == ServiceOrderStatus.CANCELLED));
     }
 }

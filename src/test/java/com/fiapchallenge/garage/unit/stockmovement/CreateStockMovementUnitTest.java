@@ -2,7 +2,7 @@ package com.fiapchallenge.garage.unit.stockmovement;
 
 import com.fiapchallenge.garage.application.stockmovement.create.CreateStockMovementService;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
-import com.fiapchallenge.garage.domain.stockmovement.StockMovementRepository;
+import com.fiapchallenge.garage.domain.stockmovement.StockMovementGateway;
 import com.fiapchallenge.garage.unit.stockmovement.factory.StockMovementTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 class CreateStockMovementUnitTest {
 
     @Mock
-    private StockMovementRepository stockMovementRepository;
+    private StockMovementGateway stockMovementGateway;
 
     @InjectMocks
     private CreateStockMovementService createStockMovementService;
@@ -30,7 +30,7 @@ class CreateStockMovementUnitTest {
     @DisplayName("Deve registrar movimentação de entrada com sucesso")
     void shouldLogInMovementSuccessfully() {
         StockMovement movement = StockMovementTestFactory.createInMovement();
-        when(stockMovementRepository.save(any(StockMovement.class))).thenReturn(movement);
+        when(stockMovementGateway.save(any(StockMovement.class))).thenReturn(movement);
 
         createStockMovementService.logMovement(
                 UUID.randomUUID(),
@@ -41,14 +41,14 @@ class CreateStockMovementUnitTest {
                 "Entrada de estoque"
         );
 
-        verify(stockMovementRepository).save(any(StockMovement.class));
+        verify(stockMovementGateway).save(any(StockMovement.class));
     }
 
     @Test
     @DisplayName("Deve registrar movimentação de saída com sucesso")
     void shouldLogOutMovementSuccessfully() {
         StockMovement movement = StockMovementTestFactory.createOutMovement();
-        when(stockMovementRepository.save(any(StockMovement.class))).thenReturn(movement);
+        when(stockMovementGateway.save(any(StockMovement.class))).thenReturn(movement);
 
         createStockMovementService.logMovement(
                 UUID.randomUUID(),
@@ -59,6 +59,6 @@ class CreateStockMovementUnitTest {
                 "Saída de estoque"
         );
 
-        verify(stockMovementRepository).save(any(StockMovement.class));
+        verify(stockMovementGateway).save(any(StockMovement.class));
     }
 }

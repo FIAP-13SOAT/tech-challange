@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.integration.user;
 
 import com.fiapchallenge.garage.adapters.outbound.entities.UserEntity;
-import com.fiapchallenge.garage.adapters.outbound.repositories.user.JpaUserRepository;
+import com.fiapchallenge.garage.adapters.outbound.gateways.user.JpaUserRepository;
 import com.fiapchallenge.garage.application.user.CreateUserService;
 import com.fiapchallenge.garage.application.user.LoginUserService;
 import com.fiapchallenge.garage.domain.user.User;

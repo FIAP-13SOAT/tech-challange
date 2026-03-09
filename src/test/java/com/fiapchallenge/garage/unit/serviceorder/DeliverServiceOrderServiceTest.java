@@ -5,7 +5,7 @@ import com.fiapchallenge.garage.application.serviceorder.deliver.DeliverServiceO
 import com.fiapchallenge.garage.domain.customer.CpfCnpj;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
 import com.fiapchallenge.garage.domain.serviceorder.exceptions.InvalidStatusToDeliverException;
 import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 class DeliverServiceOrderServiceTest {
 
     @Mock
-    private ServiceOrderRepository serviceOrderRepository;
+    private ServiceOrderGateway serviceOrderGateway;
 
     @InjectMocks
     private DeliverServiceOrderService deliverServiceOrderService;
@@ -41,15 +41,15 @@ class DeliverServiceOrderServiceTest {
         ServiceOrder serviceOrder = new ServiceOrder(serviceOrderId, "Test", UUID.randomUUID(),
                 ServiceOrderStatus.COMPLETED, List.of(), List.of(), customer);
 
-        when(serviceOrderRepository.findById(serviceOrderId)).thenReturn(Optional.of(serviceOrder));
-        when(serviceOrderRepository.save(any(ServiceOrder.class))).thenReturn(serviceOrder);
+        when(serviceOrderGateway.findById(serviceOrderId)).thenReturn(Optional.of(serviceOrder));
+        when(serviceOrderGateway.save(any(ServiceOrder.class))).thenReturn(serviceOrder);
 
         DeliverServiceOrderCommand command = new DeliverServiceOrderCommand(serviceOrderId);
         ServiceOrder result = deliverServiceOrderService.handle(command);
 
         assertEquals(ServiceOrderStatus.DELIVERED, result.getStatus());
-        verify(serviceOrderRepository).findById(serviceOrderId);
-        verify(serviceOrderRepository).save(serviceOrder);
+        verify(serviceOrderGateway).findById(serviceOrderId);
+        verify(serviceOrderGateway).save(serviceOrder);
     }
 
     @Test
@@ -61,7 +61,7 @@ class DeliverServiceOrderServiceTest {
         ServiceOrder serviceOrder = new ServiceOrder(serviceOrderId, "Test", UUID.randomUUID(),
                 ServiceOrderStatus.IN_PROGRESS, List.of(), List.of(), customer);
 
-        when(serviceOrderRepository.findById(serviceOrderId)).thenReturn(Optional.of(serviceOrder));
+        when(serviceOrderGateway.findById(serviceOrderId)).thenReturn(Optional.of(serviceOrder));
 
         DeliverServiceOrderCommand command = new DeliverServiceOrderCommand(serviceOrderId);
 

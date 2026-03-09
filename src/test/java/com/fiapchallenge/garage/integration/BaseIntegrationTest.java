@@ -3,7 +3,6 @@ package com.fiapchallenge.garage.integration;
 import com.fiapchallenge.garage.application.user.CreateUserService;
 import com.fiapchallenge.garage.application.user.LoginUserService;
 import com.fiapchallenge.garage.application.user.command.CreateUserCommand;
-import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
 import com.fiapchallenge.garage.domain.user.User;
 import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.config.VehicleTestUseCaseConfig;

@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.integration.customer;
 
-import com.fiapchallenge.garage.adapters.outbound.repositories.customer.JpaCustomerRepository;
+import com.fiapchallenge.garage.adapters.outbound.gateways.customer.JpaCustomerRepository;
 import com.fiapchallenge.garage.application.customer.create.CreateCustomerService;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;

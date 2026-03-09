@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.presenters.vehicle;
 
-import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto.VehicleDTO;
+import com.fiapchallenge.garage.adapters.inbound.rest.vehicle.dto.VehicleDTO;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
 
 import java.util.List;

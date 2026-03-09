@@ -3,7 +3,7 @@ package com.fiapchallenge.garage.application.serviceorder.cancel;
 import com.fiapchallenge.garage.application.serviceorder.exceptions.ServiceOrderNotFoundException;
 import com.fiapchallenge.garage.application.stock.add.AddStockUseCase;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.application.stock.command.AddStockCommand;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,17 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CancelServiceOrderService implements CancelServiceOrderUseCase {
 
-    private final ServiceOrderRepository serviceOrderRepository;
+    private final ServiceOrderGateway serviceOrderGateway;
     private final AddStockUseCase addStockUseCase;
 
-    public CancelServiceOrderService(ServiceOrderRepository serviceOrderRepository, AddStockUseCase addStockUseCase) {
-        this.serviceOrderRepository = serviceOrderRepository;
+    public CancelServiceOrderService(ServiceOrderGateway serviceOrderGateway, AddStockUseCase addStockUseCase) {
+        this.serviceOrderGateway = serviceOrderGateway;
         this.addStockUseCase = addStockUseCase;
     }
 
     @Override
     public ServiceOrder handle(CancelServiceOrderCommand command) {
-        ServiceOrder serviceOrder = serviceOrderRepository.findById(command.serviceOrderId())
+        ServiceOrder serviceOrder = serviceOrderGateway.findById(command.serviceOrderId())
                 .orElseThrow(() -> new ServiceOrderNotFoundException(command.serviceOrderId()));
 
         if (serviceOrder.getStockItems() != null && !serviceOrder.getStockItems().isEmpty()) {
@@ -34,6 +34,6 @@ public class CancelServiceOrderService implements CancelServiceOrderUseCase {
 
         serviceOrder.cancel();
 
-        return serviceOrderRepository.save(serviceOrder);
+        return serviceOrderGateway.save(serviceOrder);
     }
 }

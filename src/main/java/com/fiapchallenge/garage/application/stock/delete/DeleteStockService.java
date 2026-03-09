@@ -2,7 +2,7 @@ package com.fiapchallenge.garage.application.stock.delete;
 
 import com.fiapchallenge.garage.application.stock.exceptions.StockNotFoundException;
 import com.fiapchallenge.garage.domain.stock.Stock;
-import com.fiapchallenge.garage.domain.stock.StockRepository;
+import com.fiapchallenge.garage.domain.stock.StockGateway;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -10,17 +10,17 @@ import java.util.UUID;
 @Service
 public class DeleteStockService implements DeleteStockUseCase {
 
-    private final StockRepository stockRepository;
+    private final StockGateway stockGateway;
 
-    public DeleteStockService(StockRepository stockRepository) {
-        this.stockRepository = stockRepository;
+    public DeleteStockService(StockGateway stockGateway) {
+        this.stockGateway = stockGateway;
     }
 
     @Override
     public void handle(UUID id) {
-        Stock stock = stockRepository.findById(id)
+        Stock stock = stockGateway.findById(id)
                 .orElseThrow(() -> new StockNotFoundException(id));
 
-        stockRepository.deleteById(stock.getId());
+        stockGateway.deleteById(stock.getId());
     }
 }

@@ -2,7 +2,7 @@ package com.fiapchallenge.garage.application.stock.update;
 
 import com.fiapchallenge.garage.application.stock.exceptions.StockNotFoundException;
 import com.fiapchallenge.garage.domain.stock.Stock;
-import com.fiapchallenge.garage.domain.stock.StockRepository;
+import com.fiapchallenge.garage.domain.stock.StockGateway;
 import com.fiapchallenge.garage.application.stock.command.UpdateStockCommand;
 import org.springframework.stereotype.Service;
 
@@ -11,15 +11,15 @@ import java.time.LocalDateTime;
 @Service
 public class UpdateStockService implements UpdateStockUseCase {
 
-    private final StockRepository stockRepository;
+    private final StockGateway stockGateway;
 
-    public UpdateStockService(StockRepository stockRepository) {
-        this.stockRepository = stockRepository;
+    public UpdateStockService(StockGateway stockGateway) {
+        this.stockGateway = stockGateway;
     }
 
     @Override
     public Stock handle(UpdateStockCommand command) {
-        Stock existingStock = stockRepository.findById(command.id())
+        Stock existingStock = stockGateway.findById(command.id())
                 .orElseThrow(() -> new StockNotFoundException(command.id()));
 
         Stock updatedStock = existingStock
@@ -30,6 +30,6 @@ public class UpdateStockService implements UpdateStockUseCase {
                 .setUpdatedAt(LocalDateTime.now())
                 .setMinThreshold(command.minThreshold());
 
-        return stockRepository.save(updatedStock);
+        return stockGateway.save(updatedStock);
     }
 }

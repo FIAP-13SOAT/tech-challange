@@ -1,8 +1,5 @@
-package com.fiapchallenge.garage.adapters.inbound.controller.vehicle;
+package com.fiapchallenge.garage.adapters.inbound.rest.vehicle;
 
-import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto.UpdateVehicleRequestDTO;
-import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto.VehicleDTO;
-import com.fiapchallenge.garage.adapters.inbound.controller.vehicle.dto.VehicleRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,6 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.fiapchallenge.garage.adapters.inbound.rest.vehicle.dto.UpdateVehicleRequestDTO;
+import com.fiapchallenge.garage.adapters.inbound.rest.vehicle.dto.VehicleDTO;
+import com.fiapchallenge.garage.adapters.inbound.rest.vehicle.dto.VehicleRequestDTO;
 
 import java.util.List;
 import java.util.UUID;
