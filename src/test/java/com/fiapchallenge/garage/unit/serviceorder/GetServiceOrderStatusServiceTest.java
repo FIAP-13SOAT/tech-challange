@@ -5,7 +5,7 @@ import com.fiapchallenge.garage.application.serviceorder.exceptions.ServiceOrder
 import com.fiapchallenge.garage.application.serviceorder.getstatus.GetServiceOrderStatusCommand;
 import com.fiapchallenge.garage.application.serviceorder.getstatus.GetServiceOrderStatusService;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 class GetServiceOrderStatusServiceTest {
 
     @Mock
-    private ServiceOrderRepository serviceOrderRepository;
+    private ServiceOrderGateway serviceOrderGateway;
 
     @Mock
     private MessageSource messageSource;
@@ -43,7 +43,7 @@ class GetServiceOrderStatusServiceTest {
         UUID serviceOrderId = UUID.randomUUID();
         GetServiceOrderStatusCommand command = new GetServiceOrderStatusCommand(serviceOrderId);
 
-        when(serviceOrderRepository.findById(serviceOrderId)).thenReturn(Optional.of(serviceOrder));
+        when(serviceOrderGateway.findById(serviceOrderId)).thenReturn(Optional.of(serviceOrder));
         when(serviceOrder.getId()).thenReturn(serviceOrderId);
         when(serviceOrder.getStatus()).thenReturn(ServiceOrderStatus.IN_DIAGNOSIS);
         when(messageSource.getMessage(eq("serviceorder.status.IN_DIAGNOSIS"), eq(null), any(Locale.class)))
@@ -61,7 +61,7 @@ class GetServiceOrderStatusServiceTest {
         UUID serviceOrderId = UUID.randomUUID();
         GetServiceOrderStatusCommand command = new GetServiceOrderStatusCommand(serviceOrderId);
 
-        when(serviceOrderRepository.findById(serviceOrderId)).thenReturn(Optional.empty());
+        when(serviceOrderGateway.findById(serviceOrderId)).thenReturn(Optional.empty());
 
         assertThrows(ServiceOrderNotFoundException.class, () -> getServiceOrderStatusService.handle(command));
     }

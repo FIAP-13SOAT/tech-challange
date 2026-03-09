@@ -1,6 +1,6 @@
 package com.fiapchallenge.garage.integration.customer;
 
-import com.fiapchallenge.garage.adapters.outbound.repositories.customer.JpaCustomerRepository;
+import com.fiapchallenge.garage.adapters.outbound.gateways.customer.JpaCustomerRepository;
 import com.fiapchallenge.garage.application.customer.create.CreateCustomerService;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
@@ -44,8 +44,8 @@ class ListCustomerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.content.length()").value(2))
                 .andExpect(jsonPath("$.content[0].name").value("John Doe"))
                 .andExpect(jsonPath("$.content[1].name").value("Jane Smith"))
-                .andExpect(jsonPath("$.totalElements").value(2))
-                .andExpect(jsonPath("$.totalPages").value(1));
+                .andExpect(jsonPath("$.page.totalElements").value(2))
+                .andExpect(jsonPath("$.page.totalPages").value(1));
 
         assertThat(customerRepository.findAll()).hasSize(2);
     }
@@ -61,18 +61,14 @@ class ListCustomerIntegrationTest extends BaseIntegrationTest {
         mockMvc.perform(get("/customers?page=0&size=2").header("Authorization", getAuthToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(2))
-                .andExpect(jsonPath("$.totalElements").value(5))
-                .andExpect(jsonPath("$.totalPages").value(3))
-                .andExpect(jsonPath("$.number").value(0))
-                .andExpect(jsonPath("$.size").value(2))
-                .andExpect(jsonPath("$.first").value(true))
-                .andExpect(jsonPath("$.last").value(false));
+                .andExpect(jsonPath("$.page.totalElements").value(5))
+                .andExpect(jsonPath("$.page.totalPages").value(3))
+                .andExpect(jsonPath("$.page.number").value(0))
+                .andExpect(jsonPath("$.page.size").value(2));
 
         mockMvc.perform(get("/customers?page=2&size=2").header("Authorization", getAuthToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(1))
-                .andExpect(jsonPath("$.number").value(2))
-                .andExpect(jsonPath("$.first").value(false))
-                .andExpect(jsonPath("$.last").value(true));
+                .andExpect(jsonPath("$.page.number").value(2));
     }
 }

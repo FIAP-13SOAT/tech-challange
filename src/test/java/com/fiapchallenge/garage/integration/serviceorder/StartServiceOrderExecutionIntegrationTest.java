@@ -6,7 +6,7 @@ import com.fiapchallenge.garage.application.servicetype.create.CreateServiceType
 import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
 import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
@@ -47,26 +47,26 @@ class StartServiceOrderExecutionIntegrationTest extends BaseIntegrationTest {
     private CreateServiceTypeService createServiceTypeService;
 
     @Autowired
-    private ServiceOrderRepository serviceOrderRepository;
+    private ServiceOrderGateway serviceOrderGateway;
 
     @Test
     @DisplayName("Deve iniciar execução quando ordem está em AWAITING_EXECUTION")
     void shouldStartExecutionWhenServiceOrderIsAwaitingExecution() throws Exception {
         Customer customer = CustomerFixture.createCustomer(createCustomerService);
         Vehicle vehicle = VehicleFixture.createVehicle(customer.getId(), createVehicleService);
-        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), customer.getId(), createServiceOrderService, createServiceTypeService, serviceOrderRepository);
+        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), customer.getId(), createServiceOrderService, createServiceTypeService, serviceOrderGateway);
         
         // Simular aprovação do orçamento
         serviceOrder.startDiagnostic();
         serviceOrder.sendToApproval();
         serviceOrder.approve();
-        serviceOrderRepository.save(serviceOrder);
+        serviceOrderGateway.save(serviceOrder);
 
         mockMvc.perform(post("/service-orders/" + serviceOrder.getId() + "/start-execution")
                         .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC)))
                 .andExpect(status().isOk());
 
-        ServiceOrder updatedServiceOrder = serviceOrderRepository.findByIdOrThrow(serviceOrder.getId());
+        ServiceOrder updatedServiceOrder = serviceOrderGateway.findByIdOrThrow(serviceOrder.getId());
         assertEquals(ServiceOrderStatus.IN_PROGRESS, updatedServiceOrder.getStatus());
     }
 
@@ -75,7 +75,7 @@ class StartServiceOrderExecutionIntegrationTest extends BaseIntegrationTest {
     void shouldReturnErrorWhenTryingToStartExecutionWithWrongStatus() throws Exception {
         Customer customer = CustomerFixture.createCustomer(createCustomerService);
         Vehicle vehicle = VehicleFixture.createVehicle(customer.getId(), createVehicleService);
-        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(customer, vehicle.getId(), ServiceOrderStatus.AWAITING_APPROVAL, createServiceTypeService, serviceOrderRepository);
+        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(customer, vehicle.getId(), ServiceOrderStatus.AWAITING_APPROVAL, createServiceTypeService, serviceOrderGateway);
 
         mockMvc.perform(post("/service-orders/" + serviceOrder.getId() + "/start-execution")
                         .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC)))

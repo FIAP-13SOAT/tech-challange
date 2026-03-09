@@ -4,9 +4,9 @@ import com.fiapchallenge.garage.application.customer.create.CreateCustomerServic
 import com.fiapchallenge.garage.application.servicetype.create.CreateServiceTypeService;
 import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
 import com.fiapchallenge.garage.domain.stock.Stock;
-import com.fiapchallenge.garage.domain.stock.StockRepository;
+import com.fiapchallenge.garage.domain.stock.StockGateway;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
-import com.fiapchallenge.garage.domain.stockmovement.StockMovementRepository;
+import com.fiapchallenge.garage.domain.stockmovement.StockMovementGateway;
 import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
@@ -39,10 +39,10 @@ class ServiceOrderAddStockItemsAfterCreationIntegrationTest extends BaseIntegrat
     private MockMvc mockMvc;
 
     @Autowired
-    private StockRepository stockRepository;
+    private StockGateway stockGateway;
 
     @Autowired
-    private StockMovementRepository stockMovementRepository;
+    private StockMovementGateway stockMovementGateway;
 
     @Autowired
     private CreateCustomerService createCustomerService;
@@ -59,8 +59,8 @@ class ServiceOrderAddStockItemsAfterCreationIntegrationTest extends BaseIntegrat
         UUID stockId1 = createStock("Filtro de Óleo", 100);
         UUID stockId2 = createStock("Filtro de Ar", 50);
 
-        Stock initialStock1 = stockRepository.findById(stockId1).orElseThrow();
-        Stock initialStock2 = stockRepository.findById(stockId2).orElseThrow();
+        Stock initialStock1 = stockGateway.findById(stockId1).orElseThrow();
+        Stock initialStock2 = stockGateway.findById(stockId2).orElseThrow();
 
         UUID customerId = CustomerFixture.createCustomer(createCustomerService).getId();
         UUID vehicleId = VehicleFixture.createVehicle(customerId, createVehicleService).getId();
@@ -90,7 +90,7 @@ class ServiceOrderAddStockItemsAfterCreationIntegrationTest extends BaseIntegrat
 
         UUID serviceOrderId = UUID.fromString(createResponse.split("\"id\":\"")[1].split("\"")[0]);
 
-        Stock stockAfterCreation1 = stockRepository.findById(stockId1).orElseThrow();
+        Stock stockAfterCreation1 = stockGateway.findById(stockId1).orElseThrow();
         assertThat(stockAfterCreation1.getQuantity()).isEqualTo(initialStock1.getQuantity() - 5);
 
         mockMvc.perform(post("/service-orders/" + serviceOrderId + "/start-diagnosis")
@@ -128,8 +128,8 @@ class ServiceOrderAddStockItemsAfterCreationIntegrationTest extends BaseIntegrat
                         .header("Authorization", getAuthTokenForRole(UserRole.ADMIN)))
                 .andExpect(status().isOk());
 
-        Stock finalStock1 = stockRepository.findById(stockId1).orElseThrow();
-        Stock finalStock2 = stockRepository.findById(stockId2).orElseThrow();
+        Stock finalStock1 = stockGateway.findById(stockId1).orElseThrow();
+        Stock finalStock2 = stockGateway.findById(stockId2).orElseThrow();
 
         assertThat(finalStock1.getQuantity()).isEqualTo(initialStock1.getQuantity() - 5);
 
@@ -137,8 +137,8 @@ class ServiceOrderAddStockItemsAfterCreationIntegrationTest extends BaseIntegrat
                 .as("Item adicionado após criação deve ser consumido ao finalizar ordem de serviço")
                 .isEqualTo(initialStock2.getQuantity() - 3);
 
-        Page<StockMovement> movements1 = stockMovementRepository.findByStockId(stockId1, PageRequest.of(0, 10));
-        Page<StockMovement> movements2 = stockMovementRepository.findByStockId(stockId2, PageRequest.of(0, 10));
+        Page<StockMovement> movements1 = stockMovementGateway.findByStockId(stockId1, PageRequest.of(0, 10));
+        Page<StockMovement> movements2 = stockMovementGateway.findByStockId(stockId2, PageRequest.of(0, 10));
 
         assertThat(movements1.getContent()).hasSize(2);
         assertThat(movements1.getContent().get(1).getMovementType()).isEqualTo(StockMovement.MovementType.OUT);

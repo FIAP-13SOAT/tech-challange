@@ -6,7 +6,7 @@ import com.fiapchallenge.garage.application.servicetype.create.CreateServiceType
 import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import com.fiapchallenge.garage.integration.fixtures.CustomerFixture;
@@ -36,7 +36,7 @@ class TrackServiceOrderIntegrationTest extends BaseIntegrationTest {
     private final CreateVehicleService createVehicleService;
     private final CreateServiceOrderService createServiceOrderService;
     private final CreateServiceTypeService createServiceTypeService;
-    private final ServiceOrderRepository serviceOrderRepository;
+    private final ServiceOrderGateway serviceOrderGateway;
 
     @Autowired
     public TrackServiceOrderIntegrationTest(MockMvc mockMvc,
@@ -44,13 +44,13 @@ class TrackServiceOrderIntegrationTest extends BaseIntegrationTest {
                                           CreateVehicleService createVehicleService,
                                           CreateServiceOrderService createServiceOrderService,
                                           CreateServiceTypeService createServiceTypeService,
-                                          ServiceOrderRepository serviceOrderRepository) {
+                                          ServiceOrderGateway serviceOrderGateway) {
         this.mockMvc = mockMvc;
         this.createCustomerService = createCustomerService;
         this.createVehicleService = createVehicleService;
         this.createServiceOrderService = createServiceOrderService;
         this.createServiceTypeService = createServiceTypeService;
-        this.serviceOrderRepository = serviceOrderRepository;
+        this.serviceOrderGateway = serviceOrderGateway;
     }
 
     @Test
@@ -58,7 +58,7 @@ class TrackServiceOrderIntegrationTest extends BaseIntegrationTest {
     void shouldTrackServiceOrderSuccessfully() throws Exception {
         Customer customer = CustomerFixture.createCustomer(createCustomerService);
         Vehicle vehicle = VehicleFixture.createVehicle(customer.getId(), createVehicleService);
-        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), customer.getId(), createServiceOrderService, createServiceTypeService, serviceOrderRepository);
+        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), customer.getId(), createServiceOrderService, createServiceTypeService, serviceOrderGateway);
 
         mockMvc.perform(get("/public/service-orders/" + serviceOrder.getId() + "/track")
                 .param("cpfCnpj", customer.getCpfCnpjValue()))
@@ -82,7 +82,7 @@ class TrackServiceOrderIntegrationTest extends BaseIntegrationTest {
     void shouldReturnNotFoundWhenCpfCnpjDoesNotMatch() throws Exception {
         Customer customer = CustomerFixture.createCustomer(createCustomerService);
         Vehicle vehicle = VehicleFixture.createVehicle(customer.getId(), createVehicleService);
-        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), customer.getId(), createServiceOrderService, createServiceTypeService, serviceOrderRepository);
+        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), customer.getId(), createServiceOrderService, createServiceTypeService, serviceOrderGateway);
 
         mockMvc.perform(get("/public/service-orders/" + serviceOrder.getId() + "/track")
                 .param("cpfCnpj", "99999999999"))

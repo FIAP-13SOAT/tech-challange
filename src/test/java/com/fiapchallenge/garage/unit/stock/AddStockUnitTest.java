@@ -4,7 +4,7 @@ import com.fiapchallenge.garage.application.stock.add.AddStockService;
 import com.fiapchallenge.garage.application.stock.exceptions.StockNotFoundException;
 import com.fiapchallenge.garage.application.stockmovement.create.CreateStockMovementUseCase;
 import com.fiapchallenge.garage.domain.stock.Stock;
-import com.fiapchallenge.garage.domain.stock.StockRepository;
+import com.fiapchallenge.garage.domain.stock.StockGateway;
 import com.fiapchallenge.garage.application.stock.command.AddStockCommand;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
 import com.fiapchallenge.garage.unit.stock.factory.StockTestFactory;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class AddStockUnitTest {
 
     @Mock
-    private StockRepository stockRepository;
+    private StockGateway stockGateway;
 
     @Mock
     private CreateStockMovementUseCase createStockMovementUseCase;
@@ -46,13 +46,13 @@ class AddStockUnitTest {
     @Test
     @DisplayName("Deve adicionar estoque com sucesso")
     void shouldAddStockSuccessfully() {
-        when(stockRepository.findById(stock.getId())).thenReturn(Optional.of(stock));
-        when(stockRepository.save(any(Stock.class))).thenReturn(stock);
+        when(stockGateway.findById(stock.getId())).thenReturn(Optional.of(stock));
+        when(stockGateway.save(any(Stock.class))).thenReturn(stock);
 
         Stock result = addStockService.handle(command);
 
         assertEquals(70, result.getQuantity());
-        verify(stockRepository).save(any(Stock.class));
+        verify(stockGateway).save(any(Stock.class));
         verify(createStockMovementUseCase).logMovement(
                 stock.getId(),
                 StockMovement.MovementType.IN,
@@ -66,20 +66,20 @@ class AddStockUnitTest {
     @Test
     @DisplayName("Deve lançar exceção quando estoque não for encontrado")
     void shouldThrowExceptionWhenStockNotFound() {
-        when(stockRepository.findById(stock.getId())).thenReturn(Optional.empty());
+        when(stockGateway.findById(stock.getId())).thenReturn(Optional.empty());
 
         assertThrows(StockNotFoundException.class, () -> addStockService.handle(command));
-        verify(stockRepository, never()).save(any(Stock.class));
+        verify(stockGateway, never()).save(any(Stock.class));
     }
 
     @Test
     @DisplayName("Deve atualizar timestamp ao adicionar estoque")
     void shouldUpdateTimestamp() {
-        when(stockRepository.findById(stock.getId())).thenReturn(Optional.of(stock));
-        when(stockRepository.save(any(Stock.class))).thenReturn(stock);
+        when(stockGateway.findById(stock.getId())).thenReturn(Optional.of(stock));
+        when(stockGateway.save(any(Stock.class))).thenReturn(stock);
 
         addStockService.handle(command);
 
-        verify(stockRepository).save(argThat(s -> s.getUpdatedAt() != null));
+        verify(stockGateway).save(argThat(s -> s.getUpdatedAt() != null));
     }
 }

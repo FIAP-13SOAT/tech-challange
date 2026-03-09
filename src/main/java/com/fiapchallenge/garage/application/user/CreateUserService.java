@@ -2,7 +2,7 @@ package com.fiapchallenge.garage.application.user;
 
 import com.fiapchallenge.garage.application.user.command.CreateUserCommand;
 import com.fiapchallenge.garage.domain.user.User;
-import com.fiapchallenge.garage.domain.user.UserRepository;
+import com.fiapchallenge.garage.domain.user.UserGateway;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,11 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CreateUserService implements CreateUserUseCase {
 
-    private final UserRepository userRepository;
+    private final UserGateway userGateway;
     private  final PasswordEncoder passwordEncoder;
 
-    public CreateUserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
+    public CreateUserService(UserGateway userGateway, PasswordEncoder passwordEncoder) {
+        this.userGateway = userGateway;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -31,6 +31,6 @@ public class CreateUserService implements CreateUserUseCase {
                 command.role()
         );
 
-        return userRepository.create(user);
+        return userGateway.create(user);
     }
 }
