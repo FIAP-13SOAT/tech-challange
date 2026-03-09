@@ -4,7 +4,7 @@ import com.fiapchallenge.garage.adapters.inbound.controller.stockmovement.dto.St
 import com.fiapchallenge.garage.application.stockmovement.list.ListStockMovementUseCase;
 import com.fiapchallenge.garage.controllers.stockmovement.StockMovementController;
 import com.fiapchallenge.garage.presenters.stockmovement.StockMovementPresenter;
-import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,20 +26,20 @@ public class StockMovementResource implements StockMovementResourceOpenApiSpec {
 
     @GetMapping
     @Override
-    public ResponseEntity<Page<StockMovementDTO>> listAll(
+    public ResponseEntity<PagedModel<StockMovementDTO>> listAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(stockMovementController.listAll(page, size));
+        return ResponseEntity.ok(new PagedModel<>(stockMovementController.listAll(page, size)));
     }
 
     @GetMapping("/stock/{stockId}")
     @Override
-    public ResponseEntity<Page<StockMovementDTO>> listByStockId(
+    public ResponseEntity<PagedModel<StockMovementDTO>> listByStockId(
             @PathVariable UUID stockId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(stockMovementController.listByStockId(stockId, page, size));
+        return ResponseEntity.ok(new PagedModel<>(stockMovementController.listByStockId(stockId, page, size)));
     }
 }

@@ -7,7 +7,7 @@ import com.fiapchallenge.garage.controllers.customer.CustomerController;
 import com.fiapchallenge.garage.domain.customer.CustomerGateway;
 import com.fiapchallenge.garage.presenters.customer.CustomerPresenter;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,14 +34,14 @@ public class CustomerResource implements CustomerResourceOpenApiSpec {
 
     @Override
     @GetMapping
-    public ResponseEntity<Page<CustomerResponseDTO>> list(
+    public ResponseEntity<PagedModel<CustomerResponseDTO>> list(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String cpfCnpj,
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Integer size
     ) {
-        return ResponseEntity.ok(customerController.list(name, email, cpfCnpj, page, size));
+        return ResponseEntity.ok(new PagedModel<>(customerController.list(name, email, cpfCnpj, page, size)));
     }
 
     @Override

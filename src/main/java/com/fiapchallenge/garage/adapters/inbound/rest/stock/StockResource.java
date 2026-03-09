@@ -14,7 +14,7 @@ import com.fiapchallenge.garage.application.stock.update.UpdateStockUseCase;
 import com.fiapchallenge.garage.controllers.stock.StockController;
 import com.fiapchallenge.garage.presenters.stock.StockPresenter;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -64,11 +64,11 @@ public class StockResource implements StockResourceOpenApiSpec {
     @Override
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'MECHANIC', 'STOCK_KEEPER')")
-    public ResponseEntity<Page<StockDTO>> list(
+    public ResponseEntity<PagedModel<StockDTO>> list(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(stockController.list(page, size));
+        return ResponseEntity.ok(new PagedModel<>(stockController.list(page, size)));
     }
 
     @Override
