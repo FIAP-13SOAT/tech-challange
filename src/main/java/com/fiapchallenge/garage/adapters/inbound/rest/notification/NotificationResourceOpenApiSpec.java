@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,7 +20,7 @@ public interface NotificationResourceOpenApiSpec {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista recuperada com sucesso")
     })
-    ResponseEntity<Page<NotificationResponseDTO>> list(
+    ResponseEntity<PagedModel<NotificationResponseDTO>> list(
             @Parameter(description = "Numero da pagina") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Tamanho da pagina") @RequestParam(defaultValue = "10") int size
     );
@@ -29,7 +29,7 @@ public interface NotificationResourceOpenApiSpec {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista recuperada com sucesso")
     })
-    ResponseEntity<Page<NotificationResponseDTO>> listUnread(
+    ResponseEntity<PagedModel<NotificationResponseDTO>> listUnread(
             @Parameter(description = "Numero da pagina") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Tamanho da pagina") @RequestParam(defaultValue = "10") int size
     );

@@ -5,10 +5,10 @@ import com.fiapchallenge.garage.application.notification.list.ListNotificationUs
 import com.fiapchallenge.garage.application.notification.markread.MarkNotificationAsReadUseCase;
 import com.fiapchallenge.garage.controllers.notification.NotificationController;
 import com.fiapchallenge.garage.presenters.notification.NotificationPresenter;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,23 +40,23 @@ public class NotificationResource implements NotificationResourceOpenApiSpec {
     @Override
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
-    public ResponseEntity<Page<NotificationResponseDTO>> list(
+    public ResponseEntity<PagedModel<NotificationResponseDTO>> list(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return ResponseEntity.ok(notificationController.list(pageable));
+        return ResponseEntity.ok(new PagedModel<>(notificationController.list(pageable)));
     }
 
     @Override
     @GetMapping("/unread")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLERK', 'MECHANIC')")
-    public ResponseEntity<Page<NotificationResponseDTO>> listUnread(
+    public ResponseEntity<PagedModel<NotificationResponseDTO>> listUnread(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return ResponseEntity.ok(notificationController.listUnread(pageable));
+        return ResponseEntity.ok(new PagedModel<>(notificationController.listUnread(pageable)));
     }
 
     @Override

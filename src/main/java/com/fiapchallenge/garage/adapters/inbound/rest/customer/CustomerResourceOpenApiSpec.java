@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,7 +57,7 @@ public interface CustomerResourceOpenApiSpec {
             @ApiResponse(responseCode = "200", description = "Lista de clientes retornada com sucesso",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Customer.class)))
     })
-    ResponseEntity<Page<CustomerResponseDTO>> list(
+    ResponseEntity<PagedModel<CustomerResponseDTO>> list(
             @Parameter(name = "name", description = "Filtrar por nome do cliente") @RequestParam(required = false) String name,
             @Parameter(name = "email", description = "Filtrar por email do cliente") @RequestParam(required = false) String email,
             @Parameter(name = "cpfCnpj", description = "Filtrar por CPF/CNPJ do cliente") @RequestParam(required = false) String cpfCnpj,
