@@ -110,3 +110,34 @@ jobs:
             - name: Wait rollout
               continue-on-error: true
               run: kubectl rollout status deployment/garage-app --timeout=5m
+
+            - name: Get LB DNS and Update SSM
+              run: |
+                  echo "Aguardando o Load Balancer gerar o DNS..."
+
+                  # Tenta obter o DNS do Service por até 2 minutos (12 iterações de 10s)
+                  for i in {1..12}; do
+                    LB_DNS=$(kubectl get service garage-app-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+
+                    if [ ! -z "$LB_DNS" ]; then
+                      echo "DNS encontrado: $LB_DNS"
+                      break
+                    fi
+
+                    echo "Tentativa $i: DNS ainda não disponível. Aguardando 10s..."
+                    sleep 10
+                  done
+
+                  if [ -z "$LB_DNS" ]; then
+                    echo "Erro: O Load Balancer não gerou um DNS a tempo."
+                    exit 1
+                  fi
+
+                  # Salva o DNS no SSM Parameter Store para o Cloud Stack (API Gateway) usar
+                  aws ssm put-parameter \
+                    --name "/garage/prod/garage/alb_dns" \
+                    --value "$LB_DNS" \
+                    --type "String" \
+                    --overwrite
+
+                        echo "SSM atualizado com sucesso!"
