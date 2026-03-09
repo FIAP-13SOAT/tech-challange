@@ -3,7 +3,7 @@ package com.fiapchallenge.garage.application.serviceorder.finishdiagnosis;
 import com.fiapchallenge.garage.application.quote.GenerateQuoteUseCase;
 import com.fiapchallenge.garage.application.serviceorder.exceptions.ServiceOrderNotFoundException;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,21 +12,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class FinishServiceOrderDiagnosticService implements FinishServiceOrderDiagnosticUseCase {
 
-    private final ServiceOrderRepository serviceOrderRepository;
+    private final ServiceOrderGateway serviceOrderGateway;
 
     private final GenerateQuoteUseCase generateQuoteUseCase;
 
-    public FinishServiceOrderDiagnosticService(ServiceOrderRepository serviceOrderRepository, GenerateQuoteUseCase generateQuoteUseCase) {
-        this.serviceOrderRepository = serviceOrderRepository;
+    public FinishServiceOrderDiagnosticService(ServiceOrderGateway serviceOrderGateway, GenerateQuoteUseCase generateQuoteUseCase) {
+        this.serviceOrderGateway = serviceOrderGateway;
         this.generateQuoteUseCase = generateQuoteUseCase;
     }
 
     @Override
     public ServiceOrder handle(FinishServiceOrderDiagnosticCommand command) {
-        ServiceOrder serviceOrder = this.serviceOrderRepository.findById(command.id()).orElseThrow(() -> new ServiceOrderNotFoundException(command.id()));
+        ServiceOrder serviceOrder = this.serviceOrderGateway.findById(command.id()).orElseThrow(() -> new ServiceOrderNotFoundException(command.id()));
 
         serviceOrder.sendToApproval();
-        serviceOrderRepository.save(serviceOrder);
+        serviceOrderGateway.save(serviceOrder);
         generateQuoteUseCase.handle(serviceOrder.getId());
         return serviceOrder;
     }

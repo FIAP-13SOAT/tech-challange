@@ -2,7 +2,7 @@ package com.fiapchallenge.garage.application.report.service;
 
 import com.fiapchallenge.garage.application.report.command.GenerateServiceOrderExecutionReportCommand;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecution;
-import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionRepository;
+import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionGateway;
 import com.fiapchallenge.garage.application.report.exceptions.ReportErrorException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -22,16 +22,19 @@ import java.util.List;
 @Service
 public class GenerateServiceOrderExecutionReportService implements GenerateServiceOrderExecutionReportUseCase {
 
-    private final ServiceOrderExecutionRepository serviceOrderExecutionRepository;
+    private final ServiceOrderExecutionGateway serviceOrderExecutionGateway;
 
-    public GenerateServiceOrderExecutionReportService(ServiceOrderExecutionRepository serviceOrderExecutionRepository) {
-        this.serviceOrderExecutionRepository = serviceOrderExecutionRepository;
+    public GenerateServiceOrderExecutionReportService(ServiceOrderExecutionGateway serviceOrderExecutionGateway) {
+        this.serviceOrderExecutionGateway = serviceOrderExecutionGateway;
     }
 
     @Override
     public byte[] handle(GenerateServiceOrderExecutionReportCommand command) {
 
-        List<ServiceOrderExecution> serviceOrdesExecutions = serviceOrderExecutionRepository.findByStartDateBetweenOrderByStartDateAsc(command.startDate().atStartOfDay(), command.endDate().atTime(23, 59, 59));
+        List<ServiceOrderExecution> serviceOrdesExecutions = serviceOrderExecutionGateway.findByStartDateBetweenOrderByStartDateAsc(
+                command.startDate().atStartOfDay(),
+                command.endDate().atTime(23, 59, 59)
+        );
 
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 

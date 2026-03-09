@@ -4,7 +4,7 @@ import com.fiapchallenge.garage.application.customer.create.CreateCustomerServic
 import com.fiapchallenge.garage.application.servicetype.create.CreateServiceTypeService;
 import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
 import com.fiapchallenge.garage.domain.customer.Customer;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
 import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
@@ -38,7 +38,7 @@ class ServiceOrderStatusIntegrationTest extends BaseIntegrationTest {
     private CreateServiceTypeService createServiceTypeService;
 
     @Autowired
-    private ServiceOrderRepository serviceOrderRepository;
+    private ServiceOrderGateway serviceOrderGateway;
 
     @Autowired
     private MockMvc mockMvc;
@@ -89,7 +89,7 @@ class ServiceOrderStatusIntegrationTest extends BaseIntegrationTest {
                 VehicleFixture.createVehicle(customer.getId(), createVehicleService).getId(),
                 ServiceOrderStatus.AWAITING_APPROVAL,
                 createServiceTypeService,
-                serviceOrderRepository
+                serviceOrderGateway
         ).getId();
     }
 }

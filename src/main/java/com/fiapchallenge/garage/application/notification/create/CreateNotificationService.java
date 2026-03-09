@@ -1,7 +1,7 @@
 package com.fiapchallenge.garage.application.notification.create;
 
 import com.fiapchallenge.garage.domain.notification.Notification;
-import com.fiapchallenge.garage.domain.notification.NotificationRepository;
+import com.fiapchallenge.garage.domain.notification.NotificationGateway;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 @Service
 public class CreateNotificationService implements CreateNotificationUseCase {
 
-    private final NotificationRepository notificationRepository;
+    private final NotificationGateway notificationGateway;
 
-    public CreateNotificationService(NotificationRepository notificationRepository) {
-        this.notificationRepository = notificationRepository;
+    public CreateNotificationService(NotificationGateway notificationGateway) {
+        this.notificationGateway = notificationGateway;
     }
 
     @Override
@@ -30,6 +30,6 @@ public class CreateNotificationService implements CreateNotificationUseCase {
                 LocalDateTime.now()
         );
 
-        return notificationRepository.save(notification);
+        return notificationGateway.save(notification);
     }
 }

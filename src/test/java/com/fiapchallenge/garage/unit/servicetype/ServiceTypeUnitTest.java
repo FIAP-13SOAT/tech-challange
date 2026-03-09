@@ -1,8 +1,8 @@
 package com.fiapchallenge.garage.unit.servicetype;
 
-import com.fiapchallenge.garage.adapters.outbound.repositories.servicetype.ServiceTypeRepositoryImpl;
 import com.fiapchallenge.garage.application.servicetype.create.CreateServiceTypeService;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
+import com.fiapchallenge.garage.domain.servicetype.ServiceTypeGateway;
 import com.fiapchallenge.garage.unit.servicetype.utils.factory.ServiceTypeTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 class ServiceTypeUnitTest {
 
     @Mock
-    private ServiceTypeRepositoryImpl serviceOrderRepository;
+    private ServiceTypeGateway serviceTypeGateway;
 
     @InjectMocks
     private CreateServiceTypeService createServiceTypeService;
@@ -28,7 +28,7 @@ class ServiceTypeUnitTest {
     @Test
     @DisplayName("Criar ordem de serviço")
     void shouldCreateServiceOrder() {
-        when(serviceOrderRepository.save(any(ServiceType.class))).thenReturn(ServiceTypeTestFactory.build());
+        when(serviceTypeGateway.save(any(ServiceType.class))).thenReturn(ServiceTypeTestFactory.build());
 
         ServiceType serviceType = createServiceTypeService.handle(ServiceTypeTestFactory.buildCommand());
 

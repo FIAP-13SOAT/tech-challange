@@ -1,23 +1,19 @@
 package com.fiapchallenge.garage.application.vehicle.create;
 
 import com.fiapchallenge.garage.application.customer.exceptions.CustomerNotFoundException;
-import com.fiapchallenge.garage.domain.customer.CustomerRepository;
+import com.fiapchallenge.garage.domain.customer.CustomerGateway;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
-import com.fiapchallenge.garage.domain.vehicle.VehicleRepository;
+import com.fiapchallenge.garage.domain.vehicle.VehicleGateway;
 import com.fiapchallenge.garage.domain.vehicle.exceptions.InvalidLicensePlateException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Transactional
 public class CreateVehicleService implements CreateVehicleUseCase {
 
-    private final VehicleRepository vehicleRepository;
-    private final CustomerRepository customerRepository;
+    private final VehicleGateway vehicleGateway;
+    private final CustomerGateway customerGateway;
 
-    public CreateVehicleService(VehicleRepository vehicleRepository, CustomerRepository customerRepository) {
-        this.vehicleRepository = vehicleRepository;
-        this.customerRepository = customerRepository;
+    public CreateVehicleService(VehicleGateway vehicleGateway, CustomerGateway customerGateway) {
+        this.vehicleGateway = vehicleGateway;
+        this.customerGateway = customerGateway;
     }
 
     @Override
@@ -26,7 +22,7 @@ public class CreateVehicleService implements CreateVehicleUseCase {
             throw new InvalidLicensePlateException(command.licensePlate());
         }
 
-        if (!customerRepository.exists(command.customerId())) {
+        if (!customerGateway.exists(command.customerId())) {
             throw new CustomerNotFoundException(command.customerId());
         }
 
@@ -40,7 +36,7 @@ public class CreateVehicleService implements CreateVehicleUseCase {
             .observations(command.observations())
             .build();
 
-        return vehicleRepository.save(vehicle);
+        return vehicleGateway.save(vehicle);
     }
 
     private boolean isValidBrazilianLicensePlate(String licensePlate) {

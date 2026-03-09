@@ -4,7 +4,7 @@ import com.fiapchallenge.garage.application.stock.StockLevelChecker;
 import com.fiapchallenge.garage.application.stock.exceptions.StockNotFoundException;
 import com.fiapchallenge.garage.application.stockmovement.create.CreateStockMovementUseCase;
 import com.fiapchallenge.garage.domain.stock.Stock;
-import com.fiapchallenge.garage.domain.stock.StockRepository;
+import com.fiapchallenge.garage.domain.stock.StockGateway;
 import com.fiapchallenge.garage.application.stock.command.ConsumeStockCommand;
 import com.fiapchallenge.garage.domain.stock.exceptions.InsufficientStockException;
 import com.fiapchallenge.garage.domain.stockmovement.StockMovement;
@@ -15,19 +15,19 @@ import java.time.LocalDateTime;
 @Service
 public class ConsumeStockService implements ConsumeStockUseCase {
 
-    private final StockRepository stockRepository;
+    private final StockGateway stockGateway;
     private final StockLevelChecker stockLevelChecker;
     private final CreateStockMovementUseCase createStockMovementUseCase;
 
-    public ConsumeStockService(StockRepository stockRepository, StockLevelChecker stockLevelChecker, CreateStockMovementUseCase createStockMovementUseCase) {
-        this.stockRepository = stockRepository;
+    public ConsumeStockService(StockGateway stockGateway, StockLevelChecker stockLevelChecker, CreateStockMovementUseCase createStockMovementUseCase) {
+        this.stockGateway = stockGateway;
         this.stockLevelChecker = stockLevelChecker;
         this.createStockMovementUseCase = createStockMovementUseCase;
     }
 
     @Override
     public Stock handle(ConsumeStockCommand command) {
-        Stock stock = stockRepository.findById(command.stockId())
+        Stock stock = stockGateway.findById(command.stockId())
                 .orElseThrow(() -> new StockNotFoundException(command.stockId()));
 
         if (stock.getQuantity() == null || stock.getQuantity() < command.quantity()) {
@@ -44,7 +44,7 @@ public class ConsumeStockService implements ConsumeStockUseCase {
         stock.setQuantity(newQuantity)
                 .setUpdatedAt(LocalDateTime.now());
 
-        Stock updatedStock = stockRepository.save(stock);
+        Stock updatedStock = stockGateway.save(stock);
 
         createStockMovementUseCase.logMovement(
             stock.getId(),

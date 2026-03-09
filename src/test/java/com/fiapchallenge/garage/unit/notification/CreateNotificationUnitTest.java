@@ -2,7 +2,7 @@ package com.fiapchallenge.garage.unit.notification;
 
 import com.fiapchallenge.garage.application.notification.create.CreateNotificationService;
 import com.fiapchallenge.garage.domain.notification.Notification;
-import com.fiapchallenge.garage.domain.notification.NotificationRepository;
+import com.fiapchallenge.garage.domain.notification.NotificationGateway;
 import com.fiapchallenge.garage.domain.stock.Stock;
 import com.fiapchallenge.garage.unit.notification.factory.NotificationTestFactory;
 import com.fiapchallenge.garage.unit.stock.factory.StockTestFactory;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class CreateNotificationUnitTest {
 
     @Mock
-    private NotificationRepository notificationRepository;
+    private NotificationGateway notificationGateway;
 
     @InjectMocks
     private CreateNotificationService createNotificationService;
@@ -39,7 +39,7 @@ class CreateNotificationUnitTest {
     @Test
     @DisplayName("Deve criar notificação de estoque baixo com sucesso")
     void shouldCreateLowStockNotificationSuccessfully() {
-        when(notificationRepository.save(any(Notification.class))).thenAnswer(invocation -> {
+        when(notificationGateway.save(any(Notification.class))).thenAnswer(invocation -> {
             Notification savedNotification = invocation.getArgument(0);
             return savedNotification.setId(notification.getId());
         });
@@ -52,17 +52,17 @@ class CreateNotificationUnitTest {
         assertFalse(result.isRead());
         assertEquals(lowStock.getId(), result.getStockId());
         
-        verify(notificationRepository).save(any(Notification.class));
+        verify(notificationGateway).save(any(Notification.class));
     }
 
     @Test
     @DisplayName("Deve criar mensagem com formato correto")
     void shouldCreateCorrectMessageFormat() {
-        when(notificationRepository.save(any(Notification.class))).thenReturn(notification);
+        when(notificationGateway.save(any(Notification.class))).thenReturn(notification);
 
         createNotificationService.createLowStockNotification(lowStock);
 
-        verify(notificationRepository).save(argThat(n -> 
+        verify(notificationGateway).save(argThat(n ->
             n.getMessage().contains("Estoque baixo para") &&
             n.getMessage().contains(lowStock.getProductName()) &&
             n.getMessage().contains("Quantidade atual: " + lowStock.getQuantity()) &&
@@ -73,21 +73,21 @@ class CreateNotificationUnitTest {
     @Test
     @DisplayName("Deve marcar notificação como não lida")
     void shouldSetNotificationAsUnread() {
-        when(notificationRepository.save(any(Notification.class))).thenReturn(notification);
+        when(notificationGateway.save(any(Notification.class))).thenReturn(notification);
 
         createNotificationService.createLowStockNotification(lowStock);
 
-        verify(notificationRepository).save(argThat(n -> !n.isRead()));
+        verify(notificationGateway).save(argThat(n -> !n.isRead()));
     }
 
     @Test
     @DisplayName("Deve definir ID do estoque corretamente")
     void shouldSetCorrectStockId() {
-        when(notificationRepository.save(any(Notification.class))).thenReturn(notification);
+        when(notificationGateway.save(any(Notification.class))).thenReturn(notification);
 
         createNotificationService.createLowStockNotification(lowStock);
 
-        verify(notificationRepository).save(argThat(n -> 
+        verify(notificationGateway).save(argThat(n ->
             n.getStockId().equals(lowStock.getId())
         ));
     }

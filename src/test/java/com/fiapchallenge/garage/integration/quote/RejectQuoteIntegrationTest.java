@@ -5,7 +5,7 @@ import com.fiapchallenge.garage.application.quote.GenerateQuoteService;
 import com.fiapchallenge.garage.application.serviceorder.create.CreateServiceOrderService;
 import com.fiapchallenge.garage.application.servicetype.create.CreateServiceTypeService;
 import com.fiapchallenge.garage.application.vehicle.create.CreateVehicleService;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.customer.Customer;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.vehicle.Vehicle;
@@ -37,7 +37,7 @@ class RejectQuoteIntegrationTest extends BaseIntegrationTest {
     private final CreateServiceOrderService createServiceOrderService;
     private final CreateServiceTypeService createServiceTypeService;
     private final GenerateQuoteService generateQuoteService;
-    private final ServiceOrderRepository serviceOrderRepository;
+    private final ServiceOrderGateway serviceOrderGateway;
 
     @Autowired
     public RejectQuoteIntegrationTest(MockMvc mockMvc,
@@ -46,14 +46,14 @@ class RejectQuoteIntegrationTest extends BaseIntegrationTest {
                                     CreateServiceOrderService createServiceOrderService,
                                     CreateServiceTypeService createServiceTypeService,
                                     GenerateQuoteService generateQuoteService,
-                                    ServiceOrderRepository serviceOrderRepository) {
+                                    ServiceOrderGateway serviceOrderGateway) {
         this.mockMvc = mockMvc;
         this.createCustomerService = createCustomerService;
         this.createVehicleService = createVehicleService;
         this.createServiceOrderService = createServiceOrderService;
         this.createServiceTypeService = createServiceTypeService;
         this.generateQuoteService = generateQuoteService;
-        this.serviceOrderRepository = serviceOrderRepository;
+        this.serviceOrderGateway = serviceOrderGateway;
     }
 
     @Test
@@ -61,7 +61,7 @@ class RejectQuoteIntegrationTest extends BaseIntegrationTest {
     void shouldRejectQuoteForValidServiceOrder() throws Exception {
         Customer customer = CustomerFixture.createCustomer(createCustomerService);
         Vehicle vehicle = VehicleFixture.createVehicle(customer.getId(), createVehicleService);
-        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), customer.getId(), createServiceOrderService, createServiceTypeService, serviceOrderRepository);
+        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), customer.getId(), createServiceOrderService, createServiceTypeService, serviceOrderGateway);
         generateQuoteService.handle(serviceOrder.getId());
 
         mockMvc.perform(post("/quotes/service-order/" + serviceOrder.getId() + "/reject")
@@ -84,7 +84,7 @@ class RejectQuoteIntegrationTest extends BaseIntegrationTest {
     void shouldAllowAccessWithAdminRole() throws Exception {
         Customer customer = CustomerFixture.createCustomer(createCustomerService);
         Vehicle vehicle = VehicleFixture.createVehicle(customer.getId(), createVehicleService);
-        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), customer.getId(), createServiceOrderService, createServiceTypeService, serviceOrderRepository);
+        ServiceOrder serviceOrder = ServiceOrderFixture.createServiceOrder(vehicle.getId(), customer.getId(), createServiceOrderService, createServiceTypeService, serviceOrderGateway);
         generateQuoteService.handle(serviceOrder.getId());
 
         mockMvc.perform(post("/quotes/service-order/" + serviceOrder.getId() + "/reject")

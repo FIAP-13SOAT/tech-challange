@@ -2,7 +2,7 @@ package com.fiapchallenge.garage.application.serviceorder.startsdiagnosis;
 
 import com.fiapchallenge.garage.application.serviceorder.exceptions.ServiceOrderNotFoundException;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,18 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class StartServiceOrderDiagnosticService implements StartServiceOrderDiagnosticUseCase {
 
-    private final ServiceOrderRepository serviceOrderRepository;
+    private final ServiceOrderGateway serviceOrderGateway;
 
-    public StartServiceOrderDiagnosticService(ServiceOrderRepository serviceOrderRepository) {
-        this.serviceOrderRepository = serviceOrderRepository;
+    public StartServiceOrderDiagnosticService(ServiceOrderGateway serviceOrderGateway) {
+        this.serviceOrderGateway = serviceOrderGateway;
     }
 
     @Override
     public ServiceOrder handle(StartServiceOrderDiagnosticCommand command) {
-        ServiceOrder serviceOrder = serviceOrderRepository.findById(command.id()).orElseThrow(() -> new ServiceOrderNotFoundException(command.id()));
+        ServiceOrder serviceOrder = serviceOrderGateway.findById(command.id()).orElseThrow(() -> new ServiceOrderNotFoundException(command.id()));
 
         serviceOrder.startDiagnostic();
-        serviceOrderRepository.save(serviceOrder);
+        serviceOrderGateway.save(serviceOrder);
 
         return serviceOrder;
     }

@@ -1,8 +1,8 @@
 package com.fiapchallenge.garage.application.quote;
 
 import com.fiapchallenge.garage.domain.quote.Quote;
-import com.fiapchallenge.garage.domain.quote.QuoteRepository;
-import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderRepository;
+import com.fiapchallenge.garage.domain.quote.QuoteGateway;
+import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -10,22 +10,22 @@ import java.util.UUID;
 @Service
 public class RejectQuoteService implements RejectQuoteUseCase {
 
-    private final QuoteRepository quoteRepository;
-    private final ServiceOrderRepository serviceOrderRepository;
+    private final QuoteGateway quoteGateway;
+    private final ServiceOrderGateway serviceOrderGateway;
 
-    public RejectQuoteService(QuoteRepository quoteRepository, ServiceOrderRepository serviceOrderRepository) {
-        this.quoteRepository = quoteRepository;
-        this.serviceOrderRepository = serviceOrderRepository;
+    public RejectQuoteService(QuoteGateway quoteGateway, ServiceOrderGateway serviceOrderGateway) {
+        this.quoteGateway = quoteGateway;
+        this.serviceOrderGateway = serviceOrderGateway;
     }
 
     public Quote handle(UUID serviceOrderId) {
-        Quote quote = quoteRepository.findByServiceOrderIdOrThrow(serviceOrderId);
+        Quote quote = quoteGateway.findByServiceOrderIdOrThrow(serviceOrderId);
         quote.reject();
 
-        var serviceOrder = serviceOrderRepository.findByIdOrThrow(serviceOrderId);
+        var serviceOrder = serviceOrderGateway.findByIdOrThrow(serviceOrderId);
         serviceOrder.cancel();
-        serviceOrderRepository.save(serviceOrder);
+        serviceOrderGateway.save(serviceOrder);
 
-        return quoteRepository.save(quote);
+        return quoteGateway.save(quote);
     }
 }
