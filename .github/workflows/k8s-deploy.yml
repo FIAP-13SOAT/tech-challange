@@ -117,7 +117,7 @@ jobs:
 
                   # Tenta obter o DNS do Service por até 2 minutos (12 iterações de 10s)
                   for i in {1..12}; do
-                    LB_DNS=$(kubectl get service garage-app-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+                    LB_DNS=$(kubectl get service garage-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 
                     if [ ! -z "$LB_DNS" ]; then
                       echo "DNS encontrado: $LB_DNS"
