@@ -8,7 +8,7 @@ import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
 import com.fiapchallenge.garage.domain.serviceorder.exceptions.InvalidStatusToDeliverException;
-import com.fiapchallenge.garage.shared.exception.SoatNotFoundException;
+import com.fiapchallenge.garage.shared.metrics.ServiceOrderMetrics;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +28,9 @@ class DeliverServiceOrderServiceTest {
 
     @Mock
     private ServiceOrderGateway serviceOrderGateway;
+
+    @Mock
+    private ServiceOrderMetrics serviceOrderMetrics;
 
     @InjectMocks
     private DeliverServiceOrderService deliverServiceOrderService;

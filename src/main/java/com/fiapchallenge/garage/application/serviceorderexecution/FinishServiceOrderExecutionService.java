@@ -6,6 +6,7 @@ import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecution;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionGateway;
+import com.fiapchallenge.garage.shared.metrics.ServiceOrderMetrics;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,26 +16,38 @@ public class FinishServiceOrderExecutionService implements FinishServiceOrderExe
 
     private final ServiceOrderExecutionGateway serviceOrderExecutionGateway;
     private final ServiceOrderGateway serviceOrderGateway;
+    private final ServiceOrderMetrics serviceOrderMetrics;
 
     public FinishServiceOrderExecutionService(
             ServiceOrderGateway serviceOrderGateway,
-            ServiceOrderExecutionGateway serviceOrderExecutionGateway
+            ServiceOrderExecutionGateway serviceOrderExecutionGateway,
+            ServiceOrderMetrics serviceOrderMetrics
     ) {
         this.serviceOrderExecutionGateway = serviceOrderExecutionGateway;
         this.serviceOrderGateway = serviceOrderGateway;
+        this.serviceOrderMetrics = serviceOrderMetrics;
     }
 
     @Override
     public ServiceOrder handle(FinishServiceOrderExecutionCommand command) {
-        ServiceOrder serviceOrder = serviceOrderGateway.findById(command.id())
-                .orElseThrow(() -> new ServiceOrderNotFoundException(command.id()));
+        long startTime = System.currentTimeMillis();
+        try {
+            ServiceOrder serviceOrder = serviceOrderGateway.findById(command.id())
+                    .orElseThrow(() -> new ServiceOrderNotFoundException(command.id()));
 
-        ServiceOrderExecution serviceOrderExecution = serviceOrderExecutionGateway.findById(command.id())
-                .orElseThrow(() -> new ServiceOrderExecutionNotFoundException(command.id()));
+            ServiceOrderExecution serviceOrderExecution = serviceOrderExecutionGateway.findById(command.id())
+                    .orElseThrow(() -> new ServiceOrderExecutionNotFoundException(command.id()));
 
-        serviceOrderExecution.finish();
-        serviceOrderExecutionGateway.save(serviceOrderExecution);
+            serviceOrderExecution.finish();
+            serviceOrderExecutionGateway.save(serviceOrderExecution);
 
-        return serviceOrder;
+            serviceOrderMetrics.recordProcessingDuration("finish_execution", "success", System.currentTimeMillis() - startTime);
+
+            return serviceOrder;
+        } catch (Exception e) {
+            serviceOrderMetrics.incrementError("finish_execution", e.getClass().getSimpleName());
+            serviceOrderMetrics.recordProcessingDuration("finish_execution", "error", System.currentTimeMillis() - startTime);
+            throw e;
+        }
     }
 }

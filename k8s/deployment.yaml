@@ -10,6 +10,11 @@ spec:
         metadata:
             labels:
                 app: garage-app
+                tags.datadoghq.com/env: "prod"
+                tags.datadoghq.com/service: "garage"
+                tags.datadoghq.com/version: "1.0.0"
+            annotations:
+                ad.datadoghq.com/garage-app.logs: '[{"source":"java","service":"garage"}]'
         spec:
             imagePullSecrets:
                 - name: ecr-secret
@@ -50,6 +55,24 @@ spec:
                             configMapKeyRef:
                                 name: garage-config
                                 key: SPRING_PROFILES_ACTIVE
+                      - name: DD_AGENT_HOST
+                        valueFrom:
+                            fieldRef:
+                                fieldPath: status.hostIP
+                      - name: DD_ENV
+                        valueFrom:
+                            fieldRef:
+                                fieldPath: metadata.labels['tags.datadoghq.com/env']
+                      - name: DD_SERVICE
+                        valueFrom:
+                            fieldRef:
+                                fieldPath: metadata.labels['tags.datadoghq.com/service']
+                      - name: DD_VERSION
+                        valueFrom:
+                            fieldRef:
+                                fieldPath: metadata.labels['tags.datadoghq.com/version']
+                      - name: DD_LOGS_INJECTION
+                        value: "true"
                   resources:
                       requests:
                           memory: "512Mi"

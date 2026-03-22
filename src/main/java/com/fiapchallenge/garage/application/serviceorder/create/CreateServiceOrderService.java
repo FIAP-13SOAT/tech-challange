@@ -10,6 +10,7 @@ import com.fiapchallenge.garage.application.customer.exceptions.CustomerNotFound
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import com.fiapchallenge.garage.domain.servicetype.ServiceTypeGateway;
 import com.fiapchallenge.garage.application.stock.command.ConsumeStockCommand;
+import com.fiapchallenge.garage.shared.metrics.ServiceOrderMetrics;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,41 +24,56 @@ public class CreateServiceOrderService implements CreateServiceOrderUseCase {
     private final ServiceOrderGateway serviceOrderGateway;
     private final ConsumeStockUseCase consumeStockUseCase;
     private final CustomerGateway customerGateway;
+    private final ServiceOrderMetrics serviceOrderMetrics;
 
     public CreateServiceOrderService(ServiceTypeGateway serviceTypeGateway,
                                    ServiceOrderGateway serviceOrderGateway,
                                    ConsumeStockUseCase consumeStockUseCase,
-                                   CustomerGateway customerGateway) {
+                                   CustomerGateway customerGateway,
+                                   ServiceOrderMetrics serviceOrderMetrics) {
 
         this.serviceTypeGateway = serviceTypeGateway;
         this.serviceOrderGateway = serviceOrderGateway;
         this.consumeStockUseCase = consumeStockUseCase;
         this.customerGateway = customerGateway;
+        this.serviceOrderMetrics = serviceOrderMetrics;
     }
 
     @Override
     public ServiceOrder handle(CreateServiceOrderCommand command) {
-        Customer customer = customerGateway.findById(command.customerId())
-                .orElseThrow(() -> new CustomerNotFoundException(command.customerId()));
+        long startTime = System.currentTimeMillis();
+        try {
+            Customer customer = customerGateway.findById(command.customerId())
+                    .orElseThrow(() -> new CustomerNotFoundException(command.customerId()));
 
-        List<ServiceType> serviceTypesList = command.serviceTypeIdList()
-                .stream()
-                .map(serviceTypeGateway::findByIdOrThrow)
-                .toList();
+            List<ServiceType> serviceTypesList = command.serviceTypeIdList()
+                    .stream()
+                    .map(serviceTypeGateway::findByIdOrThrow)
+                    .toList();
 
-        command.stockItems().forEach(item -> {
-            ConsumeStockCommand consumeCommand = new ConsumeStockCommand(item.stockId(), item.quantity());
-            consumeStockUseCase.handle(consumeCommand);
-        });
+            command.stockItems().forEach(item -> {
+                ConsumeStockCommand consumeCommand = new ConsumeStockCommand(item.stockId(), item.quantity());
+                consumeStockUseCase.handle(consumeCommand);
+            });
 
-        List<ServiceOrderItem> stockItems = command.stockItems().stream()
-                        .map(item -> new ServiceOrderItem(item.stockId(), item.quantity()))
-                        .toList();
+            List<ServiceOrderItem> stockItems = command.stockItems().stream()
+                            .map(item -> new ServiceOrderItem(item.stockId(), item.quantity()))
+                            .toList();
 
-        ServiceOrder serviceOrder = new ServiceOrder(command, customer);
-        serviceOrder.setServiceTypeList(serviceTypesList);
-        serviceOrder.setStockItems(stockItems);
+            ServiceOrder serviceOrder = new ServiceOrder(command, customer);
+            serviceOrder.setServiceTypeList(serviceTypesList);
+            serviceOrder.setStockItems(stockItems);
 
-        return serviceOrderGateway.save(serviceOrder);
+            ServiceOrder saved = serviceOrderGateway.save(serviceOrder);
+
+            serviceOrderMetrics.incrementCreated(saved.getStatus().name());
+            serviceOrderMetrics.recordProcessingDuration("create", "success", System.currentTimeMillis() - startTime);
+
+            return saved;
+        } catch (Exception e) {
+            serviceOrderMetrics.incrementError("create", e.getClass().getSimpleName());
+            serviceOrderMetrics.recordProcessingDuration("create", "error", System.currentTimeMillis() - startTime);
+            throw e;
+        }
     }
 }
