@@ -1,10 +1,9 @@
 package com.fiapchallenge.garage.config;
 
-import com.fiapchallenge.garage.infra.UserSecurityFilter;
+import com.fiapchallenge.garage.infra.ApiGatewayAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -23,11 +22,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    private final UserSecurityFilter userAuthenticationFilter;
+    private final ApiGatewayAuthFilter apiGatewayAuthFilter;
 
     @Autowired
-    public SecurityConfig(UserSecurityFilter userAuthenticationFilter) {
-        this.userAuthenticationFilter = userAuthenticationFilter;
+    public SecurityConfig(ApiGatewayAuthFilter apiGatewayAuthFilter) {
+        this.apiGatewayAuthFilter = apiGatewayAuthFilter;
     }
 
     private static final String[] ENDPOINT_SWAGGER = {
@@ -43,8 +42,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 
     @Bean
@@ -52,13 +51,13 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable) //NOSONAR
             .authorizeHttpRequests(requests -> requests
-                .requestMatchers("/users/login").permitAll()
                 .requestMatchers(ENDPOINT_SWAGGER).permitAll()
                 .requestMatchers("/", "/actuator/health", "/robots.txt", "/sitemap.xml").permitAll()
                 .requestMatchers("/public/service-orders/**").permitAll()
                 .anyRequest().authenticated()
-            ).sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            )
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(apiGatewayAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::deny));
         return http.build();
     }
