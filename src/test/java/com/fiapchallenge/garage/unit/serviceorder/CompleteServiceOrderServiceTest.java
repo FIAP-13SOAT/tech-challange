@@ -10,6 +10,7 @@ import com.fiapchallenge.garage.domain.serviceorder.ServiceOrder;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderStatus;
 import com.fiapchallenge.garage.domain.serviceorder.exceptions.InvalidStatusToCompleteException;
+import com.fiapchallenge.garage.shared.metrics.ServiceOrderMetrics;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +33,9 @@ class CompleteServiceOrderServiceTest {
 
     @Mock
     private FinishServiceOrderExecutionUseCase finishServiceOrderExecutionUseCase;
+
+    @Mock
+    private ServiceOrderMetrics serviceOrderMetrics;
 
     @InjectMocks
     private CompleteServiceOrderService completeServiceOrderService;

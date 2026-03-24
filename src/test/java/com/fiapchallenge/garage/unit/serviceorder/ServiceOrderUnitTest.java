@@ -17,6 +17,7 @@ import com.fiapchallenge.garage.domain.serviceorder.ServiceOrderGateway;
 import com.fiapchallenge.garage.domain.serviceorderexecution.ServiceOrderExecutionGateway;
 import com.fiapchallenge.garage.domain.servicetype.ServiceType;
 import com.fiapchallenge.garage.domain.servicetype.ServiceTypeGateway;
+import com.fiapchallenge.garage.shared.metrics.ServiceOrderMetrics;
 import com.fiapchallenge.garage.unit.serviceorder.util.factory.ServiceOrderTestFactory;
 import com.fiapchallenge.garage.unit.servicetype.utils.factory.ServiceTypeTestFactory;
 import org.junit.jupiter.api.DisplayName;
@@ -53,6 +54,9 @@ class ServiceOrderUnitTest {
 
     @Mock
     GenerateQuoteUseCase generateQuoteUseCase;
+
+    @Mock
+    ServiceOrderMetrics serviceOrderMetrics;
 
     @InjectMocks
     private CreateServiceOrderService createServiceOrderService;
