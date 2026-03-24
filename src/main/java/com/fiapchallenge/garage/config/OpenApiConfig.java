@@ -5,41 +5,46 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class OpenApiConfig {
 
     private static final String SECURITY_SCHEME_NAME = "bearerAuth";
 
+    @Value("${app.api-gateway-url:}")
+    private String apiGatewayUrl;
+
     @Bean
     public OpenAPI customOpenAPI() {
         SecurityScheme securityScheme = new SecurityScheme()
+                .name(SECURITY_SCHEME_NAME)
                 .type(SecurityScheme.Type.HTTP)
                 .scheme("bearer")
                 .bearerFormat("JWT")
                 .in(SecurityScheme.In.HEADER)
-                .name("Authorization")
-                .description("Token JWT para autenticação. Ex: Bearer <token>");
+                .description("Token JWT para autenticação. Use POST /login (CPF) ou POST /admin/login (email/password) para obter o token.");
 
-        SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList(SECURITY_SCHEME_NAME);
-        return new OpenAPI()
-                .components(new Components()
-                .addSecuritySchemes(SECURITY_SCHEME_NAME, securityScheme))
-                .addSecurityItem(securityRequirement)
+        OpenAPI openAPI = new OpenAPI()
                 .info(new Info()
                         .title("Garage API")
                         .version("1.0.0")
-                        .description("API de gerênciamento de oficina mecânica"))
-                .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
+                        .description("API de gerenciamento de oficina mecânica — Projeto Garage (FIAP Pós-Graduação)"))
                 .components(new Components()
-                        .addSecuritySchemes(SECURITY_SCHEME_NAME,
-                                new SecurityScheme()
-                                        .name(SECURITY_SCHEME_NAME)
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")));
+                        .addSecuritySchemes(SECURITY_SCHEME_NAME, securityScheme))
+                .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME));
+
+        if (apiGatewayUrl != null && !apiGatewayUrl.isEmpty()) {
+            openAPI.servers(List.of(
+                new Server().url(apiGatewayUrl).description("API Gateway (produção)")
+            ));
+        }
+
+        return openAPI;
     }
 }

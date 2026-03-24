@@ -20,6 +20,9 @@ spring:
     default-schema: public
     locations: classpath:db/migration
 
+server:
+  forward-headers-strategy: framework
+
 api:
   security:
     jwt:
@@ -54,3 +57,5 @@ management:
         host: ${DD_AGENT_HOST:localhost}
         port: 8125
         flavor: datadog
+app:
+  api-gateway-url: ${APP_API_GATEWAY_URL:}

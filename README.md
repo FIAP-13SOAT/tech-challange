@@ -68,6 +68,30 @@ Essa automação garante entregas contínuas, padronizadas e confiáveis em todo
 - Terraform (Infraestrutura AWS)
 - Kubernetes (EKS)
 
+## Documentação da API
+
+A documentação interativa da API está disponível via Swagger UI. Com a aplicação em execução, acesse:
+
+- **Swagger UI:** [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+
+A autenticação é feita via token JWT (Bearer Token). Utilize o endpoint de login para obter o token e configure-o no Swagger UI através do botão "Authorize".
+
+### Endpoints REST Disponíveis
+
+| Recurso | Base Path | Descrição |
+|---|---|---|
+| Clientes | `/customers` | Cadastro, listagem, atualização e remoção de clientes |
+| Veículos | `/vehicles` | Cadastro e gestão de veículos vinculados a clientes |
+| Ordens de Serviço | `/service-orders` | Criação, acompanhamento e gestão do ciclo de vida das OS (diagnóstico, execução, conclusão, entrega, cancelamento) |
+| Acompanhamento Público | `/public/service-orders` | Consulta pública do status da OS pelo cliente (não requer autenticação) |
+| Orçamentos | `/quotes` | Geração, aprovação e rejeição de orçamentos |
+| Tipos de Serviço | `/service-types` | Cadastro e gestão dos tipos de serviço oferecidos |
+| Estoque | `/stock` | Controle de peças e materiais (cadastro, adição, consumo) |
+| Movimentações de Estoque | `/stock-movements` | Histórico de movimentações de entrada e saída |
+| Notificações | `/notifications` | Listagem e marcação de notificações como lidas |
+| Relatórios | `/reports` | Geração de relatórios de execução das ordens de serviço |
+| Usuários | `/users` | Cadastro de usuários e autenticação (login) |
+
 ## Documentação Adicional
 
 - **[Arquitetura](docs/ARCHITECTURE.md)** - Regras arquiteturais e organização do código

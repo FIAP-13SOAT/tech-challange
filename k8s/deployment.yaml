@@ -14,7 +14,7 @@ spec:
                 tags.datadoghq.com/service: "garage"
                 tags.datadoghq.com/version: "1.0.0"
             annotations:
-                ad.datadoghq.com/garage-app.logs: '[{"source":"java","service":"garage"}]'
+                ad.datadoghq.com/garage-app.logs: '[{"source":"java","service":"garage","log_processing_rules":[{"type":"multi_line","name":"java_stacktrace","pattern":"\\d{4}-\\d{2}-\\d{2}|\\{\"timestamp\""}]}]'
         spec:
             imagePullSecrets:
                 - name: ecr-secret
@@ -73,6 +73,11 @@ spec:
                                 fieldPath: metadata.labels['tags.datadoghq.com/version']
                       - name: DD_LOGS_INJECTION
                         value: "true"
+                      - name: APP_API_GATEWAY_URL
+                        valueFrom:
+                            configMapKeyRef:
+                                name: garage-config
+                                key: API_GATEWAY_URL
                   resources:
                       requests:
                           memory: "512Mi"
