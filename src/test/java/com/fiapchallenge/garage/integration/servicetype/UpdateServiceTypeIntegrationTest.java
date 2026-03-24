@@ -121,8 +121,8 @@ class UpdateServiceTypeIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 403 para role CLERK")
-    void shouldReturn403ForClerkRole() throws Exception {
+    @DisplayName("Deve permitir atualização para role CLERK (auth no API Gateway)")
+    void shouldAllowUpdateForClerkRole() throws Exception {
         ServiceType createdServiceType = ServiceTypeFixture.createServiceType(createServiceTypeService);
 
         String updateServiceTypeJson = """
@@ -136,6 +136,6 @@ class UpdateServiceTypeIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updateServiceTypeJson))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
     }
 }

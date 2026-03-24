@@ -50,10 +50,10 @@ class ListServiceTypeIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve retornar erro 403 quando não autenticado")
-    void shouldReturnUnauthorizedWhenNotAuthenticated() throws Exception {
+    @DisplayName("Deve permitir acesso sem autenticação (auth no API Gateway)")
+    void shouldAllowAccessWithoutAuthentication() throws Exception {
         mockMvc.perform(get("/service-types"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
     }
 
     @Test

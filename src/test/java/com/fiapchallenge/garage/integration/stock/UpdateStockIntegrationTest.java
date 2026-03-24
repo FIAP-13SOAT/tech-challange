@@ -139,11 +139,11 @@ class UpdateStockIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    void shouldReturn403ForMechanicRole() throws Exception {
+    void shouldAllowUpdateForMechanicRole() throws Exception {
         mockMvc.perform(put("/stock/550e8400-e29b-41d4-a716-446655440000")
                         .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(StockFixture.updateStockJson()))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isNotFound());
     }
 }

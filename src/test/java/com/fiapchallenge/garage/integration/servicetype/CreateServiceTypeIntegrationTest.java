@@ -127,8 +127,8 @@ class CreateServiceTypeIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 403 para role CLERK")
-    void shouldReturn403ForClerkRole() throws Exception {
+    @DisplayName("Deve permitir criação para role CLERK (auth no API Gateway)")
+    void shouldAllowCreationForClerkRole() throws Exception {
         String serviceTypeJson = """
                 {
                     "description": "Serviço CLERK",
@@ -140,12 +140,12 @@ class CreateServiceTypeIntegrationTest extends BaseIntegrationTest {
                         .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceTypeJson))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Deve retornar 403 para role MECHANIC")
-    void shouldReturn403ForMechanicRole() throws Exception {
+    @DisplayName("Deve permitir criação para role MECHANIC (auth no API Gateway)")
+    void shouldAllowCreationForMechanicRole() throws Exception {
         String serviceTypeJson = """
                 {
                     "description": "Serviço MECHANIC",
@@ -157,6 +157,6 @@ class CreateServiceTypeIntegrationTest extends BaseIntegrationTest {
                         .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serviceTypeJson))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
     }
 }

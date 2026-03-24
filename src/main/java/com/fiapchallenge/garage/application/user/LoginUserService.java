@@ -8,11 +8,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
-@Service
+// Login agora é feito via Lambda (POST /login e POST /admin/login no API Gateway)
+// Esta classe é mantida apenas para compatibilidade, sem registro como bean Spring
 public class LoginUserService implements LoginUserUseCase {
 
     private final AuthenticationManager authenticationManager;

@@ -100,7 +100,7 @@ class DeleteStockIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    void shouldFailToDeleteStockWithoutAuthentication() throws Exception {
+    void shouldAllowDeleteStockWithoutAuthentication() throws Exception {
         String createResponse = mockMvc.perform(post("/stock")
                         .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -113,7 +113,7 @@ class DeleteStockIntegrationTest extends BaseIntegrationTest {
         String stockId = objectMapper.readTree(createResponse).get("id").asText();
 
         mockMvc.perform(delete("/stock/{id}", stockId))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -133,9 +133,9 @@ class DeleteStockIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    void shouldReturn403ForMechanicRole() throws Exception {
+    void shouldAllowDeleteForMechanicRole() throws Exception {
         mockMvc.perform(delete("/stock/550e8400-e29b-41d4-a716-446655440000")
                         .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isNotFound());
     }
 }

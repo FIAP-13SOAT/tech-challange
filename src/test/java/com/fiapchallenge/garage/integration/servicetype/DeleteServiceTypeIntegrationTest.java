@@ -57,12 +57,12 @@ class DeleteServiceTypeIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve retornar erro 403 quando não autenticado")
-    void shouldReturnUnauthorizedWhenNotAuthenticated() throws Exception {
+    @DisplayName("Deve permitir acesso sem autenticação (auth no API Gateway)")
+    void shouldAllowAccessWithoutAuthentication() throws Exception {
         ServiceType createdServiceType = ServiceTypeFixture.createServiceType(createServiceTypeService);
 
         mockMvc.perform(delete("/service-types/" + createdServiceType.getId()))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -76,22 +76,22 @@ class DeleteServiceTypeIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 403 para role CLERK")
-    void shouldReturn403ForClerkRole() throws Exception {
+    @DisplayName("Deve permitir exclusão para role CLERK (auth no API Gateway)")
+    void shouldAllowDeleteForClerkRole() throws Exception {
         ServiceType createdServiceType = ServiceTypeFixture.createServiceType(createServiceTypeService);
 
         mockMvc.perform(delete("/service-types/" + createdServiceType.getId())
                 .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isNoContent());
     }
 
     @Test
-    @DisplayName("Deve retornar 403 para role MECHANIC")
-    void shouldReturn403ForMechanicRole() throws Exception {
+    @DisplayName("Deve permitir exclusão para role MECHANIC (auth no API Gateway)")
+    void shouldAllowDeleteForMechanicRole() throws Exception {
         ServiceType createdServiceType = ServiceTypeFixture.createServiceType(createServiceTypeService);
 
         mockMvc.perform(delete("/service-types/" + createdServiceType.getId())
                 .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isNoContent());
     }
 }

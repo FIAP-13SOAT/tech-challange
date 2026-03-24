@@ -1,7 +1,5 @@
 package com.fiapchallenge.garage.integration.user;
 
-import com.fiapchallenge.garage.application.user.CreateUserService;
-import com.fiapchallenge.garage.application.user.LoginUserService;
 import com.fiapchallenge.garage.domain.user.UserRole;
 import com.fiapchallenge.garage.integration.BaseIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -24,15 +22,14 @@ class UserAuthorizationIntegrationTest extends BaseIntegrationTest {
     private final MockMvc mockMvc;
 
     @Autowired
-    public UserAuthorizationIntegrationTest(MockMvc mockMvc, CreateUserService createUserService, LoginUserService loginUserService) {
-        super(createUserService, loginUserService);
+    public UserAuthorizationIntegrationTest(MockMvc mockMvc) {
         this.mockMvc = mockMvc;
     }
 
     @Test
-    @DisplayName("Apenas ADMIN pode criar usuários")
-    void shouldAllowOnlyAdminToCreateUsers() throws Exception {
-        String userJson = """
+    @DisplayName("Qualquer role pode criar usuários (auth no API Gateway)")
+    void shouldAllowAnyRoleToCreateUsers() throws Exception {
+        String userJsonAdmin = """
                 {
                   "fullname": "Test User",
                   "email": "test@example.com",
@@ -41,28 +38,46 @@ class UserAuthorizationIntegrationTest extends BaseIntegrationTest {
                 }
         """;
 
+        String userJsonClerk = """
+                {
+                  "fullname": "Test User",
+                  "email": "test-clerk@example.com",
+                  "password": "password123",
+                  "role": "CLERK"
+                }
+        """;
+
+        String userJsonMechanic = """
+                {
+                  "fullname": "Test User",
+                  "email": "test-mechanic@example.com",
+                  "password": "password123",
+                  "role": "CLERK"
+                }
+        """;
+
         mockMvc.perform(post("/users")
                         .header("Authorization", getAuthTokenForRole(UserRole.ADMIN))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(userJson))
+                        .content(userJsonAdmin))
                 .andExpect(status().isOk());
 
         mockMvc.perform(post("/users")
                         .header("Authorization", getAuthTokenForRole(UserRole.CLERK))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(userJson))
-                .andExpect(status().isForbidden());
+                        .content(userJsonClerk))
+                .andExpect(status().isOk());
 
         mockMvc.perform(post("/users")
                         .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(userJson))
-                .andExpect(status().isForbidden());
+                        .content(userJsonMechanic))
+                .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("ADMIN e CLERK podem criar clientes")
-    void shouldAllowAdminAndClerkToCreateCustomers() throws Exception {
+    @DisplayName("Qualquer role pode criar clientes (auth no API Gateway)")
+    void shouldAllowAnyRoleToCreateCustomers() throws Exception {
         String customerJsonAdmin = """
                 {
                   "name": "Test Customer Admin",
@@ -106,6 +121,6 @@ class UserAuthorizationIntegrationTest extends BaseIntegrationTest {
                         .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(customerJsonMechanic))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
     }
 }

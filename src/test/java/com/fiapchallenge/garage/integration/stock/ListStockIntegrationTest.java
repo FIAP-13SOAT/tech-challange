@@ -110,9 +110,9 @@ class ListStockIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    void shouldReturn403ForClerkRole() throws Exception {
+    void shouldAllowListForClerkRole() throws Exception {
         mockMvc.perform(get("/stock")
                         .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
     }
 }

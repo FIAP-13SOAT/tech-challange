@@ -36,22 +36,22 @@ class ReportIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 403 para role CLERK")
-    void shouldReturn403ForClerkRole() throws Exception {
+    @DisplayName("Deve permitir acesso para role CLERK (auth no API Gateway)")
+    void shouldAllowAccessForClerkRole() throws Exception {
         mockMvc.perform(get("/reports")
                 .param("startDate", "01-01-2024")
                 .param("endDate", "31-12-2024")
                 .header("Authorization", getAuthTokenForRole(UserRole.CLERK)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Deve retornar 403 para role MECHANIC")
-    void shouldReturn403ForMechanicRole() throws Exception {
+    @DisplayName("Deve permitir acesso para role MECHANIC (auth no API Gateway)")
+    void shouldAllowAccessForMechanicRole() throws Exception {
         mockMvc.perform(get("/reports")
                 .param("startDate", "01-01-2024")
                 .param("endDate", "31-12-2024")
                 .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
     }
 }

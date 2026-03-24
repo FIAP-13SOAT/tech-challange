@@ -93,10 +93,10 @@ class RejectQuoteIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 403 para role MECHANIC")
-    void shouldReturn403ForMechanicRole() throws Exception {
+    @DisplayName("Deve permitir acesso para role MECHANIC (auth no API Gateway)")
+    void shouldAllowAccessForMechanicRole() throws Exception {
         mockMvc.perform(post("/quotes/service-order/" + java.util.UUID.randomUUID() + "/reject")
                 .header("Authorization", getAuthTokenForRole(UserRole.MECHANIC)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isNotFound());
     }
 }
