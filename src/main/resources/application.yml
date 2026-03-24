@@ -20,7 +20,13 @@ spring:
     default-schema: public
     locations: classpath:db/migration
 
+server:
+  forward-headers-strategy: framework
+
 api:
   security:
     jwt:
       secret: RLuO//C9BYRwoWXJdtIu6S+QJ/Cl6MEWn9x+h959Ass=
+
+app:
+  api-gateway-url: ${APP_API_GATEWAY_URL:}

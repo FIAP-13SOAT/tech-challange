@@ -52,6 +52,11 @@ spec:
                             configMapKeyRef:
                                 name: garage-config
                                 key: SPRING_PROFILES_ACTIVE
+                      - name: APP_API_GATEWAY_URL
+                        valueFrom:
+                            configMapKeyRef:
+                                name: garage-config
+                                key: API_GATEWAY_URL
                   resources:
                       requests:
                           memory: "512Mi"

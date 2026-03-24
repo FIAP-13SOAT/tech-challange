@@ -60,6 +60,16 @@ jobs:
                     echo "DB_ENDPOINT=$DB_ENDPOINT" >> $GITHUB_ENV
                     echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_ENV
 
+            -   name: Get API Gateway URL
+                run: |
+                    API_GW_URL=$(aws apigatewayv2 get-apis --region ${{ env.AWS_REGION }} \
+                      --query "Items[?contains(Name,'GarageAuthIssuer')].ApiEndpoint | [0]" \
+                      --output text 2>/dev/null || echo "")
+                    if [ -z "$API_GW_URL" ] || [ "$API_GW_URL" = "None" ]; then
+                      API_GW_URL="https://ir43ha07be.execute-api.us-east-1.amazonaws.com"
+                    fi
+                    echo "API_GATEWAY_URL=$API_GW_URL" >> $GITHUB_ENV
+
             - name: Get DB secret from AWS
               run: |
                   if [ -z "$DB_SECRET_ARN" ]; then
@@ -81,6 +91,7 @@ jobs:
               run: |
                   DB_HOST=$(echo $DB_ENDPOINT | cut -d':' -f1)
                   sed -e "s|\${DB_ENDPOINT}|$DB_HOST|g" \
+                      -e "s|\${API_GATEWAY_URL}|$API_GATEWAY_URL|g" \
                       k8s/configmap.yaml | kubectl apply -f -
 
             - name: Apply Secret

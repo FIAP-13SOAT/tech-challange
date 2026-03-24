@@ -7,3 +7,4 @@ data:
     DB_PORT: "5432"
     DB_NAME: "garage"
     SPRING_PROFILES_ACTIVE: "prod"
+    API_GATEWAY_URL: "${API_GATEWAY_URL}"
