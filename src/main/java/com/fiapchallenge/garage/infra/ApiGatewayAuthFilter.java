@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -18,7 +17,7 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
 
-@Component
+// @Component removido — com permitAll() no SecurityConfig, não precisa de filter
 public class ApiGatewayAuthFilter extends OncePerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(ApiGatewayAuthFilter.class);

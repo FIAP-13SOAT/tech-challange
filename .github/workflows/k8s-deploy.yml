@@ -91,10 +91,6 @@ jobs:
                       -e "s|<BASE64_PASSWORD>|$DB_PASS_B64|g" \
                       k8s/db-secret.yaml | kubectl apply -f -
 
-            - name: Delete Service if already exists
-              run: |
-                  kubectl delete svc garage-service --ignore-not-found=true
-
             - name: Apply Service
               run: kubectl apply -f k8s/service.yaml
 
@@ -106,7 +102,6 @@ jobs:
                   sed -e "s|\${IMAGE_TAG}|$IMAGE_TAG|g" \
                       -e "s|\${ECR_REGISTRY}|$ECR_REGISTRY|g" \
                       k8s/deployment.yaml | kubectl apply -f -
-                  kubectl rollout restart deployment/garage-app
 
             - name: Apply HPA
               run: kubectl apply -f k8s/hpa.yaml
