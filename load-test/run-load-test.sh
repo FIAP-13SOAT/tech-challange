@@ -4,7 +4,7 @@
 
 set -e
 
-BASE_URL="http://a51ab1a444f364a748a180b5ad06a969-1431806275.us-east-1.elb.amazonaws.com/"
+BASE_URL="http://a7d1844735dd64948a5b68614218493e-1580416480.us-east-1.elb.amazonaws.com/"
 
 # Cores para output
 GREEN='\033[0;32m'

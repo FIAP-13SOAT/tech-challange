@@ -16,30 +16,20 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         SecurityScheme securityScheme = new SecurityScheme()
+                .name(SECURITY_SCHEME_NAME)
                 .type(SecurityScheme.Type.HTTP)
                 .scheme("bearer")
                 .bearerFormat("JWT")
                 .in(SecurityScheme.In.HEADER)
-                .name("Authorization")
                 .description("Token JWT para autenticação. Ex: Bearer <token>");
 
-        SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList(SECURITY_SCHEME_NAME);
         return new OpenAPI()
-                .components(new Components()
-                .addSecuritySchemes(SECURITY_SCHEME_NAME, securityScheme))
-                .addSecurityItem(securityRequirement)
                 .info(new Info()
                         .title("Garage API")
                         .version("1.0.0")
-                        .description("API de gerênciamento de oficina mecânica"))
-                .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
+                        .description("API de gerenciamento de oficina mecânica — Projeto Garage (FIAP Pós-Graduação)"))
                 .components(new Components()
-                        .addSecuritySchemes(SECURITY_SCHEME_NAME,
-                                new SecurityScheme()
-                                        .name(SECURITY_SCHEME_NAME)
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")));
+                        .addSecuritySchemes(SECURITY_SCHEME_NAME, securityScheme))
+                .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME));
     }
 }
