@@ -75,13 +75,4 @@ public class DatadogServiceOrderMetrics implements ServiceOrderMetrics {
             log.error("Failed to increment error counter for operation={} exception={}", operation, exceptionClass, e);
         }
     }
-
-    @Override
-    public void setActiveCount(long count) {
-        try {
-            activeCount.set(count);
-        } catch (Exception e) {
-            log.error("Failed to set active count to {}", count, e);
-        }
-    }
 }

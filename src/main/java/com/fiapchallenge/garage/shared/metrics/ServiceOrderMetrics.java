@@ -13,6 +13,4 @@ public interface ServiceOrderMetrics {
     void recordProcessingDuration(String operation, String status, long durationMs);
 
     void incrementError(String operation, String exceptionClass);
-
-    void setActiveCount(long count);
 }
