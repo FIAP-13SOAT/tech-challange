@@ -50,9 +50,8 @@ management:
         http:
           server:
             requests: 100ms,250ms,500ms,1000ms
-  statsd:
-    metrics:
-      export:
+    export:
+      statsd:
         enabled: true
         host: ${DD_AGENT_HOST:localhost}
         port: 8125
