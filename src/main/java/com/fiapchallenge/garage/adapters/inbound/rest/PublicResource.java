@@ -25,6 +25,7 @@ public class PublicResource implements PublicResourceOpenApiSpec {
         String html = "<!DOCTYPE html><html><head><title>Garage API</title></head><body>"
                 + "<h1>Status: All Systems Operational</h1>"
                 + "<p><a href='/swagger-ui/index.html'>API Documentation</a></p>"
+                + "<p>Testes de Deploy Automatizado</p>"
                 + "</body></html>";
         return ResponseEntity.ok().header("Content-Type", "text/html").body(html);
     }
